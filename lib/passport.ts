@@ -52,6 +52,7 @@ passport.use(
           const user = await prisma.user.create({
             data: {
               email: profile.email,
+              profile: profile.picture,
               username: profile._json.name,
               password: bycrptedPassword,
             },
