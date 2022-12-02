@@ -5,6 +5,7 @@ import {
   Project,
   getProjects,
   createProject,
+  updateProject,
 } from "../../utils/apicalls/project";
 
 const Dashboard = () => {
@@ -59,7 +60,24 @@ const Dashboard = () => {
       </div>
       <div>
         {projects.map((project: Project, index: number) => {
-          return <div>{project.name}</div>;
+          return (
+            <div>
+              <div>{project.name}</div>
+              <div
+                className="p-2 w-fit bg-green-300 cursor-pointer"
+                onClick={() =>
+                  updateProject(
+                    projects,
+                    index,
+                    { name: "last", isPrivate: true, id: project.id },
+                    setProjects
+                  )
+                }
+              >
+                Update Project
+              </div>
+            </div>
+          );
         })}
       </div>
     </div>
