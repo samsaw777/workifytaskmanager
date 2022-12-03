@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import { NextApiRequest, NextApiResponse } from "next";
+import messageHandler from "../../utils/Sockets/messageHandler";
 
-export default function ScoketHandler(req: NextApiRequest, res: any) {
+export default function ScoketHandler(req: any, res: any) {
   // It means that socket server was already initialised
   if (res.socket.server.io) {
     console.log("Already set up");
@@ -13,11 +14,7 @@ export default function ScoketHandler(req: NextApiRequest, res: any) {
   res.socket.server.io = io;
 
   const onConnection = (socket: any) => {
-    const createdMessage = (msg: any) => {
-      socket.broadcast.emit("newIncomingMessage", msg);
-    };
-
-    socket.on("createdMessage", createdMessage);
+    messageHandler(io, socket);
   };
 
   // Define actions inside

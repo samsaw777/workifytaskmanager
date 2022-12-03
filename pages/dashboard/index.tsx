@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [message, setMessage] = useState<Message>({ message: "" });
+  const [message, setMessage] = useState<string>("");
   console.log(messages);
   const getUser = async () => {
     await axios
@@ -35,21 +35,22 @@ const Dashboard = () => {
   };
 
   const socketInitializer = async () => {
+    getUser();
     // We just call it because we don't need anything else out of it
-    await fetch("/api/socket/socket");
+    await fetch("/api/socket");
 
     socket = io();
 
     socket.on("newIncomingMessage", (message: any) => {
-      setMessages([...messages, message]);
+      console.log(message);
+      setMessages((currentmsg: any) => [...currentmsg, { message }]);
     });
 
     console.log(messages);
+    getProjects(setProjects);
   };
 
   useEffect(() => {
-    getUser();
-    getProjects(setProjects);
     socketInitializer();
   }, []);
 
@@ -69,8 +70,8 @@ const Dashboard = () => {
   const sendMessaage = async (e: any) => {
     e.preventDefault();
     socket.emit("createdMessage", message);
-    setMessages([...messages, message]);
-    setMessage({ message: "" });
+    setMessages((currentmsg: any) => [...currentmsg, { message }]);
+    setMessage("");
   };
 
   const body = {
@@ -118,8 +119,8 @@ const Dashboard = () => {
       <div>
         <form onSubmit={(e) => sendMessaage(e)}>
           <input
-            value={message.message}
-            onChange={(e) => setMessage({ message: e.target.value })}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             type="text"
             placeholder="New message..."
           />
