@@ -11,16 +11,7 @@ if (!secret) {
 
 const Home: NextPage = ({ loggedinUser }: any) => {
   console.log(loggedinUser);
-  return (
-    <div>
-      <a
-        href="/api/google"
-        className="p-2 bg-blue-500 text-white rounded cursor-pointer"
-      >
-        Gogin with Google
-      </a>
-    </div>
-  );
+  return <div>This is landing page.</div>;
 };
 
 export default Home;
