@@ -45,7 +45,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     });
 
     // creating the jwt token and storing it in cookies.
-    const token = jwt.sign({ userId: user.id }, secret as string, {
+    const token = jwt.sign({ userId: user.id }, secret, {
       expiresIn: "7d",
     });
 
@@ -57,6 +57,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       sameSite: true,
       path: "/",
     });
+
+    res.status(200).json({ message: "User Created!" });
   } catch (error: any) {
     res.status(404).json({ error: error.message });
   }
