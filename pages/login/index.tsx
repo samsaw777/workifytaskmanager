@@ -1,18 +1,10 @@
 import Nookies from "nookies";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import type { NextPage } from "next";
+import LoginComponent from "../../components/authentication/login";
 
 const LoginPage: NextPage = () => {
-  return (
-    <div>
-      <a
-        href="/api/google"
-        className="p-2 bg-blue-500 text-white rounded cursor-pointer"
-      >
-        Gogin with Google
-      </a>
-    </div>
-  );
+  return <LoginComponent />;
 };
 
 export async function getServerSideProps(context: any) {
