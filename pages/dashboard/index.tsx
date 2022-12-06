@@ -8,6 +8,7 @@ import {
   createProject,
   updateProject,
 } from "../../utils/apicalls/project";
+import ProjectComponent from "../../components/Project/Project";
 
 interface Message {
   message: string;
@@ -16,7 +17,7 @@ interface Message {
 let socket: any;
 
 const Dashboard = () => {
-  const [loggedinUser, setLoggedInUser] = useState({});
+  const [loggedinUser, setLoggedInUser] = useState<any>({});
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -89,6 +90,7 @@ const Dashboard = () => {
       >
         Create Project
       </div>
+      <ProjectComponent loggedinUser={loggedinUser?.id} />
       <div>
         {projects.map((project: Project, index: number) => {
           return (
