@@ -14,11 +14,22 @@ interface Message {
   message: string;
 }
 
+interface LoggedInUser {
+  id: string;
+  username: string;
+  profile: string;
+  email: string;
+}
+
 let socket: any;
 
 const Dashboard = () => {
-  const [loggedinUser, setLoggedInUser] = useState<any>({});
-
+  const [loggedInUser, setLoggedInUser] = useState<LoggedInUser>({
+    id: "",
+    username: "",
+    profile: "",
+    email: "",
+  });
   const [projects, setProjects] = useState<Project[]>([]);
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,7 +39,12 @@ const Dashboard = () => {
     await axios
       .get(`${urlFetcher()}/api/user/getuser`)
       .then((res) => {
-        setLoggedInUser(res.data);
+        setLoggedInUser({
+          id: res.data.id,
+          username: res.data.username,
+          profile: res.data.profile,
+          email: res.data.email,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -90,29 +106,9 @@ const Dashboard = () => {
       >
         Create Project
       </div>
-      <ProjectComponent loggedinUser={loggedinUser?.id} />
-      <div>
-        {projects.map((project: Project, index: number) => {
-          return (
-            <div key={index}>
-              <div>{project.name}</div>
-              <div
-                className="p-2 w-fit bg-green-300 cursor-pointer"
-                onClick={() =>
-                  updateProject(
-                    projects,
-                    index,
-                    { name: "last", isPrivate: true, id: project.id },
-                    setProjects
-                  )
-                }
-              >
-                Update Project
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <ProjectComponent
+        loggedInUser={{ id: loggedInUser.id, username: loggedInUser.username }}
+      />
       <div>
         {messages.map((message: any, index: number) => {
           return <div key={index}>{message.message}</div>;
