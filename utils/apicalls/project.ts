@@ -80,3 +80,23 @@ export const updateProject = async (
     console.log(error);
   }
 };
+
+export const deleteProject = async (
+  projects: Project[],
+  projectId: number,
+  setProjects: React.Dispatch<React.SetStateAction<Project[]>>
+) => {
+  const newProject = JSON.parse(JSON.stringify(projects));
+  await axios
+    .post(`${urlFetcher()}/api/project/deleteproject`, {
+      id: projectId,
+    })
+    .then((response) => {
+      setProjects(
+        newProject.filter((project: Project) => project.id !== projectId)
+      );
+    })
+    .catch((error: any) => {
+      console.log(error.response.data.error);
+    });
+};

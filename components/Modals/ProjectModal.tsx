@@ -16,8 +16,8 @@ interface Props {
   projectStatus?: boolean | undefined;
   projectId?: number | undefined;
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
-  setProjectDetails: React.Dispatch<any>;
   projects: Project[];
+  setProjectDetails: React.Dispatch<any>;
   index: number;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 }

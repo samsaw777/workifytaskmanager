@@ -7,6 +7,7 @@ import {
 } from "../../utils/apicalls/project";
 import Link from "next/link";
 import ProjectModal from "../Modals/ProjectModal";
+import DeleteProjectModal from "../Modals/DeleteProjectModal";
 
 interface User {
   id: string;
@@ -142,6 +143,15 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
           New Project +
         </button>
       </div>
+      <DeleteProjectModal
+        isOpen={isDeleteOpen}
+        setIsOpen={setIsDeleteOpen}
+        title="Project"
+        name={projectDetails.name}
+        projectId={parseInt(projectDetails.id)}
+        projects={projects}
+        setProjects={setProjects}
+      />
       <ProjectModal
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
