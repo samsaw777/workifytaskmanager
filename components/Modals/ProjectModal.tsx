@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+
 import {
   Project,
   createProject,
@@ -17,6 +18,8 @@ interface Props {
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
   setProjectDetails: React.Dispatch<any>;
   projects: Project[];
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 interface ProjectType {
   projectName: string;
@@ -33,6 +36,8 @@ const ProjectModal = ({
   setProjects,
   projects,
   setProjectDetails,
+  index,
+  setIndex,
 }: Props) => {
   const {
     register,
@@ -53,8 +58,54 @@ const ProjectModal = ({
     setValue("projectName", "");
     setValue("isPrivate", false);
 
-    // setProjectDetails({});
+    setProjectDetails({});
   };
+
+  const createUserProject = handleSubmit(async (formData: ProjectType) => {
+    const notification = toast.loading("Creating Project!");
+    if (Object.keys(errors).length == 0) {
+      try {
+        await createProject(
+          projects,
+          { name: formData.projectName, userId, isPrivate: formData.isPrivate },
+          setProjects
+        );
+        closeModal();
+        toast.success("Project Created!", {
+          id: notification,
+        });
+      } catch (error: any) {
+        toast.error(error.message, { id: notification });
+      }
+    }
+  });
+
+  const updateUserProject = handleSubmit(async (formData: ProjectType) => {
+    const notification = toast.loading("Updating Project!");
+    if (Object.keys(errors).length == 0) {
+      try {
+        await updateProject(
+          projects,
+          index,
+          {
+            id: projectId,
+            name: formData.projectName,
+            isPrivate: formData.isPrivate,
+          },
+          setProjects
+        );
+        closeModal();
+        setIndex(0);
+        toast.success("Project Updated!", {
+          id: notification,
+        });
+      } catch (error: any) {
+        toast.error(error.message, {
+          id: notification,
+        });
+      }
+    }
+  });
 
   return (
     <div
@@ -84,7 +135,7 @@ const ProjectModal = ({
           </svg>
         </div>
         <div className="mt-2">
-          <form>
+          <form onSubmit={projectId ? updateUserProject : createUserProject}>
             <div className="flex flex-col space-y-3">
               <label className="font-medium text-md">Project Name</label>
               <input

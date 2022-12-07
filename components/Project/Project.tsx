@@ -23,6 +23,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [projectDetails, setProjectDetails] = useState<any>({});
+  const [index, setIndex] = useState<number>(0);
   const [fetchProjectPointer, setFetchProjectPointer] =
     useState<boolean>(false);
 
@@ -31,8 +32,9 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
     getProjects(setProjects);
   }, []);
 
-  const updateProjectDetails = (project: any) => {
+  const updateProjectDetails = (project: any, index: number) => {
     setProjectDetails(project);
+    setIndex(index);
     setIsModalOpen(!isModalOpen);
   };
 
@@ -92,11 +94,14 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                   stroke="currentColor"
                   className="w-6 h-6 cursor-pointer p-1 hover:bg-green-200 rounded hover:text-green-700 text-[#707070] font-bold"
                   onClick={() =>
-                    updateProjectDetails({
-                      id: project.id,
-                      name: project.name,
-                      isPrivate: project.isPrivate,
-                    })
+                    updateProjectDetails(
+                      {
+                        id: project.id,
+                        name: project.name,
+                        isPrivate: project.isPrivate,
+                      },
+                      index
+                    )
                   }
                 >
                   <path
@@ -147,6 +152,8 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
         projectTitle={projectDetails?.name}
         projectStatus={projectDetails?.isPrivate}
         projectId={parseInt(projectDetails?.id)}
+        index={index}
+        setIndex={setIndex}
       />
     </div>
   );

@@ -19,7 +19,7 @@ interface projectBody {
 interface updateproject {
   name: string;
   isPrivate: boolean;
-  id: number;
+  id: number | undefined;
 }
 
 export const createProject = async (
@@ -58,13 +58,13 @@ export const getProjects = async (
 };
 
 export const updateProject = async (
-  project: Project[],
+  projects: Project[],
   index: number,
   projectInformation: updateproject,
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>
 ) => {
   try {
-    const newProject = JSON.parse(JSON.stringify(project));
+    const newProject = JSON.parse(JSON.stringify(projects));
     await axios
       .post(`${urlFetcher()}/api/project/updateproject`, projectInformation)
       .then((response) => {
