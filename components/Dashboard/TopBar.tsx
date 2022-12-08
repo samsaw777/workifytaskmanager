@@ -1,0 +1,51 @@
+import React, { Dispatch, SetStateAction } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { MdDoubleArrow } from "react-icons/md";
+import { useRouter } from "next/router";
+
+interface LoggedinUser {
+  email: string;
+  id: string;
+  username: string;
+}
+
+type Props = {
+  openSideBar: boolean;
+  setOpenSideBar: Dispatch<SetStateAction<boolean>>;
+  loggedInUser: LoggedinUser;
+};
+
+const TopBar = ({ openSideBar, setOpenSideBar, loggedInUser }: Props) => {
+  const { pathname } = useRouter();
+
+  return (
+    <div className="h-[8vh] p-5 bg-white flex items-center mx-3 rounded-md my-2 shadow-md justify-between">
+      <div className="flex space-x-2 items-center">
+        <MdDoubleArrow
+          className={`hover:bg-violet-200 w-7 h-7 p-1 rounded cursor-pointer ${
+            openSideBar && "rotate-180"
+          }`}
+          onClick={() => setOpenSideBar(!openSideBar)}
+        />
+        {pathname.slice(1) == "dashboard" ? (
+          <div>Dashboard</div>
+        ) : (
+          <div>Project</div>
+        )}
+      </div>
+      <div className="flex space-x-2 items-center">
+        <div className="flex flex-col space-y-1 items-center">
+          <span className="ml-auto text-md font-bold">
+            {loggedInUser?.username}
+          </span>
+          <span className="ml-auto text-xs text-gray-800">
+            {loggedInUser?.email}
+          </span>
+        </div>
+        <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+      </div>
+    </div>
+  );
+};
+
+export default TopBar;

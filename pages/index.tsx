@@ -10,7 +10,6 @@ if (!secret) {
 }
 
 const Home: NextPage = ({ loggedinUser }: any) => {
-  console.log(loggedinUser);
   return <div>This is landing page.</div>;
 };
 
