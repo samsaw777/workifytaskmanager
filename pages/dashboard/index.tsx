@@ -82,7 +82,7 @@ const Dashboard = ({ loggedInUser }: any) => {
         openSidebar={openSideBar}
         setShowContent={setShowContent}
       />
-      <div className="bg-gray-200 bg-opacity-50 flex-grow">
+      <div className="bg-[#edf3f8] bg-opacity-50 flex-grow">
         <TopBar
           openSideBar={openSideBar}
           setOpenSideBar={setOpenSideBar}

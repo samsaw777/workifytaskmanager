@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { MdDoubleArrow } from "react-icons/md";
+import { MdMenu } from "react-icons/md";
 import { useRouter } from "next/router";
 
 interface LoggedinUser {
@@ -19,19 +19,18 @@ const TopBar = ({ openSideBar, setOpenSideBar, loggedInUser }: Props) => {
   const { pathname } = useRouter();
 
   return (
-    <div className="h-[8vh] p-5 bg-white flex items-center mx-3 rounded-md my-2 shadow-md justify-between">
+    <div className="h-[8vh] p-5 bg-[white] flex items-center mx-3 rounded-md my-2 shadow-md justify-between">
       <div className="flex space-x-2 items-center">
-        <MdDoubleArrow
-          className={`hover:bg-violet-200 w-7 h-7 p-1 rounded cursor-pointer ${
-            openSideBar && "rotate-180"
-          }`}
+        <MdMenu
+          className="hover:bg-violet-200 w-8 h-8 p-1  rounded cursor-pointer"
           onClick={() => setOpenSideBar(!openSideBar)}
         />
-        {pathname.slice(1) == "dashboard" ? (
+
+        {/* {pathname.slice(1) == "dashboard" ? (
           <div>Dashboard</div>
         ) : (
           <div>Project</div>
-        )}
+        )} */}
       </div>
       <div className="flex space-x-2 items-center">
         <div className="flex flex-col space-y-1 items-center">
