@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Project,
-  getProjects,
-  createProject,
-  updateProject,
-} from "../../utils/apicalls/project";
+import { Project } from "../../utils/apicalls/project";
+import axios from "axios";
+import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import Link from "next/link";
 import ProjectModal from "../Modals/ProjectModal";
 import DeleteProjectModal from "../Modals/DeleteProjectModal";
@@ -28,9 +25,24 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
   const [fetchProjectPointer, setFetchProjectPointer] =
     useState<boolean>(false);
 
+  const getProject = async () => {
+    try {
+      await axios
+        .get(`${urlFetcher()}/api/project/getproject`)
+        .then((response) => {
+          setProjects(response.data);
+        })
+        .catch((error: any) => {
+          console.log(error.response.data.error);
+        });
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   //get projects
   useEffect(() => {
-    getProjects(setProjects);
+    getProject();
   }, []);
 
   const updateProjectDetails = (project: any, index: number) => {
@@ -70,7 +82,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                   {project.isPrivate ? "Private" : "Public"}
                 </span>
               </div>
-              <Link href="/">
+              <Link href={`/project/${project.id}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
