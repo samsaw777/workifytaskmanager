@@ -14,7 +14,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const jwtToken: any = jwt.verify(token, secret);
     const Projects = await prisma.project.findMany({
       where: {
-        userId: jwtToken.userId,
+        members: {
+          some: {
+            userId: jwtToken.userId,
+          },
+        },
       },
       orderBy: {
         id: "asc",

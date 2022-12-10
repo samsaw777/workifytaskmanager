@@ -38,6 +38,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         members: {
           create: {
             email: user?.email || "",
+            userId: user?.id || "",
             profileImage: user?.profile || "",
             role: "ADMIN",
           },

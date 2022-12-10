@@ -1,6 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { urlFetcher } from "../../utils/Helper/urlFetcher";
+import axios from "axios";
 
 interface User {
   id: string;
@@ -12,13 +15,42 @@ interface User {
 interface Props {
   user: User;
   index: number;
+  projectId: number;
 }
 
-const UserSearch = ({ user, index }: Props) => {
+const UserSearch = ({ user, index, projectId }: Props) => {
+  const addMember = async (
+    userId: string,
+    userEmail: string,
+    userProfile: string
+  ) => {
+    const notification = toast.loading("Add Member");
+    try {
+      const { data } = await axios.post(
+        `${urlFetcher()}/api/project/addmember`,
+        {
+          userId,
+          userEmail,
+          userProfile,
+          projectId: projectId,
+        }
+      );
+
+      toast.success("Member Added!", {
+        id: notification,
+      });
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
   return (
     <div
       className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200"
       key={index}
+      onClick={() => addMember(user.id, user.email, user.profile)}
     >
       {user.profile ? (
         <div className="w-10 h-10 rounded-full items-center flex">
