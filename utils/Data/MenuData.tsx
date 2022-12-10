@@ -21,35 +21,35 @@ export const menu = [
 ];
 
 export const projectMenu = [
-  { title: "Board", icon: <MdDashboard /> },
-  {
-    title: "Calendar",
-    spacing: true,
-    icon: <BsReverseLayoutTextSidebarReverse />,
-  },
+  // { title: "Board", icon: <MdDashboard /> },
+  // {
+  //   title: "Calendar",
+  //   spacing: true,
+  //   icon: <BsReverseLayoutTextSidebarReverse />,
+  // },
 
   {
     title: "Scrum",
     icon: <BiTask />,
     isSubMenu: true,
-    subMenu: [{ title: "sboard" }],
+    subMenu: [{ title: "sboard" }, { title: "backlog" }],
   },
-  {
-    title: "KanBan",
-    icon: <BiTask />,
-    isSubMenu: true,
-    subMenu: [{ title: "kboard" }],
-  },
-  {
-    title: "Bug",
-    icon: <BiTask />,
-    isSubMenu: true,
-    subMenu: [{ title: "bboard" }],
-  },
-  {
-    title: "Github",
-    icon: <AiOutlineMail />,
-  },
+  // {
+  //   title: "KanBan",
+  //   icon: <BiTask />,
+  //   isSubMenu: true,
+  //   subMenu: [{ title: "kboard" }],
+  // },
+  // {
+  //   title: "Bug",
+  //   icon: <BiTask />,
+  //   isSubMenu: true,
+  //   subMenu: [{ title: "bboard" }],
+  // },
+  // {
+  //   title: "Github",
+  //   icon: <AiOutlineMail />,
+  // },
   { title: "Members", icon: <BiTask /> },
   { title: "Settings", icon: <AiFillSetting /> },
   { title: "Logout", icon: <BiLogOut />, spacing: true },
