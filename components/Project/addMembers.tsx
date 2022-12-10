@@ -3,6 +3,8 @@ import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import UserAvatar from "../../components/userAvatar/userSearch";
 import { url } from "inspector";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 interface User {
   id: string;
@@ -24,8 +26,28 @@ interface Props {
 }
 
 const AddMembers = ({ loggedInUser, projectId }: Props) => {
+  const [members, setMembers] = useState<any>([]);
   const [search, setSearch] = useState<string>("");
   const [searchedUser, setSearchUser] = useState<User[]>([]);
+
+  const getMembers = async () => {
+    try {
+      const { data } = await axios.post(
+        `${urlFetcher()}/api/project/getmembers`,
+        {
+          projectId,
+        }
+      );
+
+      setMembers(data);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  React.useEffect(() => {
+    getMembers();
+  }, []);
 
   const handleSearch = async (e: any) => {
     e.preventDefault();
@@ -69,6 +91,38 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
             }}
             projectId={projectId}
           />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-4 mx-5">
+        {members.map((member: any, index: number) => (
+          <div
+            className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200 mt-1"
+            key={index}
+          >
+            {member.profileImage ? (
+              <div className="w-10 h-10 rounded-full items-center flex">
+                <Image
+                  src={member.profileImage}
+                  width={100}
+                  height={100}
+                  alt="UserProfile"
+                />
+              </div>
+            ) : (
+              <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+            )}
+
+            <div className="flex flex-col space-y-1">
+              <div className="text-md font-semibold">{member.email}</div>
+              <div
+                className={`text-sm ${
+                  member.role == "ADMIN" ? "text-blue-400" : "text-red-400"
+                }`}
+              >
+                {member.role}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
