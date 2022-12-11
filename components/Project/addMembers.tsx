@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 import AddMembersModal from "../Modals/AddMemberModal";
 import toast from "react-hot-toast";
+import MembersOptions from "../../utils/Helper/MembersOptions";
 
 interface LoggedInUser {
   id: string;
@@ -57,6 +58,8 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
 
       console.log(data);
 
+      setMembers(members.filter((member: any) => member.id !== data.id));
+
       toast.success("Member Removed!", {
         id: notification,
       });
@@ -69,13 +72,14 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
   };
 
   return (
-    <div className=" mx-5 flex flex-col">
+    <div className="mx-5 flex flex-col">
       <AddMembersModal
         projectId={projectId}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         members={members}
         loggedInUser={{ id: loggedInUser.id }}
+        setMembers={setMembers}
       />
       <div
         className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"

@@ -22,6 +22,8 @@ interface Props {
   projectId: number;
   members: any;
   loggedInUser: loggedInUser;
+  setMembers: React.Dispatch<any>;
+  closeModal: () => Promise<void>;
 }
 
 const UserSearch = ({
@@ -30,6 +32,8 @@ const UserSearch = ({
   projectId,
   members,
   loggedInUser,
+  setMembers,
+  closeModal,
 }: Props) => {
   const addMember = async (
     userId: string,
@@ -59,9 +63,11 @@ const UserSearch = ({
         }
       );
 
+      setMembers([...members, data]);
       toast.success("Member Added!", {
         id: notification,
       });
+      closeModal();
     } catch (error: any) {
       console.log(error);
       toast.error(error.message, {

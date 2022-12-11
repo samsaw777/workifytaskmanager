@@ -21,6 +21,7 @@ interface Props {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
   members: any;
+  setMembers: React.Dispatch<any>;
 }
 
 const AddMemberModal = ({
@@ -29,6 +30,7 @@ const AddMemberModal = ({
   isOpen,
   members,
   loggedInUser,
+  setMembers,
 }: Props) => {
   const [search, setSearch] = useState<string>("");
   const [searchedUser, setSearchUser] = useState<User[]>([]);
@@ -110,6 +112,8 @@ const AddMemberModal = ({
                 projectId={projectId}
                 members={members}
                 loggedInUser={loggedInUser}
+                setMembers={setMembers}
+                closeModal={closeModal}
               />
             </div>
           ))}
