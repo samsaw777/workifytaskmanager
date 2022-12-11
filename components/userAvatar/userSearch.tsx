@@ -69,6 +69,7 @@ const UserSearch = ({
       });
     }
   };
+
   return (
     <div
       className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200 cursor-pointer mt-1"
