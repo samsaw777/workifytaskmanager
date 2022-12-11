@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.googleSignInButton {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #6b7280;
+  line-height: 0.3em;
+  margin: 10px 0 20px;
+}
+
+.googleSignInButton span {
+  background: #fff;
+  padding: 0 10px;
+}
+
+* {
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
