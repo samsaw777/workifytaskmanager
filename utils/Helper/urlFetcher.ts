@@ -9,6 +9,6 @@ export const urlFetcher = () => {
   if (mode === "development") {
     return "http://localhost:3000";
   } else {
-    return "https://workifytask.vercel.app";
+    return "https://workifytaskmanager.vercel.app";
   }
 };
