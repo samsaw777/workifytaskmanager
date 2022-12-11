@@ -5,6 +5,7 @@ import UserAvatar from "../../components/userAvatar/userSearch";
 import { url } from "inspector";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import AddMembersModal from "../Modals/AddMemberModal";
 
 interface User {
   id: string;
@@ -69,6 +70,7 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
 
   return (
     <div>
+      <AddMembersModal />
       <form onSubmit={(e) => handleSearch(e)}>
         <input
           value={search}
