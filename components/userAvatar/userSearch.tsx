@@ -48,7 +48,7 @@ const UserSearch = ({ user, index, projectId }: Props) => {
   };
   return (
     <div
-      className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200"
+      className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200 cursor-pointer mt-1"
       key={index}
       onClick={() => addMember(user.id, user.email, user.profile)}
     >

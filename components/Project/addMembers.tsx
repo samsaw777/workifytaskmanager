@@ -1,19 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
-import UserAvatar from "../../components/userAvatar/userSearch";
-import { url } from "inspector";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 import AddMembersModal from "../Modals/AddMemberModal";
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  profile: string;
-  password: string;
-}
 
 interface LoggedInUser {
   id: string;
@@ -28,8 +18,7 @@ interface Props {
 
 const AddMembers = ({ loggedInUser, projectId }: Props) => {
   const [members, setMembers] = useState<any>([]);
-  const [search, setSearch] = useState<string>("");
-  const [searchedUser, setSearchUser] = useState<User[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const getMembers = async () => {
     try {
@@ -50,52 +39,20 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
     getMembers();
   }, []);
 
-  const handleSearch = async (e: any) => {
-    e.preventDefault();
-    if (search == "") {
-      setSearchUser([]);
-      console.log("Please search a user");
-      return;
-    }
-
-    try {
-      const { data } = await axios.get(
-        `${urlFetcher()}/api/user/searchusers?search=${search}`
-      );
-      setSearchUser(data);
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
   return (
-    <div>
-      <AddMembersModal />
-      <form onSubmit={(e) => handleSearch(e)}>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          className="w-[90%] p-2 border-2 border-blue-300"
-          placeholder="Enter Name To Search User"
-        />
-        <button className="hidden" type="submit"></button>
-      </form>
-      <div className="grid grid-cols-2 gap-4 mt-5 mx-5">
-        {searchedUser.map((user: User, index: number) => (
-          <UserAvatar
-            index={index}
-            user={{
-              id: user.id,
-              email: user.email,
-              username: user.username,
-              profile: user.profile,
-            }}
-            projectId={projectId}
-          />
-        ))}
+    <div className=" mx-5 flex flex-col">
+      <AddMembersModal
+        projectId={projectId}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+      />
+      <div
+        className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        Add Members
       </div>
-      <div className="grid grid-cols-2 gap-4 mx-5">
+      <div className="grid grid-cols-2 gap-4">
         {members.map((member: any, index: number) => (
           <div
             className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200 mt-1"
