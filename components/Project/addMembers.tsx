@@ -18,8 +18,8 @@ interface Props {
 
 const AddMembers = ({ loggedInUser, projectId }: Props) => {
   const [members, setMembers] = useState<any>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
-
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  console.log(members.filter((member: any) => member.role === "ADMIN"));
   const getMembers = async () => {
     try {
       const { data } = await axios.post(
@@ -45,6 +45,8 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
         projectId={projectId}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
+        members={members}
+        loggedInUser={{ id: loggedInUser.id }}
       />
       <div
         className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"

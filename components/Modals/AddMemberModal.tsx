@@ -11,13 +11,25 @@ interface User {
   password: string;
 }
 
-interface Props {
-  projectId: number;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpen: boolean;
+interface LoggedInUser {
+  id: string;
 }
 
-const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
+interface Props {
+  projectId: number;
+  loggedInUser: LoggedInUser;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean;
+  members: any;
+}
+
+const AddMemberModal = ({
+  projectId,
+  setIsOpen,
+  isOpen,
+  members,
+  loggedInUser,
+}: Props) => {
   const [search, setSearch] = useState<string>("");
   const [searchedUser, setSearchUser] = useState<User[]>([]);
 
@@ -38,6 +50,13 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
       console.log(error);
     }
   };
+
+  const closeModal = async () => {
+    setSearch("");
+    setSearchUser([]);
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div
       className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
@@ -46,7 +65,7 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
       id="overlay"
       //   onClick={() => setIsOpen(!isOpen)}
     >
-      <div className="bg-white w-[550px] h-[400px] py-4 px-4 rounded-md shadow-xl text-gray-800">
+      <div className="bg-white w-[550px] max-h-[700px] py-4 px-4 rounded-md shadow-xl text-gray-800">
         <div className="flex justify-center flex-col-reverse">
           <h4 className="text-lg font-bold text-center flex-grow">
             Add users to the project
@@ -56,7 +75,7 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
             id="close-modal"
             fill="currentColor"
             viewBox="0 0 20 20"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => closeModal()}
           >
             <path
               fillRule="evenodd"
@@ -89,6 +108,8 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
                   profile: user.profile,
                 }}
                 projectId={projectId}
+                members={members}
+                loggedInUser={loggedInUser}
               />
             </div>
           ))}

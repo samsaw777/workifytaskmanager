@@ -12,19 +12,42 @@ interface User {
   profile: string;
 }
 
+interface loggedInUser {
+  id: string;
+}
+
 interface Props {
   user: User;
   index: number;
   projectId: number;
+  members: any;
+  loggedInUser: loggedInUser;
 }
 
-const UserSearch = ({ user, index, projectId }: Props) => {
+const UserSearch = ({
+  user,
+  index,
+  projectId,
+  members,
+  loggedInUser,
+}: Props) => {
   const addMember = async (
     userId: string,
     userEmail: string,
     userProfile: string
   ) => {
-    const notification = toast.loading("Add Member");
+    if (members.find((member: any) => member.userId === user.id)) {
+      toast.error("User Already Exists");
+      return;
+    }
+
+    const adminUser = members.find((member: any) => member.role == "ADMIN");
+
+    if (adminUser.userId != loggedInUser.id) {
+      toast.error("Only Admin can added the user in the group!");
+      return;
+    }
+    const notification = toast.loading("Adding Member");
     try {
       const { data } = await axios.post(
         `${urlFetcher()}/api/project/addmember`,
