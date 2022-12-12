@@ -9,6 +9,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       where: {
         projectId,
       },
+      orderBy: {
+        id: "asc",
+      },
     });
 
     res.status(200).json(members);

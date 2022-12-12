@@ -51,7 +51,7 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
     const adminUser = members.filter((member: any) => member.role == "ADMIN");
 
     if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
-      toast.error("Only Admin can remove user from the Workspace!");
+      toast.error("Only Admin can assign user role!");
       return;
     }
 
@@ -67,6 +67,39 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
       setMembers(newMembers);
 
       toast.success("Member is not Admin!", {
+        id: notification,
+      });
+
+      setOptionIndex(-1);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const makeMember = async (memberId: number, index: number) => {
+    const newMembers = JSON.parse(JSON.stringify(members));
+    const adminUser = members.filter((member: any) => member.role == "ADMIN");
+
+    if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
+      toast.error("Only Admin can assign role!");
+      return;
+    }
+
+    const notification = toast.loading("Making User A Member");
+    try {
+      const { data } = await axios.post(
+        `${urlFetcher()}/api/project/removeadmin`,
+        {
+          memberId,
+        }
+      );
+      newMembers[index].role = "MEMBER";
+      setMembers(newMembers);
+
+      toast.success("User is now a Member!", {
         id: notification,
       });
 
@@ -133,7 +166,7 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
       >
         Add Members
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 mt-5">
         {members.map((member: any, index: number) => (
           <div
             className="w-full p-3 rounded-md flex justify-between items-center bg-gray-200 mt-1"
@@ -175,11 +208,17 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
                 <div className="absolute bg-white option border-2  z-20">
                   <div
                     className="flex space-x-1 items-center cursor-pointer p-2 bg-white group optadmin"
-                    onClick={() => makeAdmin(member.id, index)}
+                    onClick={
+                      member.role == "ADMIN"
+                        ? () => makeMember(member.id, index)
+                        : () => makeAdmin(member.id, index)
+                    }
                   >
                     <FaUserCheck className="w-6 h-6 p-1" />
 
-                    <div className="remove font-semibold">Make Admin</div>
+                    <div className="remove font-semibold">
+                      {member.role == "ADMIN" ? "Make Member" : "Make Admin"}
+                    </div>
                   </div>
                   <div
                     className="flex space-x-1 items-center cursor-pointer p-2 bg-white group opt"

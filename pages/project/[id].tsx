@@ -5,6 +5,7 @@ import TopBar from "../../components/Dashboard/TopBar";
 import * as jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma";
 import Members from "../../components/Project/addMembers";
+import { ProjectContents } from "../../utils/Helper/ProjectContents";
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
@@ -19,16 +20,16 @@ interface User {
   password: string;
 }
 
-const ProjectDetails = ({ loggedInUser, projectId }: any) => {
+const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
-  const [showContent, setShowContent] = useState<string>("Board");
+  const [showContent, setShowContent] = useState<string>("view");
 
   return (
     <div className="flex h-screen">
       <ProjectSidebar
         openSidebar={openSideBar}
         setShowContent={setShowContent}
-        // projectTitle={projectsDetail?.name}
+        projectTitle={projectTitle}
         // showContent={showContent}
       />
       <div className="bg-gray-200 bg-opacity-5 flex-grow">
@@ -40,20 +41,11 @@ const ProjectDetails = ({ loggedInUser, projectId }: any) => {
         {/* <ProjectMembers members={projectsDetail?.members} /> */}
         {/* hello */}
         <div className="h-[90vh] p-2">
-          <Members
-            loggedInUser={{
-              id: loggedInUser.id,
-              email: loggedInUser.email,
-              profileImage: loggedInUser.profile,
-            }}
-            projectId={projectId}
-          />
-          {/* {projectContent({
+          {ProjectContents({
             componentName: showContent,
-            board: projectsDetail?.board,
-            members: projectsDetail?.members,
-            loggedinUserEmail: loggedInUser.email,
-          })} */}
+            loggedInUser: loggedInUser,
+            projectId: projectId,
+          })}
         </div>
       </div>
     </div>
@@ -84,12 +76,21 @@ export async function getServerSideProps(context: any) {
     where: { id: jwtToken.userId },
   });
 
+  const projectResponse = await prisma.project.findUnique({
+    where: {
+      id: projectId,
+    },
+  });
+
+  const project: any = JSON.parse(JSON.stringify(projectResponse));
+
   const user: any = JSON.stringify(response);
 
   return {
     props: {
       loggedInUser: JSON.parse(user),
       projectId,
+      projectTitle: project.name,
     },
   };
 }
