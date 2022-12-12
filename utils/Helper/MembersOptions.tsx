@@ -1,18 +1,19 @@
 import React, { useState } from "react";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 
 const MemberOptions = () => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   return (
-    <div className="">
+    <div className="relative">
       <div
         className="cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        Options
+        <BiDotsVerticalRounded />
       </div>
       {isExpanded && (
-        <div className="absolute bg-gray-100 -top-32 border-2 border-blue-300 z-20">
+        <div className="absolute bg-white option border-2 border-blue-300 z-20">
           This is the expanded div.
         </div>
       )}
