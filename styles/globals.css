@@ -20,7 +20,22 @@
 }
 
 .option {
-  width: 100px;
+  width: 150px;
   top: 20px;
   right: 7px;
+}
+
+.remove {
+  font-size: 13px;
+}
+
+.opt:hover {
+  background: #ef4444;
+  color: #fff;
+  font-weight: bold;
+}
+.optadmin:hover {
+  background: #22c55e;
+  color: #fff;
+  font-weight: bold;
 }

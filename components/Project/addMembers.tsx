@@ -5,6 +5,8 @@ import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 import AddMembersModal from "../Modals/AddMemberModal";
 import toast from "react-hot-toast";
+import { BiDotsVerticalRounded } from "react-icons/bi";
+import { FaUserCheck, FaUserMinus } from "react-icons/fa";
 
 import MembersOptions from "../../utils/Helper/MembersOptions";
 
@@ -22,6 +24,9 @@ interface Props {
 const AddMembers = ({ loggedInUser, projectId }: Props) => {
   const [members, setMembers] = useState<any>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [optionIndex, setOptionIndex] = useState<number>(-1);
+
   const getMembers = async () => {
     try {
       const { data } = await axios.post(
@@ -41,10 +46,43 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
     getMembers();
   }, []);
 
-  const removeMember = async (memberId: number) => {
-    const adminUser = members.find((member: any) => member.role == "ADMIN");
+  const makeAdmin = async (memberId: number, index: number) => {
+    const newMembers = JSON.parse(JSON.stringify(members));
+    const adminUser = members.filter((member: any) => member.role == "ADMIN");
 
-    if (adminUser.userId != loggedInUser.id) {
+    if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
+      toast.error("Only Admin can remove user from the Workspace!");
+      return;
+    }
+
+    const notification = toast.loading("Making Member Admin");
+    try {
+      const { data } = await axios.post(
+        `${urlFetcher()}/api/project/makeadmin`,
+        {
+          memberId,
+        }
+      );
+      newMembers[index].role = "ADMIN";
+      setMembers(newMembers);
+
+      toast.success("Member is not Admin!", {
+        id: notification,
+      });
+
+      setOptionIndex(-1);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const removeMember = async (memberId: number) => {
+    const adminUser = members.filter((member: any) => member.role == "ADMIN");
+
+    if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
       toast.error("Only Admin can remove user from the Workspace!");
       return;
     }
@@ -64,12 +102,19 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
       toast.success("Member Removed!", {
         id: notification,
       });
+
+      setOptionIndex(-1);
     } catch (error: any) {
       console.log(error);
       toast.error(error.message, {
         id: notification,
       });
     }
+  };
+
+  const openOptions = (index: number) => {
+    setOptionIndex(index);
+    setIsExpanded(!isExpanded);
   };
 
   return (
@@ -119,7 +164,35 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
                 </div>
               </div>
             </div>
-            <MembersOptions />
+            <div className="relative">
+              <div
+                className="cursor-pointer"
+                onClick={() => openOptions(index)}
+              >
+                <BiDotsVerticalRounded />
+              </div>
+              {isExpanded && index == optionIndex && (
+                <div className="absolute bg-white option border-2  z-20">
+                  <div
+                    className="flex space-x-1 items-center cursor-pointer p-2 bg-white group optadmin"
+                    onClick={() => makeAdmin(member.id, index)}
+                  >
+                    <FaUserCheck className="w-6 h-6 p-1" />
+
+                    <div className="remove font-semibold">Make Admin</div>
+                  </div>
+                  <div
+                    className="flex space-x-1 items-center cursor-pointer p-2 bg-white group opt"
+                    onClick={() => removeMember(member.id)}
+                  >
+                    <FaUserMinus className="w-6 h-6 p-1" />
+
+                    <div className="remove font-semibold">Remove Member</div>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* <MembersOptions removeMember={removeMember} memberId={member.id} /> */}
             {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

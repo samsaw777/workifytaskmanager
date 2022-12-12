@@ -45,9 +45,9 @@ const UserSearch = ({
       return;
     }
 
-    const adminUser = members.find((member: any) => member.role == "ADMIN");
+    const adminUser = members.filter((member: any) => member.role == "ADMIN");
 
-    if (adminUser.userId != loggedInUser.id) {
+    if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
       toast.error("Only Admin can added the user in the group!");
       return;
     }
@@ -83,7 +83,7 @@ const UserSearch = ({
       onClick={() => addMember(user.id, user.email, user.profile)}
     >
       {user.profile ? (
-        <div className="w-10 h-10 rounded-full items-center flex">
+        <div className="w-10 h-10 rounded-full items-center flex overflow-hidden">
           <Image
             src={user.profile}
             width={100}
