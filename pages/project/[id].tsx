@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nookies from "nookies";
 import ProjectSidebar from "../../components/Project/ProjectSisebar";
 import TopBar from "../../components/Dashboard/TopBar";
@@ -6,11 +6,14 @@ import * as jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma";
 import Members from "../../components/Project/addMembers";
 import { ProjectContents } from "../../utils/Helper/ProjectContents";
+import io from "socket.io-client";
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
   throw new Error("No Secret");
 }
+
+let socket: any;
 
 interface User {
   id: string;
@@ -23,6 +26,17 @@ interface User {
 const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("view");
+  const socketInit = async () => {
+    await fetch("/api/socket");
+
+    socket = io();
+
+    socket.emit("setup", loggedInUser);
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
 
   return (
     <div className="flex h-screen">
