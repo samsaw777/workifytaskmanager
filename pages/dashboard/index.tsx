@@ -36,8 +36,7 @@ interface LoggedInUser {
 let socket: any;
 
 const Dashboard = ({ loggedInUserDetails }: any) => {
-  const { loggedInUser, setLoggedInUser } = ProjectState();
-  console.log(loggedInUser);
+  const { setLoggedInUser } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("Dashboard");
   const router = useRouter();
@@ -61,23 +60,8 @@ const Dashboard = ({ loggedInUserDetails }: any) => {
         setShowContent={setShowContent}
       />
       <div className="bg-[#edf3f8] bg-opacity-50 flex-grow">
-        <TopBar
-          openSideBar={openSideBar}
-          setOpenSideBar={setOpenSideBar}
-          loggedInUser={{
-            email: loggedInUserDetails?.email,
-            username: loggedInUserDetails?.username,
-            id: loggedInUserDetails?.id,
-          }}
-        />
-        <MainContent
-          loggedInUser={{
-            email: loggedInUserDetails?.email,
-            username: loggedInUserDetails?.username,
-            id: loggedInUserDetails?.id,
-          }}
-          componentName={showContent}
-        />
+        <TopBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
+        <MainContent componentName={showContent} />
       </div>
     </div>
   );

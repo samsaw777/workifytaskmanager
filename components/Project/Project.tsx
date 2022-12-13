@@ -7,20 +7,15 @@ import ProjectModal from "../Modals/ProjectModal";
 import DeleteProjectModal from "../Modals/DeleteProjectModal";
 import io from "socket.io-client";
 import { useRouter } from "next/router";
-
-interface User {
-  id: string;
-  username: string;
-}
-
-interface Props {
-  loggedInUser: User;
-}
+import { ProjectState } from "../../Context/ProjectContext";
 
 let socket: any;
 
-const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
+const ProjectComponent = () => {
   const router = useRouter();
+  const {
+    loggedInUser: { id, username },
+  } = ProjectState();
   const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
