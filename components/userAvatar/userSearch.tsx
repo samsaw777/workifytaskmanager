@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import axios from "axios";
-
+import io from "socket.io-client";
+let socket: any;
 interface User {
   id: string;
   email: string;
@@ -35,6 +36,16 @@ const UserSearch = ({
   setMembers,
   closeModal,
 }: Props) => {
+  const socketInit = async () => {
+    await fetch("/api/socket");
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
+
   const addMember = async (
     userId: string,
     userEmail: string,
@@ -64,6 +75,15 @@ const UserSearch = ({
       );
 
       setMembers([...members, data]);
+      socket.emit("memberadded", {
+        project: {
+          members,
+          projectId,
+        },
+        senderId: loggedInUser.id,
+        newMemberDetails: data,
+        type: "members",
+      });
       toast.success("Member Added!", {
         id: notification,
       });

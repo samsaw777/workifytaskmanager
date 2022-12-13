@@ -7,8 +7,10 @@ import AddMembersModal from "../Modals/AddMemberModal";
 import toast from "react-hot-toast";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FaUserCheck, FaUserMinus } from "react-icons/fa";
-
+import io from "socket.io-client";
 import MembersOptions from "../../utils/Helper/MembersOptions";
+
+let socket: any;
 
 interface LoggedInUser {
   id: string;
@@ -27,6 +29,25 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [optionIndex, setOptionIndex] = useState<number>(-1);
 
+  const socketInit = async () => {
+    await fetch("/api/socket");
+
+    socket = io();
+
+    socket.emit("setup", loggedInUser);
+
+    socket.on("memberlist", (newMemberDetails: any) => {
+      if (newMemberDetails.project.projectId == projectId) {
+        setMembers((current: any) => [
+          ...current,
+          newMemberDetails.newMemberDetails,
+        ]);
+      }
+    });
+
+    getMembers();
+  };
+
   const getMembers = async () => {
     try {
       const { data } = await axios.post(
@@ -35,7 +56,6 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
           projectId,
         }
       );
-
       setMembers(data);
     } catch (error: any) {
       console.log(error.message);
@@ -43,7 +63,7 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
   };
 
   React.useEffect(() => {
-    getMembers();
+    socketInit();
   }, []);
 
   const makeAdmin = async (memberId: number, index: number) => {

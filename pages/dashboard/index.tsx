@@ -39,42 +39,15 @@ const Dashboard = ({ loggedInUser }: any) => {
   const [showContent, setShowContent] = useState<string>("Dashboard");
   const router = useRouter();
 
-  // const [projects, setProjects] = useState<Project[]>([]);
+  const socketInit = async () => {
+    await fetch("/api/socket");
 
-  // const [messages, setMessages] = useState<Message[]>([]);
-  // const [message, setMessage] = useState<string>("");
+    socket = io();
+  };
 
-  // const socketInitializer = async () => {
-  //   // We just call it because we don't need anything else out of it
-  //   await fetch("/api/socket");
-
-  //   socket = io();
-
-  //   socket.on("newIncomingMessage", (message: any) => {
-  //     console.log(message);
-  //     setMessages((currentmsg: any) => [...currentmsg, { message }]);
-  //   });
-
-  //   console.log(messages);
-  //   getProjects(setProjects);
-  // };
-
-  // useEffect(() => {
-  //   socketInitializer();
-  // }, []);
-
-  // const sendMessaage = async (e: any) => {
-  //   e.preventDefault();
-  //   socket.emit("createdMessage", message);
-  //   setMessages((currentmsg: any) => [...currentmsg, { message }]);
-  //   setMessage("");
-  // };
-
-  // const body = {
-  //   name: "Third Project",
-  //   userId: "83fbe910-0dbf-47c7-a101-d827d280b6ba",
-  //   isPrivate: true,
-  // };
+  useEffect(() => {
+    socketInit();
+  }, []);
 
   return (
     <div className="flex h-screen">

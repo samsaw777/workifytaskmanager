@@ -5,6 +5,8 @@ import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import Link from "next/link";
 import ProjectModal from "../Modals/ProjectModal";
 import DeleteProjectModal from "../Modals/DeleteProjectModal";
+import io from "socket.io-client";
+import { useRouter } from "next/router";
 
 interface User {
   id: string;
@@ -15,7 +17,10 @@ interface Props {
   loggedInUser: User;
 }
 
+let socket: any;
+
 const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -40,10 +45,26 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
     }
   };
 
+  const socketInit = async () => {
+    await fetch("/api/socket");
+
+    socket = io();
+
+    getProject();
+  };
+
+  const openProject = (projectId: number) => {
+    router.push(`/project/${projectId}`);
+    // socket.emit("joinproject", { id: projectId });
+  };
+
   //get projects
   useEffect(() => {
-    getProject();
+    // getProject();
+    socketInit();
   }, []);
+
+  useEffect(() => {}, []);
 
   const updateProjectDetails = (project: any, index: number) => {
     setProjectDetails(project);
@@ -82,7 +103,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                   {project.isPrivate ? "Private" : "Public"}
                 </span>
               </div>
-              <Link href={`/project/${project.id}`}>
+              <div onClick={() => openProject(project.id)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -95,7 +116,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </Link>
+              </div>
             </div>
             <div className="flex justify-between">
               <div className="flex space-x-3">

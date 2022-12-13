@@ -26,18 +26,18 @@ interface User {
 const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("view");
+
   const socketInit = async () => {
     await fetch("/api/socket");
 
     socket = io();
 
-    socket.emit("setup", loggedInUser);
+    socket.emit("joinproject", { id: projectId });
   };
 
   useEffect(() => {
     socketInit();
   }, []);
-
   return (
     <div className="flex h-screen">
       <ProjectSidebar
