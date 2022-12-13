@@ -22,17 +22,6 @@ if (!secret) {
   throw new Error("No Secret");
 }
 
-interface Message {
-  message: string;
-}
-
-interface LoggedInUser {
-  id: string;
-  username: string;
-  profile: string;
-  email: string;
-}
-
 let socket: any;
 
 const Dashboard = ({ loggedInUserDetails }: any) => {

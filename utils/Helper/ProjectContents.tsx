@@ -2,27 +2,13 @@ import Members from "../../components/Project/addMembers";
 
 interface Props {
   componentName: string;
-  loggedInUser: any;
   projectId: any;
 }
 
-export const ProjectContents = ({
-  componentName,
-  loggedInUser,
-  projectId,
-}: Props) => {
+export const ProjectContents = ({ componentName, projectId }: Props) => {
   switch (componentName) {
     case "Members":
-      return (
-        <Members
-          loggedInUser={{
-            id: loggedInUser.id,
-            email: loggedInUser.email,
-            profileImage: loggedInUser.profile,
-          }}
-          projectId={projectId}
-        />
-      );
+      return <Members projectId={projectId} />;
     case "Scrum":
       return <>this is the scrum view.</>;
     case "Settings":

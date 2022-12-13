@@ -50,17 +50,12 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
         // showContent={showContent}
       />
       <div className="bg-gray-200 bg-opacity-5 flex-grow">
-        <TopBar
-          openSideBar={openSideBar}
-          setOpenSideBar={setOpenSideBar}
-          loggedInUser={loggedInUser}
-        />
+        <TopBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
         {/* <ProjectMembers members={projectsDetail?.members} /> */}
         {/* hello */}
         <div className="h-[90vh] p-2">
           {ProjectContents({
             componentName: showContent,
-            loggedInUser: loggedInUser,
             projectId: projectId,
           })}
         </div>

@@ -9,21 +9,17 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FaUserCheck, FaUserMinus } from "react-icons/fa";
 import io from "socket.io-client";
 import MembersOptions from "../../utils/Helper/MembersOptions";
+import { ProjectState } from "../../Context/ProjectContext";
 
 let socket: any;
 
-interface LoggedInUser {
-  id: string;
-  email: string;
-  profileImage: string;
-}
-
 interface Props {
-  loggedInUser: LoggedInUser;
   projectId: number;
 }
 
-const AddMembers = ({ loggedInUser, projectId }: Props) => {
+const AddMembers = ({ projectId }: Props) => {
+  const { loggedInUser } = ProjectState();
+
   const [members, setMembers] = useState<any>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -177,7 +173,6 @@ const AddMembers = ({ loggedInUser, projectId }: Props) => {
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         members={members}
-        loggedInUser={{ id: loggedInUser.id }}
         setMembers={setMembers}
       />
       <div

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import axios from "axios";
 import io from "socket.io-client";
+import { ProjectState } from "../../Context/ProjectContext";
 let socket: any;
 interface User {
   id: string;
@@ -13,16 +14,11 @@ interface User {
   profile: string;
 }
 
-interface loggedInUser {
-  id: string;
-}
-
 interface Props {
   user: User;
   index: number;
   projectId: number;
   members: any;
-  loggedInUser: loggedInUser;
   setMembers: React.Dispatch<any>;
   closeModal: () => Promise<void>;
 }
@@ -32,10 +28,11 @@ const UserSearch = ({
   index,
   projectId,
   members,
-  loggedInUser,
   setMembers,
   closeModal,
 }: Props) => {
+  const { loggedInUser } = ProjectState();
+
   const socketInit = async () => {
     await fetch("/api/socket");
 

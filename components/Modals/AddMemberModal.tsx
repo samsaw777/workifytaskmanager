@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import UserAvatar from "../userAvatar/userSearch";
-
+import { ProjectState } from "../../Context/ProjectContext";
 interface User {
   id: string;
   email: string;
@@ -11,13 +11,9 @@ interface User {
   password: string;
 }
 
-interface LoggedInUser {
-  id: string;
-}
-
 interface Props {
   projectId: number;
-  loggedInUser: LoggedInUser;
+
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
   members: any;
@@ -29,9 +25,10 @@ const AddMemberModal = ({
   setIsOpen,
   isOpen,
   members,
-  loggedInUser,
+
   setMembers,
 }: Props) => {
+  const { loggedInUser } = ProjectState();
   const [search, setSearch] = useState<string>("");
   const [searchedUser, setSearchUser] = useState<User[]>([]);
 
@@ -111,7 +108,6 @@ const AddMemberModal = ({
                 }}
                 projectId={projectId}
                 members={members}
-                loggedInUser={loggedInUser}
                 setMembers={setMembers}
                 closeModal={closeModal}
               />
