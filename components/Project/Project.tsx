@@ -53,11 +53,6 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
     getProject();
   };
 
-  const openProject = (projectId: number) => {
-    router.push(`/project/${projectId}`);
-    // socket.emit("joinproject", { id: projectId });
-  };
-
   //get projects
   useEffect(() => {
     // getProject();
@@ -103,7 +98,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                   {project.isPrivate ? "Private" : "Public"}
                 </span>
               </div>
-              <div onClick={() => openProject(project.id)}>
+              <Link href={`/project/${project.id}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -116,7 +111,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </div>
+              </Link>
             </div>
             <div className="flex justify-between">
               <div className="flex space-x-3">

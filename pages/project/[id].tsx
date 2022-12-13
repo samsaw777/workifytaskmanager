@@ -33,6 +33,9 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
     socket = io();
 
     socket.emit("joinproject", { id: projectId });
+    socket.on("members", (memberDetails: any) => {
+      console.log(memberDetails);
+    });
   };
 
   useEffect(() => {

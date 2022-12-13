@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import DashbordSideBar from "../../components/Dashboard/Sidebar";
 import TopBar from "../../components/Dashboard/TopBar";
 import MainContent from "../../components/Dashboard/MainContent";
+import { ProjectState } from "../../Context/ProjectContext";
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
@@ -34,7 +35,9 @@ interface LoggedInUser {
 
 let socket: any;
 
-const Dashboard = ({ loggedInUser }: any) => {
+const Dashboard = ({ loggedInUserDetails }: any) => {
+  const { loggedInUser, setLoggedInUser } = ProjectState();
+  console.log(loggedInUser);
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("Dashboard");
   const router = useRouter();
@@ -43,6 +46,8 @@ const Dashboard = ({ loggedInUser }: any) => {
     await fetch("/api/socket");
 
     socket = io();
+
+    setLoggedInUser(loggedInUserDetails);
   };
 
   useEffect(() => {
@@ -60,16 +65,16 @@ const Dashboard = ({ loggedInUser }: any) => {
           openSideBar={openSideBar}
           setOpenSideBar={setOpenSideBar}
           loggedInUser={{
-            email: loggedInUser?.email,
-            username: loggedInUser?.username,
-            id: loggedInUser?.id,
+            email: loggedInUserDetails?.email,
+            username: loggedInUserDetails?.username,
+            id: loggedInUserDetails?.id,
           }}
         />
         <MainContent
           loggedInUser={{
-            email: loggedInUser?.email,
-            username: loggedInUser?.username,
-            id: loggedInUser?.id,
+            email: loggedInUserDetails?.email,
+            username: loggedInUserDetails?.username,
+            id: loggedInUserDetails?.id,
           }}
           componentName={showContent}
         />
@@ -104,7 +109,7 @@ export async function getServerSideProps(context: any) {
 
   return {
     props: {
-      loggedInUser: JSON.parse(user),
+      loggedInUserDetails: JSON.parse(user),
     },
   };
 }
