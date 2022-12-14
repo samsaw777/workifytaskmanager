@@ -72,7 +72,7 @@ const ProjectComponent = () => {
       <div className="flex space-x-5 items-center">
         <span>{username}'s Projects</span>
       </div>
-      <div className="grid grid-cols-3 gap-2 mt-5">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 mt-5">
         {projects?.map((project: any, index: number) => (
           <div
             key={index}
