@@ -7,6 +7,7 @@ import prisma from "../../lib/prisma";
 import Members from "../../components/Project/addMembers";
 import { ProjectContents } from "../../utils/Helper/ProjectContents";
 import io from "socket.io-client";
+import { ProjectState } from "../../Context/ProjectContext";
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
@@ -24,6 +25,7 @@ interface User {
 }
 
 const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
+  const { setMembers, setLoggedInUser } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -31,10 +33,18 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
     await fetch("/api/socket");
 
     socket = io();
-
+    setLoggedInUser(loggedInUser);
     socket.emit("joinproject", { id: projectId });
     socket.on("members", (memberDetails: any) => {
-      console.log(memberDetails);
+      if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.type == "members"
+      ) {
+        setMembers((current: any) => [
+          ...current,
+          memberDetails.newMemberDetails,
+        ]);
+      }
     });
   };
 

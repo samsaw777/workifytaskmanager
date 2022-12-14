@@ -18,9 +18,7 @@ interface Props {
 }
 
 const AddMembers = ({ projectId }: Props) => {
-  const { loggedInUser } = ProjectState();
-
-  const [members, setMembers] = useState<any>([]);
+  const { loggedInUser, members, setMembers } = ProjectState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [optionIndex, setOptionIndex] = useState<number>(-1);
@@ -32,14 +30,14 @@ const AddMembers = ({ projectId }: Props) => {
 
     socket.emit("setup", loggedInUser);
 
-    socket.on("memberlist", (newMemberDetails: any) => {
-      if (newMemberDetails.project.projectId == projectId) {
-        setMembers((current: any) => [
-          ...current,
-          newMemberDetails.newMemberDetails,
-        ]);
-      }
-    });
+    // socket.on("memberlist", (newMemberDetails: any) => {
+    //   if (newMemberDetails.project.projectId == projectId) {
+    //     setMembers((current: any) => [
+    //       ...current,
+    //       newMemberDetails.newMemberDetails,
+    //     ]);
+    //   }
+    // });
 
     getMembers();
   };
@@ -172,8 +170,6 @@ const AddMembers = ({ projectId }: Props) => {
         projectId={projectId}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
-        members={members}
-        setMembers={setMembers}
       />
       <div
         className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"

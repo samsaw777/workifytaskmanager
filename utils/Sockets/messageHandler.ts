@@ -38,7 +38,8 @@ export default (io: any, socket: any) => {
     project.members.forEach((member: any) => {
       if (member.userId == memberDetails.senderId) return;
 
-      socket.in(member.userId).emit("memberlist", memberDetails);
+      // socket.in(member.userId).emit("memberlist", memberDetails);
+      socket.in(project.projectId).emit("members", memberDetails);
     });
   });
 };

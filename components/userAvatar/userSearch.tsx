@@ -18,20 +18,11 @@ interface Props {
   user: User;
   index: number;
   projectId: number;
-  members: any;
-  setMembers: React.Dispatch<any>;
   closeModal: () => Promise<void>;
 }
 
-const UserSearch = ({
-  user,
-  index,
-  projectId,
-  members,
-  setMembers,
-  closeModal,
-}: Props) => {
-  const { loggedInUser } = ProjectState();
+const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
+  const { loggedInUser, members, setMembers } = ProjectState();
 
   const socketInit = async () => {
     await fetch("/api/socket");
@@ -71,7 +62,7 @@ const UserSearch = ({
         }
       );
 
-      setMembers([...members, data]);
+      // setMembers([...members, data]);
       socket.emit("memberadded", {
         project: {
           members,
