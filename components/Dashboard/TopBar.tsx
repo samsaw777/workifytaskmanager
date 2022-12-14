@@ -12,7 +12,6 @@ type Props = {
 const TopBar = ({ openSideBar, setOpenSideBar }: Props) => {
   const { pathname } = useRouter();
   const { loggedInUser } = ProjectState();
-  console.log(loggedInUser);
 
   return (
     <div className="h-[8vh] p-5 bg-[white] flex items-center mx-3 rounded-md my-2 shadow-md justify-between">

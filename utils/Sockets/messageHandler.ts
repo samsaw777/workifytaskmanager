@@ -33,7 +33,7 @@ export default (io: any, socket: any) => {
 
     if (!project.members) return console.log("Members not Found!");
 
-    socket.in(project.projectId).emit("members", memberDetails);
+    socket.to(project.projectId).emit("members", memberDetails);
 
     project.members.forEach((member: any) => {
       if (member.userId == memberDetails.senderId) return;

@@ -61,7 +61,6 @@ const AddMembers = ({ projectId }: Props) => {
   }, []);
 
   const makeAdmin = async (memberId: number, index: number) => {
-    const newMembers = JSON.parse(JSON.stringify(members));
     const adminUser = members.filter((member: any) => member.role == "ADMIN");
 
     if (!adminUser.find((member: any) => member.userId == loggedInUser.id)) {
@@ -77,8 +76,17 @@ const AddMembers = ({ projectId }: Props) => {
           memberId,
         }
       );
-      newMembers[index].role = "ADMIN";
-      setMembers(newMembers);
+
+      socket.emit("memberadded", {
+        project: {
+          projectId,
+          members,
+        },
+        senderId: loggedInUser.id,
+        index: index,
+        section: "members",
+        type: "makeadmin",
+      });
 
       toast.success("Member is not Admin!", {
         id: notification,
@@ -110,8 +118,17 @@ const AddMembers = ({ projectId }: Props) => {
           memberId,
         }
       );
-      newMembers[index].role = "MEMBER";
-      setMembers(newMembers);
+
+      socket.emit("memberadded", {
+        project: {
+          projectId,
+          members,
+        },
+        senderId: loggedInUser.id,
+        index: index,
+        section: "members",
+        type: "makemember",
+      });
 
       toast.success("User is now a Member!", {
         id: notification,

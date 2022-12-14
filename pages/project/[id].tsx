@@ -25,7 +25,7 @@ interface User {
 }
 
 const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
-  const { setMembers, setLoggedInUser } = ProjectState();
+  const { setMembers, setLoggedInUser, members } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -33,10 +33,9 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
     await fetch("/api/socket");
 
     socket = io();
-    setLoggedInUser(loggedInUser);
+
     socket.emit("joinproject", { id: projectId });
     socket.on("members", (memberDetails: any) => {
-      console.log(memberDetails);
       if (
         memberDetails.project.projectId === projectId &&
         memberDetails.section == "members" &&
@@ -51,19 +50,41 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
         memberDetails.section == "members" &&
         memberDetails.type == "removemember"
       ) {
-        console.log(memberDetails.newMemberDetails.userId);
         setMembers((current: any) =>
           current.filter(
             (member: any) => member.id != memberDetails.newMemberDetails.id
           )
         );
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "makeadmin"
+      ) {
+        const newMembers = JSON.parse(
+          JSON.stringify(memberDetails.project.members)
+        );
+        newMembers[memberDetails.index].role = "ADMIN";
+        setMembers(newMembers);
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "makemember"
+      ) {
+        const newMembers = JSON.parse(
+          JSON.stringify(memberDetails.project.members)
+        );
+        newMembers[memberDetails.index].role = "MEMBER";
+        setMembers(newMembers);
       }
     });
   };
 
   useEffect(() => {
+    setLoggedInUser(loggedInUser);
     socketInit();
   }, []);
+
+  useEffect(() => {});
   return (
     <div className="flex h-screen">
       <ProjectSidebar
