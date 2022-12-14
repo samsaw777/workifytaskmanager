@@ -9,6 +9,6 @@ export const urlFetcher = () => {
   if (mode === "development") {
     return "http://localhost:3000";
   } else {
-    return "https://workifytaskmanager.netlify.app";
+    return "https://workifytaskmanager.onrender.com";
   }
 };
