@@ -8,6 +8,7 @@ import Members from "../../components/Project/addMembers";
 import { ProjectContents } from "../../utils/Helper/ProjectContents";
 import io from "socket.io-client";
 import { ProjectState } from "../../Context/ProjectContext";
+import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
@@ -30,7 +31,7 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   const [showContent, setShowContent] = useState<string>("view");
 
   const socketInit = async () => {
-    await fetch("/api/socket");
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
 

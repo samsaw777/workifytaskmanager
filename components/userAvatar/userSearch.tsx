@@ -25,7 +25,7 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
   const { loggedInUser, members, setMembers } = ProjectState();
 
   const socketInit = async () => {
-    await fetch("/api/socket");
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
