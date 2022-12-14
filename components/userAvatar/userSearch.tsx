@@ -70,7 +70,8 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
         },
         senderId: loggedInUser.id,
         newMemberDetails: data,
-        type: "members",
+        section: "members",
+        type: "addmember",
       });
       toast.success("Member Added!", {
         id: notification,

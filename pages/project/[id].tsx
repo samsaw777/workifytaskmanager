@@ -36,14 +36,27 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
     setLoggedInUser(loggedInUser);
     socket.emit("joinproject", { id: projectId });
     socket.on("members", (memberDetails: any) => {
+      console.log(memberDetails);
       if (
         memberDetails.project.projectId === projectId &&
-        memberDetails.type == "members"
+        memberDetails.section == "members" &&
+        memberDetails.type == "addmember"
       ) {
         setMembers((current: any) => [
           ...current,
           memberDetails.newMemberDetails,
         ]);
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "removemember"
+      ) {
+        console.log(memberDetails.newMemberDetails.userId);
+        setMembers((current: any) =>
+          current.filter(
+            (member: any) => member.id != memberDetails.newMemberDetails.id
+          )
+        );
       }
     });
   };

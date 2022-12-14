@@ -146,6 +146,16 @@ const AddMembers = ({ projectId }: Props) => {
 
       setMembers(members.filter((member: any) => member.id !== data.id));
 
+      socket.emit("memberadded", {
+        project: {
+          members,
+          projectId,
+        },
+        senderId: loggedInUser.id,
+        newMemberDetails: data,
+        section: "members",
+        type: "removemember",
+      });
       toast.success("Member Removed!", {
         id: notification,
       });
