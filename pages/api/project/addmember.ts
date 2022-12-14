@@ -5,7 +5,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const { projectId, userId, userEmail, userProfile } = req.body;
 
-    await prisma.members.create({
+    const member = await prisma.members.create({
       data: {
         projectId: projectId,
         email: userEmail,
@@ -15,7 +15,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    res.status(200).json("Member added to the project!");
+    res.status(200).json(member);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

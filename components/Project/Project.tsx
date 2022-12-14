@@ -5,17 +5,17 @@ import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import Link from "next/link";
 import ProjectModal from "../Modals/ProjectModal";
 import DeleteProjectModal from "../Modals/DeleteProjectModal";
+import io from "socket.io-client";
+import { useRouter } from "next/router";
+import { ProjectState } from "../../Context/ProjectContext";
 
-interface User {
-  id: string;
-  username: string;
-}
+let socket: any;
 
-interface Props {
-  loggedInUser: User;
-}
-
-const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
+const ProjectComponent = () => {
+  const router = useRouter();
+  const {
+    loggedInUser: { id, username },
+  } = ProjectState();
   const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -40,10 +40,21 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
     }
   };
 
+  const socketInit = async () => {
+    await fetch("/api/socket");
+
+    socket = io();
+
+    getProject();
+  };
+
   //get projects
   useEffect(() => {
-    getProject();
+    // getProject();
+    socketInit();
   }, []);
+
+  useEffect(() => {}, []);
 
   const updateProjectDetails = (project: any, index: number) => {
     setProjectDetails(project);
@@ -61,7 +72,7 @@ const ProjectComponent = ({ loggedInUser: { id, username } }: Props) => {
       <div className="flex space-x-5 items-center">
         <span>{username}'s Projects</span>
       </div>
-      <div className="grid grid-cols-3 gap-2 mt-5">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 mt-5">
         {projects?.map((project: any, index: number) => (
           <div
             key={index}

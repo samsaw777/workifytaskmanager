@@ -10,7 +10,7 @@ export default function ScoketHandler(req: any, res: any) {
     return;
   }
 
-  const io = new Server(res.socket.server);
+  const io = new Server(res.socket.server, { pingTimeout: 60000 });
   res.socket.server.io = io;
 
   const onConnection = (socket: any) => {

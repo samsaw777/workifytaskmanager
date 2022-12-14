@@ -15,7 +15,27 @@
   padding: 0 10px;
 }
 
-* {
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+.option {
+  width: 150px;
+  top: 20px;
+  right: 7px;
+}
+
+.remove {
+  font-size: 13px;
+}
+
+.opt:hover {
+  background: #ef4444;
+  color: #fff;
+  font-weight: bold;
+}
+.optadmin:hover {
+  background: #22c55e;
+  color: #fff;
+  font-weight: bold;
 }

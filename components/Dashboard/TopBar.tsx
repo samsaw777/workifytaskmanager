@@ -2,21 +2,16 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { MdMenu } from "react-icons/md";
 import { useRouter } from "next/router";
-
-interface LoggedinUser {
-  email: string;
-  id: string;
-  username: string;
-}
+import { ProjectState } from "../../Context/ProjectContext";
 
 type Props = {
   openSideBar: boolean;
   setOpenSideBar: Dispatch<SetStateAction<boolean>>;
-  loggedInUser: LoggedinUser;
 };
 
-const TopBar = ({ openSideBar, setOpenSideBar, loggedInUser }: Props) => {
+const TopBar = ({ openSideBar, setOpenSideBar }: Props) => {
   const { pathname } = useRouter();
+  const { loggedInUser } = ProjectState();
 
   return (
     <div className="h-[8vh] p-5 bg-[white] flex items-center mx-3 rounded-md my-2 shadow-md justify-between">

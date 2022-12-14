@@ -11,14 +11,15 @@ import { AiOutlineCaretDown } from "react-icons/ai";
 type Props = {
   openSidebar: boolean;
   setShowContent: React.Dispatch<React.SetStateAction<string>>;
-  //   projectTitle: string;
+  projectTitle: string;
   //   showContent: string;
 };
 
 const ProjectSideBar = ({
   openSidebar,
   setShowContent,
-}: //   projectTitle,
+  projectTitle,
+}: //
 //   showContent,
 Props) => {
   const router = useRouter();
@@ -55,7 +56,7 @@ Props) => {
             !openSidebar && "scale-0"
           }`}
         >
-          {/* {projectTitle} */} Hello
+          {projectTitle}
         </h1>
       </div>
       <ul className="pt-6">

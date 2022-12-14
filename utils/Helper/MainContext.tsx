@@ -1,21 +1,15 @@
 import Project from "../../components/Project/Project";
 
-interface LoggedinUser {
-  email: string;
-  id: string;
-  username: string;
-}
 type Props = {
-  loggedInUser: LoggedinUser;
   componentName: string;
 };
 
-export const showComponent = ({ loggedInUser, componentName }: Props) => {
+export const showComponent = ({ componentName }: Props) => {
   switch (componentName) {
     case "Dashboard":
       return <div>This is dashboard</div>;
     case "Projects":
-      return <Project loggedInUser={loggedInUser} />;
+      return <Project />;
     case "Inbox":
       return <div>This is dashboard</div>;
     case "Tasks":
