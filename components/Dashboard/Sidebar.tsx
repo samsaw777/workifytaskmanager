@@ -25,8 +25,8 @@ const DashboardSidebar = ({ openSidebar, setShowContent }: Props) => {
   return (
     <div
       className={` ${
-        openSidebar ? "w-72" : "w-20 "
-      } bg-[#101a32] shadow-md h-screen p-5  pt-8 relative duration-300`}
+        openSidebar ? "w-72" : "w-20"
+      } bg-[#101a32] shadow-md h-screen p-5 pt-8 relative duration-300`}
     >
       <div className="inline-flex items-center cursor-pointer h-[5vh]">
         <div className="w-12 h-12 block float-left mr-2 cursor-pointer text-white">
