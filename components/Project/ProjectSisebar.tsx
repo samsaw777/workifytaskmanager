@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { BiLogOut } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { AiOutlineCaretDown } from "react-icons/ai";
+import { LogoutUser } from "../../utils/apicalls/userauthentication";
 
 type Props = {
   openSidebar: boolean;
@@ -35,10 +36,6 @@ Props) => {
   const openSubMenu = (index: number): void => {
     setSubMenuIndex(index);
     setIsSubMenuOpen(!isSubMenuOpen);
-  };
-
-  const logoutUser = async () => {
-    console.log("This is the logout function");
   };
 
   return (
@@ -74,7 +71,7 @@ Props) => {
               `}
               onClick={
                 Menu.title == "Logout"
-                  ? logoutUser
+                  ? () => LogoutUser(router)
                   : () => {
                       if (
                         Menu.title == "Scrum" ||
