@@ -8,6 +8,7 @@ import DeleteProjectModal from "../Modals/DeleteProjectModal";
 import io from "socket.io-client";
 import { useRouter } from "next/router";
 import { ProjectState } from "../../Context/ProjectContext";
+import ProjectLoading from "../../components/Loading/ProjectLoading";
 
 let socket: any;
 
@@ -27,16 +28,20 @@ const ProjectComponent = () => {
 
   const getProject = async () => {
     try {
+      setLoading(true);
       await axios
         .get(`${urlFetcher()}/api/project/getproject`)
         .then((response) => {
           setProjects(response.data);
+          setLoading(false);
         })
         .catch((error: any) => {
           console.log(error.response.data.error);
+          setLoading(false);
         });
     } catch (error: any) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -72,6 +77,13 @@ const ProjectComponent = () => {
       <div className="flex space-x-5 items-center">
         <span>{username}'s Projects</span>
       </div>
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 mt-5">
+          {[...Array(3)].map(() => (
+            <ProjectLoading />
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 mt-5">
         {projects?.map((project: any, index: number) => (
           <div
