@@ -59,7 +59,6 @@ model Board{
     id String   @id @default(uuid())
     type String
     projectId Int
-    boardPlace String
     Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
     sections Section[]
 }

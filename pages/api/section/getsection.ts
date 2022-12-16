@@ -5,16 +5,17 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const { boardId } = req.body;
 
-    //Create the section and keep the title empty.
-    const section = await prisma.section.create({
-      data: {
+    const sections = await prisma.section.findMany({
+      where: {
         boardId,
-        title: "",
+      },
+      orderBy: {
+        id: "asc",
       },
     });
 
-    res.status(200).json(section);
+    res.status(200).json(sections);
   } catch (error: any) {
-    throw new Error(error.message);
+    res.status(500).json({ error: error.message });
   }
 }
