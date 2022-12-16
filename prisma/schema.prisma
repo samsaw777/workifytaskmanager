@@ -15,6 +15,7 @@ model User {
   profile   String
   password  String
   project Project[]
+  issues Issues[]
 }
 
 model Project{
@@ -28,7 +29,7 @@ model Project{
   isPrivate Boolean
   User User @relation(fields: [userId], references: [id],onDelete: Cascade)
   members Members[]
-
+  board Board[]
 }
 
 model Members{
@@ -39,4 +40,34 @@ model Members{
   role String
   projectId Int
   Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
+}
+
+model Issues{
+  id Int @id @default(autoincrement())
+  type String
+  username String
+  profile String
+  userId String
+  sectionId Int
+  sectionName Int
+   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Board{
+    id String   @id @default(uuid())
+    type String
+    projectId Int
+    boardPlace String
+    Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
+    sections Section[]
+}
+
+model Section{
+  id Int @id @default(autoincrement())
+  title String
+  boardId String
+  Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
+  issues Issues[]
 }
