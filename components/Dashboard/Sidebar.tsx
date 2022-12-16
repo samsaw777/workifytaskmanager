@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import Project from "../../images/project.svg";
 import { menu } from "../../utils/Data/MenuData";
+import { LogoutUser } from "../../utils/apicalls/userauthentication";
 
 interface Props {
   openSidebar: boolean;
@@ -21,15 +22,11 @@ const DashboardSidebar = ({ openSidebar, setShowContent }: Props) => {
     setCurrentMenu(index);
   };
 
-  const logoutUser = () => {
-    console.log("Logout user!");
-  };
-
   return (
     <div
       className={` ${
-        openSidebar ? "w-72" : "w-20 "
-      } bg-[#101a32] shadow-md h-screen p-5  pt-8 relative duration-300`}
+        openSidebar ? "w-72" : "w-20"
+      } bg-[#101a32] shadow-md h-screen p-5 pt-8 relative duration-300`}
     >
       <div className="inline-flex items-center cursor-pointer h-[5vh]">
         <div className="w-12 h-12 block float-left mr-2 cursor-pointer text-white">
@@ -57,7 +54,7 @@ const DashboardSidebar = ({ openSidebar, setShowContent }: Props) => {
               `}
             onClick={
               Menu.title == "Logout"
-                ? logoutUser
+                ? () => LogoutUser(router)
                 : () => setActiveMenu(Menu.title, index)
             }
           >

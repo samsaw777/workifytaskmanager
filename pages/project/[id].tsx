@@ -27,7 +27,7 @@ interface User {
 
 const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   const { setMembers, setLoggedInUser, members } = ProjectState();
-  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
+  const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
   const socketInit = async () => {

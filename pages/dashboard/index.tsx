@@ -26,7 +26,7 @@ let socket: any;
 
 const Dashboard = ({ loggedInUserDetails }: any) => {
   const { setLoggedInUser } = ProjectState();
-  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
+  const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("Dashboard");
   const router = useRouter();
 

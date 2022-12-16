@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { BiLogOut } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { AiOutlineCaretDown } from "react-icons/ai";
+import { LogoutUser } from "../../utils/apicalls/userauthentication";
 
 type Props = {
   openSidebar: boolean;
@@ -37,22 +38,18 @@ Props) => {
     setIsSubMenuOpen(!isSubMenuOpen);
   };
 
-  const logoutUser = async () => {
-    console.log("This is the logout function");
-  };
-
   return (
     <div
       className={` ${
         openSidebar ? "w-72" : "w-20 "
-      } bg-white shadow-md h-screen p-5  pt-8 relative duration-300`}
+      } bg-[#101a32] shadow-md h-screen p-5  pt-8 relative duration-300`}
     >
       <div className="inline-flex items-center cursor-pointer h-[10vh]">
-        <div className="w-12 h-12 block float-left mr-2 cursor-pointer text-[#695CFE]">
+        <div className="w-12 h-12 block float-left mr-2 cursor-pointer text-white">
           <Image src={Project} width={100} height={100} alt="ProjectImage" />
         </div>
         <h1
-          className={`text-lg font-bold text-[#695CFE] origin-left duration-300 ${
+          className={`text-lg font-bold text-white origin-left duration-300 ${
             !openSidebar && "scale-0"
           }`}
         >
@@ -64,17 +61,17 @@ Props) => {
           <div key={index}>
             <li
               key={index}
-              className={`flex  rounded-md p-2 cursor-pointer hover:bg-[#695CFE] hover:text-white   text-sm items-center gap-x-4 
+              className={`flex  rounded-md p-2 cursor-pointer hover:bg-white/[.20] hover:text-white   text-sm items-center gap-x-4 
               ${Menu.spacing ? "mt-9" : "mt-2"} ${
                 Menu.title === "showContent"
-                  ? "bg-[#695CFE] text-white font-bold bg-opacity-100"
-                  : "text-[#707070]"
+                  ? "bg-white/[.20] text-white font-bold bg-opacity-100"
+                  : "text-white"
               } 
             ${Menu.title == "Logout" && "hover:bg-red-400 hover:font-bold"}
               `}
               onClick={
                 Menu.title == "Logout"
-                  ? logoutUser
+                  ? () => LogoutUser(router)
                   : () => {
                       if (
                         Menu.title == "Scrum" ||
@@ -117,11 +114,11 @@ Props) => {
                     <li
                       key={index}
                       onClick={() => setActiveMenu(menu.title, index)}
-                      className={`flex  rounded-md p-2 cursor-pointer hover:bg-[#695CFE] hover:text-white mt-2 text-sm items-center gap-x-4 
+                      className={`flex  rounded-md p-2 cursor-pointer hover:bg-white/[.20] hover:text-white mt-2 text-sm items-center gap-x-4 
                       ${menu.spacing && "mt-9"} ${
                         menu.title === "showContent"
-                          ? "bg-[#695CFE] text-white font-bold bg-opacity-100"
-                          : "text-[#707070] font-medium"
+                          ? "bg-white/[.20] text-white font-bold bg-opacity-100"
+                          : "text-[#fff] font-medium"
                       } 
                     `}
                     >
