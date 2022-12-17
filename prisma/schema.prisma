@@ -45,6 +45,8 @@ model Members{
 model Issues{
   id Int @id @default(autoincrement())
   type String
+  issue String
+  projectId Int
   username String
   profile String
   userId String
