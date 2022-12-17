@@ -25,8 +25,13 @@ interface User {
   password: string;
 }
 
-const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
-  const { setMembers, setLoggedInUser, members } = ProjectState();
+const ProjectDetails = ({
+  loggedInUser,
+  projectId,
+  projectTitle,
+  project,
+}: any) => {
+  const { setMembers, setLoggedInUser, setProject } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -83,6 +88,7 @@ const ProjectDetails = ({ loggedInUser, projectId, projectTitle }: any) => {
   useEffect(() => {
     setLoggedInUser(loggedInUser);
     socketInit();
+    setProject(project);
   }, []);
 
   useEffect(() => {});
@@ -137,6 +143,13 @@ export async function getServerSideProps(context: any) {
     where: {
       id: projectId,
     },
+    include: {
+      board: {
+        include: {
+          sections: true,
+        },
+      },
+    },
   });
 
   const project: any = JSON.parse(JSON.stringify(projectResponse));
@@ -148,6 +161,7 @@ export async function getServerSideProps(context: any) {
       loggedInUser: JSON.parse(user),
       projectId,
       projectTitle: project.name,
+      project,
     },
   };
 }

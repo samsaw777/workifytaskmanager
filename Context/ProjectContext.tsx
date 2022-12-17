@@ -22,6 +22,8 @@ interface Context {
   members: Member[];
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   setLoggedInUser: React.Dispatch<React.SetStateAction<loggedInUser>>;
+  project: any;
+  setProject: any;
 }
 
 const ProjectContext = createContext<Context>({
@@ -35,6 +37,8 @@ const ProjectContext = createContext<Context>({
   setLoggedInUser() {},
   members: [],
   setMembers: () => [],
+  project: {},
+  setProject: () => {},
 });
 
 const ProjectProvider = ({ children }: any) => {
@@ -47,9 +51,17 @@ const ProjectProvider = ({ children }: any) => {
   });
 
   const [members, setMembers] = useState<Member[]>([]);
+  const [project, setProject] = useState<any>({});
   return (
     <ProjectContext.Provider
-      value={{ loggedInUser, setLoggedInUser, members, setMembers }}
+      value={{
+        loggedInUser,
+        setLoggedInUser,
+        members,
+        setMembers,
+        project,
+        setProject,
+      }}
     >
       {children}
     </ProjectContext.Provider>

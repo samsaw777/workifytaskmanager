@@ -43,6 +43,21 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             role: "ADMIN",
           },
         },
+        board: {
+          create: [
+            {
+              type: "SCRUM",
+              sections: {
+                create: [
+                  { title: "To DO" },
+                  { title: "Doing" },
+                  { title: "Completed" },
+                ],
+              },
+            },
+            { type: "KANBAN" },
+          ],
+        },
       },
     });
 
