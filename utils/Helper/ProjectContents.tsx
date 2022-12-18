@@ -1,4 +1,5 @@
 import Members from "../../components/Project/addMembers";
+import Backlog from "../../components/Project/Scrum/Backloq/Backlog";
 import ScrumBoard from "../../components/Project/Scrum/ScrumBoard";
 
 interface Props {
@@ -17,7 +18,7 @@ export const ProjectContents = ({ componentName, projectId }: Props) => {
     case "scrumboard":
       return <ScrumBoard />;
     case "backlog":
-      return <>this is the backlog stuff</>;
+      return <Backlog />;
     default:
       return <>This is the default stuff</>;
   }

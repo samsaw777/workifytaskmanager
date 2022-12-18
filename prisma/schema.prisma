@@ -51,7 +51,7 @@ model Issues{
   profile String
   userId String
   sectionId Int
-  sectionName Int
+  sectionName String
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
