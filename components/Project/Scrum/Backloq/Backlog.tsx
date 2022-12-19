@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/Ri";
 import { AiOutlinePlus } from "react-icons/ai";
 import { ProjectState } from "../../../../Context/ProjectContext";
+import IssueModal from "../../../Modals/IssueModal";
 
 const Backlog = () => {
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState(false);
   const {
     project: { board },
   } = ProjectState();
@@ -27,19 +29,23 @@ const Backlog = () => {
             <span>Backlog</span>
           </div>
           <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-            create issue
+            create sprint
           </div>
         </div>
         <div className={`${openBacklog ? "block" : "hidden"}`}>
           <div className="w-full flex h-10 border-2 text-blue-600 border-dashed border-blue-100 text-xs justify-center items-center">
             Your backlog is empty..
           </div>
-          <div className="flex space-x-2 items-center text-sm mt-1  p-2 group hover:bg-gray-200 cursor-pointer">
+          <div
+            className="flex space-x-2 items-center text-sm mt-1  p-2 group hover:bg-gray-200 cursor-pointer"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             <AiOutlinePlus className="" />
             <span>Create Issue</span>
           </div>
         </div>
       </div>
+      <IssueModal isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
   );
 };
