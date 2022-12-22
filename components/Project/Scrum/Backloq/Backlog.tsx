@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/Ri";
 import { AiOutlinePlus } from "react-icons/ai";
-import { ProjectState } from "../../../../Context/ProjectContext";
 import IssueModal from "../../../Modals/IssueModal";
 
 const Backlog = () => {
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    project: { board },
-  } = ProjectState();
-
-  const createIssue = async () => {};
 
   return (
     <div className="w-ful p-2">

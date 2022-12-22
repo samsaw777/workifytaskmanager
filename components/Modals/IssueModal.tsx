@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Dropdown from "../Reuse/Dropdown";
+import { ProjectState } from "../../Context/ProjectContext";
 
 interface Props {
   isOpen: boolean;
@@ -31,8 +32,18 @@ const MenuItems = [
 ];
 
 const IssueModal = ({ isOpen, setIsOpen }: Props) => {
+  const {
+    project: { board },
+  } = ProjectState();
+
   const [selectedItem, setSelectedItem] = useState<Item>(MenuItems[0]);
   const [issueName, setIssueName] = useState<string>("");
+
+  const cancelIssue = () => {
+    setIsOpen(!isOpen);
+    setIssueName("");
+    setSelectedItem(MenuItems[0]);
+  };
   return (
     <div
       className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
@@ -61,7 +72,7 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
             ></path>
           </svg>
         </div>
-        <div className="flex mt-2 items-center space-x-2">
+        <div className="flex mt-2 items-center space-x-2 w-full">
           <div className="w-[20%]">
             <Dropdown
               menuItems={MenuItems}
@@ -69,7 +80,7 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
               setSelectedItem={setSelectedItem}
             />
           </div>
-          <div className="w-[70%]">
+          <div className="w-[80%]">
             <form>
               <input
                 type="text"
@@ -80,6 +91,20 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
               />
             </form>
           </div>
+        </div>
+        <div className="flex w-full justify-end mt-16 space-x-4">
+          <button
+            className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
+            onClick={() => cancelIssue()}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
+            type="submit"
+          >
+            Create
+          </button>
         </div>
       </div>
     </div>
