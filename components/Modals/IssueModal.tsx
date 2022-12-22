@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Dropdown from "../Reuse/Dropdown";
 import { ProjectState } from "../../Context/ProjectContext";
+import Toast from "react-hot-toast";
+import axios from "axios";
+import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
 interface Props {
   isOpen: boolean;
@@ -33,7 +36,10 @@ const MenuItems = [
 
 const IssueModal = ({ isOpen, setIsOpen }: Props) => {
   const {
-    project: { board },
+    setIssues,
+    issues,
+    project: { id, board },
+    loggedInUser,
   } = ProjectState();
 
   const [selectedItem, setSelectedItem] = useState<Item>(MenuItems[0]);
@@ -44,6 +50,43 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
     setIssueName("");
     setSelectedItem(MenuItems[0]);
   };
+
+  const createIssue = async (e: any) => {
+    e.preventDefault();
+    const boardInfo = board.filter(
+      (boardValue: any) => boardValue.type == "SCRUM"
+    );
+
+    const sectionInfo = boardInfo[0].sections?.filter(
+      (section: any) => section.title == "To DO"
+    );
+
+    const notification = Toast.loading("Creating Issue");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/issue/createissue`, {
+          type: selectedItem.title,
+          issue: issueName,
+          username: loggedInUser.username,
+          profile: loggedInUser.profile,
+          userId: loggedInUser.id,
+          sectionId: sectionInfo[0].id,
+          sectionName: sectionInfo[0].title,
+          projectId: id,
+        })
+        .then((res) => {
+          setIssueName("");
+          setSelectedItem(MenuItems[0]);
+
+          setIssues([...issues, res.data]);
+          Toast.success("Issue Created!", { id: notification });
+          setIsOpen(!isOpen);
+        });
+    } catch (error: any) {
+      Toast.error(error.message, { id: notification });
+    }
+  };
+
   return (
     <div
       className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
@@ -72,16 +115,16 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
             ></path>
           </svg>
         </div>
-        <div className="flex mt-2 items-center space-x-2 w-full">
-          <div className="w-[20%]">
-            <Dropdown
-              menuItems={MenuItems}
-              selectedItem={selectedItem}
-              setSelectedItem={setSelectedItem}
-            />
-          </div>
-          <div className="w-[80%]">
-            <form>
+        <form onSubmit={(e) => createIssue(e)}>
+          <div className="flex mt-2 items-center space-x-2 w-full">
+            <div className="w-[20%]">
+              <Dropdown
+                menuItems={MenuItems}
+                selectedItem={selectedItem}
+                setSelectedItem={setSelectedItem}
+              />
+            </div>
+            <div className="w-[80%]">
               <input
                 type="text"
                 value={issueName}
@@ -89,23 +132,23 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
                 className="py-1 px-2 focus:outline-none focus:border-blue-500 border-2 border-gray-200 w-full placeholder:text-gray-500"
                 placeholder="Enter Issue Name"
               />
-            </form>
+            </div>
           </div>
-        </div>
-        <div className="flex w-full justify-end mt-16 space-x-4">
-          <button
-            className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
-            onClick={() => cancelIssue()}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
-            type="submit"
-          >
-            Create
-          </button>
-        </div>
+          <div className="flex w-full justify-end mt-16 space-x-4">
+            <button
+              className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
+              onClick={() => cancelIssue()}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
+              type="submit"
+            >
+              Create
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

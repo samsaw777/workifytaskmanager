@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/Ri";
 import { AiOutlinePlus } from "react-icons/ai";
 import IssueModal from "../../../Modals/IssueModal";
+import { ProjectState } from "../../../../Context/ProjectContext";
 
 const Backlog = () => {
+  const { issues } = ProjectState();
+
+  console.log(issues);
+
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
 
