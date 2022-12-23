@@ -14,8 +14,9 @@ interface Props {
 }
 
 const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
+  console.table(selectedItem);
   const [items, setItems] = useState<Item[]>(
-    menuItems.filter((item) => item.id !== selectedItem.id)
+    menuItems.filter((item) => item.title !== selectedItem.title)
   );
 
   const [isOpen, setIsOpen] = useState<boolean>(false);

@@ -38,6 +38,12 @@ const Backlog = () => {
 
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [updateIssueDetails, setUpdateIssueDetails] = useState<{
+    type: string;
+    id: number;
+    issue: string;
+    index: number;
+  }>({ type: "Story", id: 0, issue: "", index: 0 });
 
   return (
     <div className="w-ful p-2">
@@ -62,7 +68,15 @@ const Backlog = () => {
           {issues ? (
             <div>
               {issues.map((issue, index: number) => {
-                return <Issue issue={issue} index={index} />;
+                return (
+                  <Issue
+                    issue={issue}
+                    index={index}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    setUpdateIssueDetails={setUpdateIssueDetails}
+                  />
+                );
               })}
             </div>
           ) : (
@@ -79,7 +93,12 @@ const Backlog = () => {
           </div>
         </div>
       </div>
-      <IssueModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <IssueModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setUpdateIssueDetails={setUpdateIssueDetails}
+        updateIssueDetails={updateIssueDetails}
+      />
     </div>
   );
 };

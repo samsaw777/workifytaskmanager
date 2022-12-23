@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dropdown from "../Reuse/Dropdown";
 import { ProjectState } from "../../Context/ProjectContext";
 import Toast from "react-hot-toast";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
+type UpdateIssue = {
+  type: string;
+  id: number;
+  issue: string;
+  index: number;
+};
+
 interface Props {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
+  updateIssueDetails: UpdateIssue;
 }
 
 interface Item {
@@ -34,7 +43,12 @@ const MenuItems = [
   },
 ];
 
-const IssueModal = ({ isOpen, setIsOpen }: Props) => {
+const IssueModal = ({
+  isOpen,
+  setIsOpen,
+  updateIssueDetails,
+  setUpdateIssueDetails,
+}: Props) => {
   const {
     setIssues,
     issues,
@@ -42,13 +56,28 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
     loggedInUser,
   } = ProjectState();
 
-  const [selectedItem, setSelectedItem] = useState<Item>(MenuItems[0]);
+  const updateItem = MenuItems.filter(
+    (item) => item.title == updateIssueDetails.type
+  );
+  useEffect(() => {
+    if (Object.keys(updateIssueDetails).length > 0) {
+      setSelectedItem(
+        updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
+      );
+      setIssueName(updateIssueDetails.issue);
+    }
+  }, [isOpen]);
+
+  const [selectedItem, setSelectedItem] = useState<Item>(
+    updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
+  );
   const [issueName, setIssueName] = useState<string>("");
 
   const cancelIssue = () => {
-    setIsOpen(!isOpen);
     setIssueName("");
     setSelectedItem(MenuItems[0]);
+    setIsOpen(!isOpen);
+    setUpdateIssueDetails({ type: "Story", id: 0, issue: "", index: 0 });
   };
 
   const createIssue = async (e: any) => {
@@ -86,6 +115,39 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
     }
   };
 
+  const updateIssue = async (e: any) => {
+    e.preventDefault();
+    const notification = Toast.loading("Updating Issue");
+
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/issue/updateissue`, {
+          issueId: updateIssueDetails.id,
+          type: selectedItem.title,
+          issue: issueName,
+        })
+        .then((res) => {
+          const newIssue = JSON.parse(JSON.stringify(issues));
+          newIssue[updateIssueDetails.index].issue = res.data.issue;
+          newIssue[updateIssueDetails.index].type = res.data.type;
+          setIssues([...newIssue]);
+          setIssueName("");
+          setSelectedItem(MenuItems[0]);
+          setIsOpen(!isOpen);
+          setUpdateIssueDetails({
+            type: "Story",
+            id: 0,
+            issue: "",
+            index: 0,
+          });
+
+          Toast.success("Issue Updated", { id: notification });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, { id: notification });
+    }
+  };
+
   return (
     <div
       className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
@@ -105,7 +167,7 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
             id="close-modal"
             fill="currentColor"
             viewBox="0 0 20 20"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => cancelIssue()}
           >
             <path
               fillRule="evenodd"
@@ -114,7 +176,13 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
             ></path>
           </svg>
         </div>
-        <form onSubmit={(e) => createIssue(e)}>
+        <form
+          onSubmit={
+            updateIssueDetails.issue != ""
+              ? (e) => updateIssue(e)
+              : (e) => createIssue(e)
+          }
+        >
           <div className="flex mt-2 items-center space-x-2 w-full">
             <div className="w-[20%]">
               <Dropdown
@@ -145,7 +213,7 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
               className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
               type="submit"
             >
-              Create
+              {updateIssueDetails.issue != "" ? "Update" : "Create"}
             </button>
           </div>
         </form>

@@ -20,14 +20,35 @@ interface Issue {
   sectionName: string;
 }
 
+type UpdateIssue = {
+  type: string;
+  id: number;
+  issue: string;
+  index: number;
+};
 interface Props {
   issue: Issue;
   index: number;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
 }
 
-const Issue = ({ issue, index }: Props) => {
+const Issue = ({
+  issue,
+  index,
+  isOpen,
+  setIsOpen,
+  setUpdateIssueDetails,
+}: Props) => {
   const { issues, setIssues } = ProjectState();
   const [openOption, setOpenOption] = useState<boolean>(false);
+
+  const updateIssue = (issue: UpdateIssue) => {
+    setUpdateIssueDetails(issue);
+    setIsOpen(!isOpen);
+    setOpenOption(!openOption);
+  };
 
   //Delete Issue.
   const deleteIssue = async (issueId: number) => {
@@ -88,7 +109,17 @@ const Issue = ({ issue, index }: Props) => {
           />
           {openOption && (
             <div className="absolute w-[140px] bg-white shadow-md rounded-md right-2 top-7 z-10  flex flex-col">
-              <div className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2">
+              <div
+                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                onClick={() =>
+                  updateIssue({
+                    id: issue.id,
+                    issue: issue.issue,
+                    type: issue.type,
+                    index,
+                  })
+                }
+              >
                 <AiFillEdit className="text-green-500" />
                 <span className="text-sm">Edit Issue</span>
               </div>
