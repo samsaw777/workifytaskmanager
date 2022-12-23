@@ -53,16 +53,15 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
 
   const createIssue = async (e: any) => {
     e.preventDefault();
-    const boardInfo = board.filter(
-      (boardValue: any) => boardValue.type == "SCRUM"
-    );
-
-    const sectionInfo = boardInfo[0].sections?.filter(
-      (section: any) => section.title == "To DO"
-    );
-
     const notification = Toast.loading("Creating Issue");
     try {
+      const boardInfo = board.filter(
+        (boardValue: any) => boardValue.type == "SCRUM"
+      );
+
+      const sectionInfo = boardInfo[0].sections?.filter(
+        (section: any) => section.title == "To DO"
+      );
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/createissue`, {
           type: selectedItem.title,
@@ -76,11 +75,12 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
         })
         .then((res) => {
           setIssueName("");
+          console.table(res.data);
           setSelectedItem(MenuItems[0]);
 
           setIssues([...issues, res.data]);
-          Toast.success("Issue Created!", { id: notification });
           setIsOpen(!isOpen);
+          Toast.success("Issue Created!", { id: notification });
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });
@@ -137,6 +137,7 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
           <div className="flex w-full justify-end mt-16 space-x-4">
             <button
               className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
+              type="button"
               onClick={() => cancelIssue()}
             >
               Cancel
