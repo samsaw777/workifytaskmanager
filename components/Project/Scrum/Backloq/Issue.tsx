@@ -3,6 +3,10 @@ import Image from "next/image";
 import { colorFetcher } from "../../../../utils/Helper/colorFetcher";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { AiOutlineDelete, AiFillEdit } from "react-icons/ai";
+import Toast from "react-hot-toast";
+import { ProjectState } from "../../../../Context/ProjectContext";
+import axios from "axios";
+import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 
 interface Issue {
   id: number;
@@ -22,7 +26,33 @@ interface Props {
 }
 
 const Issue = ({ issue, index }: Props) => {
+  const { issues, setIssues } = ProjectState();
   const [openOption, setOpenOption] = useState<boolean>(false);
+
+  //Delete Issue.
+  const deleteIssue = async (issueId: number) => {
+    const notification = Toast.loading("Deleting Issue!");
+
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/issue/deleteissue`, {
+          issueId,
+        })
+        .then((response) => {
+          setIssues([
+            ...issues.filter((issue) => issue.id != response.data.id),
+          ]);
+
+          Toast.success("Issue Deleted!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
 
   return (
     <div
@@ -62,7 +92,10 @@ const Issue = ({ issue, index }: Props) => {
                 <AiFillEdit className="text-green-500" />
                 <span className="text-sm">Edit Issue</span>
               </div>
-              <div className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2">
+              <div
+                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                onClick={() => deleteIssue(issue.id)}
+              >
                 <AiOutlineDelete className="text-red-500" />
                 <span className="text-sm">Delete Issue</span>
               </div>
