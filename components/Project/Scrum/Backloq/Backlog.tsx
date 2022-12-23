@@ -6,6 +6,8 @@ import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import Image from "next/image";
+import { colorFetcher } from "../../../../utils/Helper/colorFetcher";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 
 const Backlog = () => {
   const {
@@ -67,7 +69,12 @@ const Backlog = () => {
                     key={index}
                   >
                     <div className="flex space-x-3 items-center">
-                      <div className="w-3 h-3 rounded-sm bg-gray-400"></div>
+                      <div
+                        className="w-3 h-3 rounded-sm"
+                        style={{
+                          backgroundColor: `${colorFetcher(issue.type)}`,
+                        }}
+                      ></div>
                       <div className=" text-xs">NEW {issue.id}</div>
                       <div className="text-sm">{issue.issue}</div>
                     </div>
@@ -83,6 +90,7 @@ const Backlog = () => {
                           alt="UserProfile"
                         />
                       </div>
+                      <BiDotsVerticalRounded />
                     </div>
                   </div>
                 );

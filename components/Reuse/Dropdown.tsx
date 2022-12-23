@@ -43,7 +43,8 @@ const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
         "
         >
           <div
-            className={`w-3 h-3  rounded-sm bg-${selectedItem.color}-300`}
+            className={`w-3 h-3  rounded-sm `}
+            style={{ backgroundColor: `${selectedItem.color}` }}
           ></div>
           <span className="text-sm font-normal">{selectedItem.title}</span>
         </div>
@@ -64,7 +65,8 @@ const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
               >
                 <div className="flex space-x-4 items-center">
                   <div
-                    className={`w-3 h-3  rounded-sm bg-${item.color}-300`}
+                    className={`w-3 h-3  rounded-sm `}
+                    style={{ backgroundColor: `${item.color}` }}
                   ></div>
                   <div>{item.title}</div>
                 </div>

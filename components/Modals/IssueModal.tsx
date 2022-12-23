@@ -20,17 +20,17 @@ const MenuItems = [
   {
     id: 1,
     title: "Story",
-    color: "green",
+    color: "#86efac",
   },
   {
     id: 2,
     title: "Task",
-    color: "blue",
+    color: "#93c5fd",
   },
   {
     id: 3,
     title: "Bug",
-    color: "red",
+    color: "#fca5a5",
   },
 ];
 
@@ -75,7 +75,6 @@ const IssueModal = ({ isOpen, setIsOpen }: Props) => {
         })
         .then((res) => {
           setIssueName("");
-          console.table(res.data);
           setSelectedItem(MenuItems[0]);
 
           setIssues([...issues, res.data]);
