@@ -69,7 +69,7 @@ const IssueModal = ({
   }, [isOpen]);
 
   const [selectedItem, setSelectedItem] = useState<Item>(
-    updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
+    MenuItems.filter((item) => item.title == updateIssueDetails.type)[0]
   );
   const [issueName, setIssueName] = useState<string>("");
 
@@ -189,6 +189,8 @@ const IssueModal = ({
                 menuItems={MenuItems}
                 selectedItem={selectedItem}
                 setSelectedItem={setSelectedItem}
+                updateIssueDetails={updateIssueDetails}
+                isOpenModal={isOpen}
               />
             </div>
             <div className="w-[80%]">

@@ -7,16 +7,34 @@ interface Item {
   color: string;
 }
 
+type UpdateIssue = {
+  type: string;
+  id: number;
+  issue: string;
+  index: number;
+};
+
 interface Props {
   menuItems: Item[];
   setSelectedItem: React.Dispatch<React.SetStateAction<Item>>;
   selectedItem: Item;
+  updateIssueDetails: UpdateIssue;
+  isOpenModal: boolean;
 }
 
-const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
-  console.table(selectedItem);
+const Dropdown = ({
+  menuItems,
+  setSelectedItem,
+  selectedItem,
+  updateIssueDetails,
+  isOpenModal,
+}: Props) => {
+  React.useEffect(() => {
+    setItems(menuItems.filter((item) => item.title != updateIssueDetails.type));
+  }, [isOpenModal]);
+
   const [items, setItems] = useState<Item[]>(
-    menuItems.filter((item) => item.title !== selectedItem.title)
+    menuItems.filter((item) => item.title !== updateIssueDetails.type)
   );
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -45,9 +63,9 @@ const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
         >
           <div
             className={`w-3 h-3  rounded-sm `}
-            style={{ backgroundColor: `${selectedItem.color}` }}
+            style={{ backgroundColor: `${selectedItem?.color}` }}
           ></div>
-          <span className="text-sm font-normal">{selectedItem.title}</span>
+          <span className="text-sm font-normal">{selectedItem?.title}</span>
         </div>
         <RiArrowDropUpLine
           className={`text-2xl rotate-180 ${
@@ -67,7 +85,7 @@ const Dropdown = ({ menuItems, setSelectedItem, selectedItem }: Props) => {
                 <div className="flex space-x-4 items-center">
                   <div
                     className={`w-3 h-3  rounded-sm `}
-                    style={{ backgroundColor: `${item.color}` }}
+                    style={{ backgroundColor: `${item?.color}` }}
                   ></div>
                   <div>{item.title}</div>
                 </div>
