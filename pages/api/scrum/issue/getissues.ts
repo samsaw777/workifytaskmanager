@@ -12,11 +12,17 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         where: {
           projectId: id,
         },
+        orderBy: {
+          position: "asc",
+        },
       });
     } else {
       issues = await prisma.issues.findMany({
         where: {
           sectionId: id,
+        },
+        orderBy: {
+          position: "asc",
         },
       });
     }

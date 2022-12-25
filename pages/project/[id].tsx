@@ -31,7 +31,6 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  console.table(project);
   const { setMembers, setLoggedInUser, setProject } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");

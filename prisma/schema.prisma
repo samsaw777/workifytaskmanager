@@ -50,7 +50,9 @@ model Issues{
   username String
   profile String
   userId String
+  position Int
   sectionId Int
+  sprintId Int
   sectionName String
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -58,7 +60,7 @@ model Issues{
 
 
 model Board{
-    id String   @id @default(uuid())
+    id Int   @id @default(autoincrement())
     type String
     projectId Int
     Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
@@ -68,7 +70,7 @@ model Board{
 model Section{
   id Int @id @default(autoincrement())
   title String
-  boardId String
+  boardId Int
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
 }
