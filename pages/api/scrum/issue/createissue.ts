@@ -13,6 +13,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       sectionName,
       projectId,
       sprintId,
+      sprintName,
     } = req.body;
 
     const totalIssues = await prisma.issues.findMany({
@@ -35,6 +36,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         projectId,
         position: issuesLength,
         sprintId,
+        sprintName
       },
     });
 

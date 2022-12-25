@@ -102,6 +102,7 @@ const IssueModal = ({
           sectionName: sectionInfo[0].title,
           projectId: id,
           sprintId: board[0].id,
+          sprintName: "BACKLOG",
         })
         .then((res) => {
           setIssueName("");
