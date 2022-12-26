@@ -7,6 +7,7 @@ import Issue from "../Backloq/Issue";
 interface Sprint {
   sprintName: string;
   boardId: number;
+  id: number;
 }
 
 interface Props {
@@ -53,7 +54,7 @@ const Sprint = ({
         </div>
       </div>
       {openSprint && (
-        <Droppable key="sprintOne" droppableId={"3".toString()}>
+        <Droppable key="sprintOne" droppableId={sprint.id.toString()}>
           {(provided) => (
             <div
               // className={`${openBacklog ? "block" : "hidden"}`}
