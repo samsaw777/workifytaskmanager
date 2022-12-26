@@ -47,6 +47,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           create: [
             {
               type: "SCRUM",
+              backlog: {
+                create: {
+                  backlogName: "BACKLOG",
+                },
+              },
               sections: {
                 create: [
                   { title: "To DO" },
