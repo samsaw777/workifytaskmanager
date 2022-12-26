@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { RiArrowDropDownLine, RiTestTubeLine } from "react-icons/Ri";
+import { RiArrowDropDownLine } from "react-icons/Ri";
 import { AiOutlinePlus } from "react-icons/ai";
-import IssueModal from "../../../Modals/IssueModal";
 import { ProjectState } from "../../../../Context/ProjectContext";
-import axios from "axios";
-import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
-import Toast from "react-hot-toast";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-
+import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
 
 interface Props {
@@ -26,10 +21,8 @@ interface Props {
 const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
   const {
     issues,
-    project: { id, board },
+    project: { board },
   } = ProjectState();
-
-  console.log(board);
 
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
 
@@ -94,12 +87,6 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
           )}
         </Droppable>
       </div>
-      {/* <IssueModal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        setUpdateIssueDetails={setUpdateIssueDetails}
-        updateIssueDetails={updateIssueDetails}
-      /> */}
     </div>
   );
 };

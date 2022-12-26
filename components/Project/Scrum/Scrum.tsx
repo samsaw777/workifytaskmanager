@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { RiArrowDropDownLine, RiTestTubeLine } from "react-icons/Ri";
-import { AiOutlinePlus } from "react-icons/ai";
 import IssueModal from "../../Modals/IssueModal";
 import { ProjectState } from "../../../Context/ProjectContext";
 import axios from "axios";
@@ -15,7 +13,7 @@ const Scrum = () => {
   const {
     issues,
     setIssues,
-    project: { id, board },
+    project: { id },
   } = ProjectState();
 
   const fetchIssues = async () => {
