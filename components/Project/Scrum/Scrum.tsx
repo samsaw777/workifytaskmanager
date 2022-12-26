@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from "react";
 import IssueModal from "../../Modals/IssueModal";
+import SprintModal from "../../Modals/SprintModal";
 import { ProjectState } from "../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Backlog from "./Backloq/Backlog";
+import Sprint from "./Sprints/Sprint";
 
-import Issue from "./Backloq/Issue";
+interface SprintInterface {
+  sprintName: string;
+  boardId: number;
+}
 
 const Scrum = () => {
   const {
     issues,
     setIssues,
-    project: { id },
+    project: { id, board },
+    sprints,
   } = ProjectState();
 
   const fetchIssues = async () => {
@@ -99,32 +105,18 @@ const Scrum = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="w-ful p-2">
-        <Droppable key="sprintOne" droppableId={"3".toString()}>
-          {(provided) => (
-            <div
-              // className={`${openBacklog ? "block" : "hidden"}`}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              hello
-              {[...issues.filter((issues: any) => issues.sprintId == 3)].map(
-                (issue: any, index: number) => {
-                  return (
-                    <Issue
-                      issue={issue}
-                      index={index}
-                      isOpen={isOpen}
-                      setIsOpen={setIsOpen}
-                      setUpdateIssueDetails={setUpdateIssueDetails}
-                    />
-                  );
-                }
-              )}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+      <div className="w-ful p-2 flex flex-col space-y-3">
+        {sprints.map((sprint: any, index: number) => {
+          return (
+            <Sprint
+              sprint={sprint}
+              index={index}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              setUpdateIssueDetails={setUpdateIssueDetails}
+            />
+          );
+        })}
         <Backlog
           isOpen={isOpen}
           setIsOpen={setIsOpen}
@@ -136,6 +128,7 @@ const Scrum = () => {
           setUpdateIssueDetails={setUpdateIssueDetails}
           updateIssueDetails={updateIssueDetails}
         />
+        <SprintModal />
       </div>
     </DragDropContext>
   );

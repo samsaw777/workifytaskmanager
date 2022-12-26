@@ -4,6 +4,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
+import SprintModal from "../../../Modals/SprintModal";
 
 interface Props {
   isOpen: boolean;
@@ -24,6 +25,8 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
     project: { board },
   } = ProjectState();
 
+  console.log(board);
+
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
 
   return (
@@ -41,9 +44,11 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
             />
             <span>{board[0].backlog.backlogName}</span>
           </div>
-          <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-            create sprint
-          </div>
+          <SprintModal>
+            <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
+              create sprint
+            </div>
+          </SprintModal>
         </div>
         <Droppable key="issueKey" droppableId={board[0].backlog.id.toString()}>
           {(provided) => (

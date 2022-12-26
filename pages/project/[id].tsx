@@ -31,7 +31,8 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  const { setMembers, setLoggedInUser, setProject } = ProjectState();
+  const { setMembers, setLoggedInUser, setProject, setSprints } =
+    ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -89,6 +90,7 @@ const ProjectDetails = ({
     setLoggedInUser(loggedInUser);
     socketInit();
     setProject(project);
+    setSprints(project.board[0].sprints);
   }, []);
 
   useEffect(() => {});
@@ -147,6 +149,11 @@ export async function getServerSideProps(context: any) {
       board: {
         include: {
           backlog: true,
+          sprints: {
+            orderBy: {
+              id: "asc",
+            },
+          },
           sections: {
             include: {
               issues: true,

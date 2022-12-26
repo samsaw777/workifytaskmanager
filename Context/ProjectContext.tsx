@@ -29,6 +29,11 @@ interface ScrumIssue {
   sectionName: string;
 }
 
+interface Sprint {
+  id: number;
+  sprintName: string;
+}
+
 interface Context {
   loggedInUser: loggedInUser;
   members: Member[];
@@ -38,6 +43,8 @@ interface Context {
   setProject: any;
   issues: ScrumIssue[];
   setIssues: React.Dispatch<React.SetStateAction<ScrumIssue[]>>;
+  sprints: Sprint[];
+  setSprints: React.Dispatch<React.SetStateAction<Sprint[]>>;
 }
 
 const ProjectContext = createContext<Context>({
@@ -55,6 +62,8 @@ const ProjectContext = createContext<Context>({
   setProject: () => {},
   setIssues: () => [],
   issues: [],
+  sprints: [],
+  setSprints: () => [],
 });
 
 const ProjectProvider = ({ children }: any) => {
@@ -69,6 +78,7 @@ const ProjectProvider = ({ children }: any) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [project, setProject] = useState<any>({});
   const [issues, setIssues] = useState<ScrumIssue[]>([]);
+  const [sprints, setSprints] = useState<Sprint[]>([]);
   return (
     <ProjectContext.Provider
       value={{
@@ -80,6 +90,8 @@ const ProjectProvider = ({ children }: any) => {
         setProject,
         issues,
         setIssues,
+        sprints,
+        setSprints,
       }}
     >
       {children}
