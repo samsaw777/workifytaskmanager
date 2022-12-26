@@ -94,7 +94,7 @@ const Issue = ({
                 backgroundColor: `${colorFetcher(issue.type)}`,
               }}
             ></div>
-            <div className=" text-xs">NEW {issue.id}</div>
+            <div className=" text-xs">NEW {index + 1}</div>
             <div className="text-sm">{issue.issue}</div>
           </div>
           <div className="flex space-x-3 items-center">

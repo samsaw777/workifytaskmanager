@@ -56,7 +56,8 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
                 <div>
                   {[
                     ...issues.filter(
-                      (issues: any) => issues.sprintId == board[0].backlog.id
+                      (issues: any) =>
+                        issues.sprintName == board[0].backlog.backlogName
                     ),
                   ].map((issue, index: number) => {
                     return (
