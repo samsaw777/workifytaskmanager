@@ -11,7 +11,7 @@ interface Sprint {
 }
 
 interface Props {
-  sprint: Sprint;
+  sprint: any;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateIssueDetails: React.Dispatch<
@@ -23,6 +23,8 @@ interface Props {
     }>
   >;
   index: number;
+  setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Sprint = ({
@@ -31,7 +33,15 @@ const Sprint = ({
   setIsOpen,
   setUpdateIssueDetails,
   index,
+  setIssueCheck,
+  setIndex,
 }: Props) => {
+  const openIssueModal = () => {
+    setIssueCheck(sprint.sprintName);
+    setIsOpen(!isOpen);
+    setIndex(index);
+  };
+
   const { issues } = ProjectState();
   const [openSprint, setOpenSprint] = useState<boolean>(true);
   return (
@@ -54,24 +64,16 @@ const Sprint = ({
         </div>
       </div>
       {openSprint && (
-        <Droppable key="sprintOne" droppableId={sprint.id.toString()}>
+        <Droppable key="sprintOne" droppableId={sprint.sprintName}>
           {(provided) => (
             <div
-              // className={`${openBacklog ? "block" : "hidden"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
+              // className={`${openBacklog ? "block" : "hidden"}`}
             >
-              {[
-                ...issues.filter(
-                  (issues: any) => issues.sprintName == sprint.sprintName
-                ),
-              ].length > 0 ? (
+              {sprint?.issues?.length > 0 ? (
                 <div>
-                  {[
-                    ...issues.filter(
-                      (issues: any) => issues.sprintName == sprint.sprintName
-                    ),
-                  ].map((issue, index: number) => {
+                  {sprint?.issues?.map((issue: any, index: number) => {
                     return (
                       <Issue
                         issue={issue}
@@ -82,17 +84,17 @@ const Sprint = ({
                       />
                     );
                   })}
-                  {provided.placeholder}
                 </div>
               ) : (
                 <div className="w-full flex h-10 border-2 text-gray-400 border-dashed border-gray-400/[.6] text-xs justify-center items-center">
                   Add some issues into the sprint by dragging the issues here.
                 </div>
               )}
+              {provided.placeholder}
 
               <div
                 className="flex space-x-2 items-center text-sm mt-1  p-2 group hover:bg-gray-200 cursor-pointer"
-                // onClick={() => setIsOpen(!isOpen)}
+                onClick={() => openIssueModal()}
               >
                 <AiOutlinePlus className="" />
                 <span>Create Issue</span>
@@ -106,3 +108,10 @@ const Sprint = ({
 };
 
 export default Sprint;
+
+/*
+
+1. Add a check in the create issue fucntion by sending props.
+2. Make Droppable id as spritName / backlogName.
+
+*/

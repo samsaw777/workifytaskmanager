@@ -17,15 +17,24 @@ interface Props {
       index: number;
     }>
   >;
+  setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
-  const {
-    issues,
-    project: { board },
-  } = ProjectState();
+const Backlog = ({
+  isOpen,
+  setIsOpen,
+  setUpdateIssueDetails,
+  setIssueCheck,
+  setIndex,
+}: Props) => {
+  const { issues } = ProjectState();
 
-  console.log(board);
+  const openIssueModal = () => {
+    setIssueCheck("BACKLOG");
+    setIsOpen(!isOpen);
+    setIndex(-1);
+  };
 
   const [openBacklog, setOpenBacklog] = useState<boolean>(true);
 
@@ -42,7 +51,7 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
                 !openBacklog && "-rotate-90"
               } transition duration-150`}
             />
-            <span>{board[0].backlog.backlogName}</span>
+            <span>BACKLOG</span>
           </div>
           <SprintModal>
             <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
@@ -50,7 +59,7 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
             </div>
           </SprintModal>
         </div>
-        <Droppable key="issueKey" droppableId={board[0].backlog.id.toString()}>
+        <Droppable key="issueKey" droppableId="BACKLOG">
           {(provided) => (
             <div
               className={`${openBacklog ? "block" : "hidden"}`}
@@ -61,8 +70,7 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
                 <div>
                   {[
                     ...issues.filter(
-                      (issues: any) =>
-                        issues.sprintName == board[0].backlog.backlogName
+                      (issues: any) => issues.sprintName == "BACKLOG"
                     ),
                   ].map((issue, index: number) => {
                     return (
@@ -84,7 +92,7 @@ const Backlog = ({ isOpen, setIsOpen, setUpdateIssueDetails }: Props) => {
               )}
               <div
                 className="flex space-x-2 items-center text-sm mt-1  p-2 group hover:bg-gray-200 cursor-pointer"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => openIssueModal()}
               >
                 <AiOutlinePlus className="" />
                 <span>Create Issue</span>

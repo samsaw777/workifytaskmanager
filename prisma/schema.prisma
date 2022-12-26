@@ -55,6 +55,8 @@ model Issues{
   sectionName String
   sprintId Int
   sprintName String
+  isUnderStartSprint Boolean
+  Sprint Sprint @relation(fields: [sprintName], references:[sprintName], onDelete: Cascade)
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -67,7 +69,6 @@ model Board{
     Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
     sections Section[]
     sprints Sprint[]
-    backlog Backlog?
 }
 
 model Section{
@@ -80,14 +81,12 @@ model Section{
 
 model Sprint{
   id Int @id @default(autoincrement())
-  sprintName String
+  sprintName String @unique
   boardId Int
+  isUnderStartSprint Boolean
+  isPrimary Boolean
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
+  issues Issues[]
 }
 
-model Backlog{
-  id Int @id @default(autoincrement())
-  backlogName String
-  boardId Int @unique
-  Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
-}
+

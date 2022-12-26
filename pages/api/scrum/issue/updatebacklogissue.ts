@@ -19,7 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             id,
           },
           data: {
-            sprintId: parseInt(sprintResourceId),
+            sprintName: sprintResourceId,
             position: parseInt(key),
           },
         });
@@ -33,7 +33,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           id,
         },
         data: {
-          sprintId: parseInt(sprintDestinationId),
+          sprintName: sprintDestinationId,
           position: parseInt(key),
         },
       });

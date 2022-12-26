@@ -9,6 +9,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       data: {
         sprintName,
         boardId,
+        isUnderStartSprint: false,
+        isPrimary: false,
       },
     });
 

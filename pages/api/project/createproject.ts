@@ -47,9 +47,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           create: [
             {
               type: "SCRUM",
-              backlog: {
+              sprints: {
                 create: {
-                  backlogName: "BACKLOG",
+                  sprintName: "BACKLOG",
+                  isPrimary: true,
+                  isUnderStartSprint: false,
                 },
               },
               sections: {

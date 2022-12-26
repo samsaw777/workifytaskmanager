@@ -17,6 +17,9 @@ interface Props {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
   updateIssueDetails: UpdateIssue;
+  check: string;
+  setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
+  index: number;
 }
 
 interface Item {
@@ -48,6 +51,9 @@ const IssueModal = ({
   setIsOpen,
   updateIssueDetails,
   setUpdateIssueDetails,
+  check,
+  setIssueCheck,
+  index,
 }: Props) => {
   const {
     setIssues,
@@ -56,6 +62,13 @@ const IssueModal = ({
     loggedInUser,
   } = ProjectState();
 
+  const setIssuesFunction = (index: number, response: any) => {
+    if (index > 0) {
+      board[0].sprint[index]?.issues?.push(response);
+    } else {
+      setIssues([...issues, response]);
+    }
+  };
   const updateItem = MenuItems.filter(
     (item) => item.title == updateIssueDetails.type
   );
@@ -75,6 +88,7 @@ const IssueModal = ({
 
   const cancelIssue = () => {
     setIssueName("");
+    setIssueCheck("");
     setSelectedItem(MenuItems[0]);
     setIsOpen(!isOpen);
     setUpdateIssueDetails({ type: "Story", id: 0, issue: "", index: 0 });
@@ -101,14 +115,14 @@ const IssueModal = ({
           sectionId: sectionInfo[0].id,
           sectionName: sectionInfo[0].title,
           projectId: id,
-          sprintId: board[0].backlog.id,
-          sprintName: board[0].backlog.backlogName,
+          sprintId: 0,
+          sprintName: check,
         })
         .then((res) => {
           setIssueName("");
           setSelectedItem(MenuItems[0]);
-
-          setIssues([...issues, res.data]);
+          setIssueCheck("");
+          setIssuesFunction(index, res.data);
           setIsOpen(!isOpen);
           Toast.success("Issue Created!", { id: notification });
         });
@@ -129,11 +143,19 @@ const IssueModal = ({
           issue: issueName,
         })
         .then((res) => {
-          const newIssue = JSON.parse(JSON.stringify(issues));
-          newIssue[updateIssueDetails.index].issue = res.data.issue;
-          newIssue[updateIssueDetails.index].type = res.data.type;
-          setIssues([...newIssue]);
+          if (index > 0) {
+            board[0].sprints[index].issues[updateIssueDetails.index].issue =
+              res.data.issue;
+            board[0].sprints[index].issues[updateIssueDetails.index].type =
+              res.data.type;
+          } else {
+            const newIssue = JSON.parse(JSON.stringify(issues));
+            newIssue[updateIssueDetails.index].issue = res.data.issue;
+            newIssue[updateIssueDetails.index].type = res.data.type;
+            setIssues([...newIssue]);
+          }
           setIssueName("");
+          setIssueCheck("");
           setSelectedItem(MenuItems[0]);
           setIsOpen(!isOpen);
           setUpdateIssueDetails({

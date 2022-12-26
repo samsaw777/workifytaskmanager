@@ -3,29 +3,18 @@ import prisma from "../../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { id, getType } = req.body;
+    const { id } = req.body;
 
     let issues: any;
 
-    if (getType == "Project") {
-      issues = await prisma.issues.findMany({
-        where: {
-          projectId: id,
-        },
-        orderBy: {
-          position: "asc",
-        },
-      });
-    } else {
-      issues = await prisma.issues.findMany({
-        where: {
-          sectionId: id,
-        },
-        orderBy: {
-          position: "asc",
-        },
-      });
-    }
+    issues = await prisma.issues.findMany({
+      where: {
+        AND: [{ projectId: id }, { sprintName: "BACKLOG" }],
+      },
+      orderBy: {
+        position: "asc",
+      },
+    });
 
     res.status(200).json(issues);
   } catch (error: any) {

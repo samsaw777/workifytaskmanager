@@ -81,7 +81,7 @@ const Issue = ({
         <div
           className={`${
             snapshot.isDragging ? "cursor-grab" : "cursor-pointer"
-          }w-full p-2 flex justify-between border-[2px] mt-1 border-gray-200`}
+          }w-full p-2 flex justify-between border-[2px] mt-1 border-gray-200 bg-white`}
           key={index}
           ref={provided.innerRef}
           {...provided.draggableProps}

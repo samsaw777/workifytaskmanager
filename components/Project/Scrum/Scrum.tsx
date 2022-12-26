@@ -22,12 +22,13 @@ const Scrum = () => {
     sprints,
   } = ProjectState();
 
+  console.log(board);
+
   const fetchIssues = async () => {
     try {
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/getissues`, {
           id,
-          getType: "Project",
         })
         .then((res) => {
           setIssues(res.data);
@@ -47,59 +48,70 @@ const Scrum = () => {
     issue: string;
     index: number;
   }>({ type: "Story", id: 0, issue: "", index: 0 });
+  const [issueCheck, setIssueCheck] = useState<string>("");
+  const [index, setIndex] = useState<number>(-1);
 
   const onDragEnd = async ({ source, destination }: DropResult) => {
-    const notification = Toast.loading("Changing Position!");
+    console.log(source, destination);
+    // const notification = Toast.loading("Changing Position!");
     try {
       if (!destination) return;
-
       let newIssuesList = [];
-      const sourceIssues = JSON.parse(
-        JSON.stringify(
-          issues.filter((issue: any) => issue.sprintId == source.droppableId)
-        )
-      );
 
-      const destinationIssues = JSON.parse(
+      const notEqual = JSON.parse(
         JSON.stringify(
           issues.filter(
-            (issue: any) => issue.sprintId == destination.droppableId
+            (issue: any) =>
+              issue.sprintName != source.droppableId || destination.droppableId
           )
         )
       );
 
-      if (parseInt(source.droppableId) == parseInt(destination.droppableId)) {
+      console.log(notEqual);
+      const sourceIssues = JSON.parse(
+        JSON.stringify(
+          issues.filter((issue: any) => issue.sprintName == source.droppableId)
+        )
+      );
+      const destinationIssues = JSON.parse(
+        JSON.stringify(
+          issues.filter(
+            (issue: any) => issue.sprintName == destination.droppableId
+          )
+        )
+      );
+      if (source.droppableId == destination.droppableId) {
         const [removedIssue] = sourceIssues.splice(source.index, 1);
         sourceIssues.splice(destination.index, 0, removedIssue);
-        newIssuesList = [...sourceIssues, ...destinationIssues];
+        newIssuesList = [...notEqual, ...sourceIssues, ...destinationIssues];
         setIssues(newIssuesList);
       } else {
         let [removed] = sourceIssues.splice(source.index, 1);
-        removed.sprintId = destination.droppableId;
+        removed.sprintName = destination.droppableId;
         destinationIssues.splice(destination.index, 0, removed);
-        newIssuesList = [...sourceIssues, ...destinationIssues];
+        newIssuesList = [...notEqual, ...sourceIssues, ...destinationIssues];
         setIssues(newIssuesList);
       }
-
-      await axios
-        .post(`${urlFetcher()}/api/scrum/issue/updatebacklogissue`, {
-          resourceList: sourceIssues,
-          destinationList: destinationIssues,
-          sprintResourceId: source.droppableId,
-          sprintDestinationId: destination.droppableId,
-        })
-        .then((res) => {
-          Toast.success("Position Changed!", {
-            id: notification,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // await axios
+      //   .post(`${urlFetcher()}/api/scrum/issue/updatebacklogissue`, {
+      //     resourceList: sourceIssues,
+      //     destinationList: destinationIssues,
+      //     sprintResourceId: source.droppableId,
+      //     sprintDestinationId: destination.droppableId,
+      //   })
+      //   .then((res) => {
+      //     Toast.success("Position Changed!", {
+      //       id: notification,
+      //     });
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     } catch (error: any) {
-      Toast.error(error.message, {
-        id: notification,
-      });
+      // Toast.error(error.message, {
+      //   id: notification,
+      // });
+      console.log(error.message);
     }
   };
 
@@ -114,6 +126,8 @@ const Scrum = () => {
               isOpen={isOpen}
               setIsOpen={setIsOpen}
               setUpdateIssueDetails={setUpdateIssueDetails}
+              setIssueCheck={setIssueCheck}
+              setIndex={setIndex}
             />
           );
         })}
@@ -121,14 +135,19 @@ const Scrum = () => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           setUpdateIssueDetails={setUpdateIssueDetails}
+          setIssueCheck={setIssueCheck}
+          setIndex={setIndex}
         />
         <IssueModal
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           setUpdateIssueDetails={setUpdateIssueDetails}
           updateIssueDetails={updateIssueDetails}
+          check={issueCheck}
+          setIssueCheck={setIssueCheck}
+          index={index}
         />
-        <SprintModal />
+        {/* <SprintModal /> */}
       </div>
     </DragDropContext>
   );

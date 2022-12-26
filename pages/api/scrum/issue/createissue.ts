@@ -36,7 +36,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         projectId,
         position: issuesLength,
         sprintId,
-        sprintName
+        sprintName,
+        isUnderStartSprint: false,
       },
     });
 

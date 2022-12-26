@@ -148,10 +148,16 @@ export async function getServerSideProps(context: any) {
     include: {
       board: {
         include: {
-          backlog: true,
           sprints: {
             orderBy: {
               id: "asc",
+            },
+            include: {
+              issues: {
+                orderBy: {
+                  id: "asc",
+                },
+              },
             },
           },
           sections: {
