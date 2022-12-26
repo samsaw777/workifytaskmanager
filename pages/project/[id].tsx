@@ -146,6 +146,7 @@ export async function getServerSideProps(context: any) {
     include: {
       board: {
         include: {
+          backlog: true,
           sections: {
             include: {
               issues: true,
