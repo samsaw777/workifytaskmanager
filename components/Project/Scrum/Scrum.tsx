@@ -9,11 +9,6 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Backlog from "./Backloq/Backlog";
 import Sprint from "./Sprints/Sprint";
 
-interface SprintInterface {
-  sprintName: string;
-  boardId: number;
-}
-
 const Scrum = () => {
   const {
     issues,
@@ -47,10 +42,11 @@ const Scrum = () => {
     type: string;
     id: number;
     issue: string;
+    sprintId: number;
     index: number;
-  }>({ type: "Story", id: 0, issue: "", index: 0 });
+  }>({ type: "Story", id: 0, issue: "", sprintId: 0, index: -1 });
   const [issueCheck, setIssueCheck] = useState<string>("");
-  const [index, setIndex] = useState<number>(-1);
+  // const [index, setIndex] = useState<number>(-1);
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
     sprintName: string;
@@ -129,7 +125,7 @@ const Scrum = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} key="fdfd">
       <div className="w-ful p-2 flex flex-col space-y-3">
         {sprints.map((sprint: any, index: number) => {
           return (
@@ -139,7 +135,6 @@ const Scrum = () => {
               isOpen={isOpen}
               setIsOpen={setIsOpen}
               setUpdateIssueDetails={setUpdateIssueDetails}
-              setIndex={setIndex}
               setSprintDetails={setSprintDetails}
             />
           );
@@ -156,9 +151,7 @@ const Scrum = () => {
           setIsOpen={setIsOpen}
           setUpdateIssueDetails={setUpdateIssueDetails}
           updateIssueDetails={updateIssueDetails}
-          check={issueCheck}
           setIssueCheck={setIssueCheck}
-          index={index}
           setSprintDetails={setSprintDetails}
           sprintDetails={sprintDetails}
         />

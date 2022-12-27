@@ -11,7 +11,7 @@ type UpdateIssue = {
   type: string;
   id: number;
   issue: string;
-  index: number;
+  sprintId: number;
 };
 
 interface Props {

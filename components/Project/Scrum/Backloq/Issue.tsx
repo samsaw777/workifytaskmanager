@@ -16,18 +16,19 @@ interface Issue {
   username: string;
   profile: string;
   userId: string;
-  sectionId: number;
-  sectionName: string;
+  sprintId: number;
+  sprintName: string;
 }
 
 type UpdateIssue = {
   type: string;
   id: number;
   issue: string;
+  sprintId: number;
   index: number;
 };
 interface Props {
-  issue: Issue;
+  issue: any;
   index: number;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -76,7 +77,7 @@ const Issue = ({
   };
 
   return (
-    <Draggable index={index} key={issue.id} draggableId={issue.id.toString()}>
+    <Draggable index={index} key={index} draggableId={issue.id.toString()}>
       {(provided, snapshot) => (
         <div
           className={`${
@@ -123,6 +124,7 @@ const Issue = ({
                         id: issue.id,
                         issue: issue.issue,
                         type: issue.type,
+                        sprintId: issue.sprintId,
                         index,
                       })
                     }

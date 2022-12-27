@@ -20,11 +20,11 @@ interface Props {
       type: string;
       id: number;
       issue: string;
+      sprintId: number;
       index: number;
     }>
   >;
   index: number;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
   setSprintDetails: React.Dispatch<
     React.SetStateAction<{ id: number; sprintName: string }>
   >;
@@ -36,13 +36,11 @@ const Sprint = ({
   setIsOpen,
   setUpdateIssueDetails,
   index,
-  setIndex,
   setSprintDetails,
 }: Props) => {
   const openIssueModal = () => {
     setIsOpen(!isOpen);
     setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
-    setIndex(index);
   };
 
   const { issues } = ProjectState();

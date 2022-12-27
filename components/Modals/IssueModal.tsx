@@ -10,6 +10,7 @@ type UpdateIssue = {
   id: number;
   issue: string;
   index: number;
+  sprintId: number;
 };
 
 interface Props {
@@ -17,9 +18,7 @@ interface Props {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
   updateIssueDetails: UpdateIssue;
-  check: string;
   setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
-  index: number;
   setSprintDetails: React.Dispatch<
     React.SetStateAction<{ id: number; sprintName: string }>
   >;
@@ -55,9 +54,7 @@ const IssueModal = ({
   setIsOpen,
   updateIssueDetails,
   setUpdateIssueDetails,
-  check,
   setIssueCheck,
-  index,
   setSprintDetails,
   sprintDetails,
 }: Props) => {
@@ -66,15 +63,9 @@ const IssueModal = ({
     issues,
     project: { id, board },
     loggedInUser,
+    sprints,
   } = ProjectState();
 
-  const setIssuesFunction = (index: number, response: any) => {
-    if (index > 0) {
-      board[0].sprint[index]?.issues?.push(response);
-    } else {
-      setIssues([...issues, response]);
-    }
-  };
   const updateItem = MenuItems.filter(
     (item) => item.title == updateIssueDetails.type
   );
@@ -98,7 +89,13 @@ const IssueModal = ({
     setSelectedItem(MenuItems[0]);
     setIsOpen(!isOpen);
     setSprintDetails({ id: 0, sprintName: "" });
-    setUpdateIssueDetails({ type: "Story", id: 0, issue: "", index: 0 });
+    setUpdateIssueDetails({
+      type: "Story",
+      id: 0,
+      issue: "",
+      sprintId: 0,
+      index: -1,
+    });
   };
 
   const createIssue = async (e: any) => {
@@ -131,7 +128,10 @@ const IssueModal = ({
           setSelectedItem(MenuItems[0]);
           setIssueCheck("");
           // setIssuesFunction(index, res.data);
-          board[0].sprints[index]?.issues?.push(res.data);
+          const sprint: any = sprints.filter(
+            (s: any) => s.id === sprintDetails.id
+          );
+          sprint[0]?.issues?.push(res.data);
           setIsOpen(!isOpen);
           Toast.success("Issue Created!", { id: notification });
         });
@@ -152,17 +152,12 @@ const IssueModal = ({
           issue: issueName,
         })
         .then((res) => {
-          if (index > 0) {
-            board[0].sprints[index].issues[updateIssueDetails.index].issue =
-              res.data.issue;
-            board[0].sprints[index].issues[updateIssueDetails.index].type =
-              res.data.type;
-          } else {
-            const newIssue = JSON.parse(JSON.stringify(issues));
-            newIssue[updateIssueDetails.index].issue = res.data.issue;
-            newIssue[updateIssueDetails.index].type = res.data.type;
-            setIssues([...newIssue]);
-          }
+          const sprint: any = sprints.filter(
+            (sprint: any) => sprint.id === updateIssueDetails.sprintId
+          );
+          sprint[0].issues[updateIssueDetails.index].issue = res.data.issue;
+          sprint[0].issues[updateIssueDetails.index].type = res.data.type;
+
           setIssueName("");
           setIssueCheck("");
           setSelectedItem(MenuItems[0]);
@@ -171,13 +166,14 @@ const IssueModal = ({
             type: "Story",
             id: 0,
             issue: "",
-            index: 0,
+            sprintId: 0,
+            index: -1,
           });
-
           Toast.success("Issue Updated", { id: notification });
         });
     } catch (error: any) {
-      Toast.error(error.message, { id: notification });
+      // Toast.error(error.message, { id: notification });
+      console.log(error);
     }
   };
 
