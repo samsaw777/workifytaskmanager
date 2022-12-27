@@ -8,6 +8,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     destinationList,
     sprintResourceId,
     sprintDestinationId,
+    sprintResourceName,
+    sprintDestinationName,
   } = req.body;
 
   try {
@@ -19,7 +21,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             id,
           },
           data: {
-            sprintName: sprintResourceId,
+            sprintName: sprintResourceName,
+            sprintId: sprintResourceId,
             position: parseInt(key),
           },
         });
@@ -33,7 +36,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           id,
         },
         data: {
-          sprintName: sprintDestinationId,
+          sprintName: sprintDestinationName,
+          sprintId: sprintDestinationId,
           position: parseInt(key),
         },
       });

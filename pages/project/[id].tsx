@@ -150,7 +150,7 @@ export async function getServerSideProps(context: any) {
         include: {
           sprints: {
             orderBy: {
-              id: "asc",
+              id: "desc",
             },
             include: {
               issues: {

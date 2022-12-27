@@ -20,6 +20,10 @@ interface Props {
   check: string;
   setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
   index: number;
+  setSprintDetails: React.Dispatch<
+    React.SetStateAction<{ id: number; sprintName: string }>
+  >;
+  sprintDetails: { id: number; sprintName: string };
 }
 
 interface Item {
@@ -54,6 +58,8 @@ const IssueModal = ({
   check,
   setIssueCheck,
   index,
+  setSprintDetails,
+  sprintDetails,
 }: Props) => {
   const {
     setIssues,
@@ -91,6 +97,7 @@ const IssueModal = ({
     setIssueCheck("");
     setSelectedItem(MenuItems[0]);
     setIsOpen(!isOpen);
+    setSprintDetails({ id: 0, sprintName: "" });
     setUpdateIssueDetails({ type: "Story", id: 0, issue: "", index: 0 });
   };
 
@@ -115,14 +122,16 @@ const IssueModal = ({
           sectionId: sectionInfo[0].id,
           sectionName: sectionInfo[0].title,
           projectId: id,
-          sprintId: 0,
-          sprintName: check,
+          sprintId: sprintDetails.id,
+          sprintName: sprintDetails.sprintName,
+          isUnderStartSprint: false,
         })
         .then((res) => {
           setIssueName("");
           setSelectedItem(MenuItems[0]);
           setIssueCheck("");
-          setIssuesFunction(index, res.data);
+          // setIssuesFunction(index, res.data);
+          board[0].sprints[index]?.issues?.push(res.data);
           setIsOpen(!isOpen);
           Toast.success("Issue Created!", { id: notification });
         });

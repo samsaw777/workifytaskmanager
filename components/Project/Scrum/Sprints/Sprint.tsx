@@ -4,6 +4,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { RiArrowDropDownLine } from "react-icons/Ri";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
+import SprintModal from "../../../Modals/SprintModal";
 interface Sprint {
   sprintName: string;
   boardId: number;
@@ -23,8 +24,10 @@ interface Props {
     }>
   >;
   index: number;
-  setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
+  setSprintDetails: React.Dispatch<
+    React.SetStateAction<{ id: number; sprintName: string }>
+  >;
 }
 
 const Sprint = ({
@@ -33,19 +36,24 @@ const Sprint = ({
   setIsOpen,
   setUpdateIssueDetails,
   index,
-  setIssueCheck,
   setIndex,
+  setSprintDetails,
 }: Props) => {
   const openIssueModal = () => {
-    setIssueCheck(sprint.sprintName);
     setIsOpen(!isOpen);
+    setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
     setIndex(index);
   };
 
   const { issues } = ProjectState();
   const [openSprint, setOpenSprint] = useState<boolean>(true);
   return (
-    <div className="flex flex-col space-y-2 bg-gray-100  px-3 py-2" key={index}>
+    <div
+      className={`flex flex-col space-y-2 ${
+        !sprint.isPrimary && "bg-gray-100"
+      }  px-3 py-2`}
+      key={index}
+    >
       <div className="w-full flex justify-between items-center">
         <div
           className="flex space-x-1 items-center cursor-pointer flex-1 py-1"
@@ -59,12 +67,22 @@ const Sprint = ({
           <span>{sprint.sprintName}</span>
         </div>
 
-        <div className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-          start sprint
-        </div>
+        {sprint.isPrimary && (
+          <SprintModal>
+            <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
+              create sprint
+            </div>
+          </SprintModal>
+        )}
+
+        {!sprint.isPrimary && (
+          <div className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
+            start sprint
+          </div>
+        )}
       </div>
       {openSprint && (
-        <Droppable key="sprintOne" droppableId={sprint.sprintName}>
+        <Droppable key="sprintOne" droppableId={sprint.id.toString()}>
           {(provided) => (
             <div
               ref={provided.innerRef}
@@ -86,8 +104,16 @@ const Sprint = ({
                   })}
                 </div>
               ) : (
-                <div className="w-full flex h-10 border-2 text-gray-400 border-dashed border-gray-400/[.6] text-xs justify-center items-center">
-                  Add some issues into the sprint by dragging the issues here.
+                <div
+                  className={`w-full flex h-10 border-2 ${
+                    !sprint.isPrimary
+                      ? "text-gray-400 border-gray-400/[.6]"
+                      : "text-blue-600 border-blue-100"
+                  }  border-dashed  text-xs justify-center items-center`}
+                >
+                  {sprint.isPrimary
+                    ? "Your backlog is empty.."
+                    : "Add some issues into the sprint by dragging the issues here."}
                 </div>
               )}
               {provided.placeholder}
