@@ -155,14 +155,24 @@ export async function getServerSideProps(context: any) {
             include: {
               issues: {
                 orderBy: {
-                  id: "asc",
+                  position: "asc",
                 },
               },
             },
           },
           sections: {
             include: {
-              issues: true,
+              issues: {
+                where: {
+                  isUnderStartSprint: false,
+                  NOT: {
+                    sprintName: "BACKLOG",
+                  },
+                },
+                orderBy: {
+                  position: "asc",
+                },
+              },
             },
           },
         },
