@@ -15,6 +15,7 @@ interface Props {
       id: number;
       issue: string;
       index: number;
+      sprintId: number;
     }>
   >;
   setIssueCheck: React.Dispatch<React.SetStateAction<string>>;

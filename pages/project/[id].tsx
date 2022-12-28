@@ -31,7 +31,7 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  const { setMembers, setLoggedInUser, setProject, setSprints } =
+  const { setMembers, setLoggedInUser, setProject, setSprints, setSections } =
     ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
@@ -90,7 +90,6 @@ const ProjectDetails = ({
     setLoggedInUser(loggedInUser);
     socketInit();
     setProject(project);
-    setSprints(project.board[0].sprints);
   }, []);
 
   useEffect(() => {});

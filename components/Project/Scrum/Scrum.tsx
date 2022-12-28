@@ -11,8 +11,6 @@ import Sprint from "./Sprints/Sprint";
 
 const Scrum = () => {
   const {
-    issues,
-    setIssues,
     project: { id, board },
     sprints,
     setSprints,
@@ -20,21 +18,21 @@ const Scrum = () => {
 
   console.log(board);
 
-  const fetchIssues = async () => {
+  const fetchSprints = async () => {
     try {
       await axios
-        .post(`${urlFetcher()}/api/scrum/issue/getissues`, {
-          id,
+        .post(`${urlFetcher()}/api/scrum/sprint/getsprint`, {
+          boardId: board[0].id,
         })
         .then((res) => {
-          setIssues(res.data);
+          setSprints(res.data);
         });
     } catch (error: any) {
       console.error(error);
     }
   };
   useEffect(() => {
-    fetchIssues();
+    fetchSprints();
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);

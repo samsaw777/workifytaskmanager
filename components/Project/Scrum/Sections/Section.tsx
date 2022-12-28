@@ -1,5 +1,6 @@
 import React from "react";
 import SectionIssue from "./SectionIssue";
+import { Droppable } from "react-beautiful-dnd";
 
 interface Issue {
   id: number;
@@ -25,15 +26,29 @@ const Section = ({ id, title, issues }: Props) => {
       key={id}
       className="h-[100%] overflow-y-scroll flex-none bg-gray-100 w-[350px] rounded-md"
     >
-      <div
-        className="flex flex-col space-y-2 h-[90%] px-2 overflow-scroll
+      <div className="p-2 px-4 text-gray-500">{title}</div>
+      <Droppable key={id} droppableId={id.toString()}>
+        {(provided) => (
+          <div
+            className="flex flex-col space-y-2 h-[90%] px-2 overflow-scroll
                 "
-      >
-        <div className="p-2 px-4 text-gray-500">{title}</div>
-        {issues.map((issue: Issue) => (
-          <SectionIssue id={issue.id} type={issue.type} issue={issue.issue} />
-        ))}
-      </div>
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {issues.map((issue: Issue, index: number) => (
+              <div key={index}>
+                <SectionIssue
+                  id={issue.id}
+                  type={issue.type}
+                  issue={issue.issue}
+                  index={index}
+                />
+              </div>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
