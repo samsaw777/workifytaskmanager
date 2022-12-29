@@ -139,10 +139,10 @@ const IssueModal = ({
           setSelectedItem(MenuItems[0]);
           setIssueCheck("");
           // setIssuesFunction(index, res.data);
-          const sprint: any = sprints.filter(
-            (s: any) => s.id === sprintDetails.id
-          );
-          sprint[0]?.issues?.push(res.data);
+          // const sprint: any = sprints.filter(
+          //   (s: any) => s.id === sprintDetails.id
+          // );
+          // sprint[0]?.issues?.push(res.data);
 
           socket.emit("issueCreated", {
             projectId: id,
