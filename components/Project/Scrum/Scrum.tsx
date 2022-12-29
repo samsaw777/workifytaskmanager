@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import IssueModal from "../../Modals/IssueModal";
-import SprintModal from "../../Modals/SprintModal";
 import { ProjectState } from "../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import Backlog from "./Backloq/Backlog";
 import Sprint from "./Sprints/Sprint";
+import io, { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 const Scrum = () => {
   const {
@@ -17,6 +18,12 @@ const Scrum = () => {
   } = ProjectState();
 
   console.log(board);
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
 
   const fetchSprints = async () => {
     try {
@@ -33,7 +40,7 @@ const Scrum = () => {
   };
   useEffect(() => {
     fetchSprints();
-    console.log("running");
+    socketInit();
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -135,6 +142,7 @@ const Scrum = () => {
               setIsOpen={setIsOpen}
               setUpdateIssueDetails={setUpdateIssueDetails}
               setSprintDetails={setSprintDetails}
+              socket={socket}
             />
           );
         })}
@@ -153,6 +161,7 @@ const Scrum = () => {
           setIssueCheck={setIssueCheck}
           setSprintDetails={setSprintDetails}
           sprintDetails={sprintDetails}
+          socket={socket}
         />
         {/* <SprintModal /> */}
       </div>

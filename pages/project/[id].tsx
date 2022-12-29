@@ -77,6 +77,24 @@ const ProjectDetails = ({
             newSprintArray[sprintIndex].issues[issueIndex].issue = issue.issue;
             newSprintArray[sprintIndex].issues[issueIndex].type = issue.type;
             setSprints(newSprintArray);
+          } else if (
+            projectId === ProjectId &&
+            section == "backlog" &&
+            type == "deleteissue"
+          ) {
+            const sprintIndex: number = sprints.findIndex(
+              (sprint: any) => sprint.id === sprintId
+            );
+
+            const sprint = JSON.parse(JSON.stringify(sprints));
+
+            sprint[sprintIndex].issues = [
+              ...sprint[sprintIndex].issues.filter(
+                (i: any) => i.id !== issue.id
+              ),
+            ];
+
+            setSprints(sprint);
           }
         }
       );

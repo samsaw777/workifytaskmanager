@@ -5,6 +5,7 @@ import { RiArrowDropDownLine } from "react-icons/Ri";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
 import SprintModal from "../../../Modals/SprintModal";
+import { Socket } from "socket.io-client";
 interface Sprint {
   sprintName: string;
   boardId: number;
@@ -28,6 +29,7 @@ interface Props {
   setSprintDetails: React.Dispatch<
     React.SetStateAction<{ id: number; sprintName: string }>
   >;
+  socket: Socket;
 }
 
 const Sprint = ({
@@ -37,6 +39,7 @@ const Sprint = ({
   setUpdateIssueDetails,
   index,
   setSprintDetails,
+  socket,
 }: Props) => {
   const openIssueModal = () => {
     setIsOpen(!isOpen);
@@ -97,6 +100,7 @@ const Sprint = ({
                         isOpen={isOpen}
                         setIsOpen={setIsOpen}
                         setUpdateIssueDetails={setUpdateIssueDetails}
+                        socket={socket}
                       />
                     );
                   })}

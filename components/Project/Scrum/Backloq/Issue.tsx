@@ -8,6 +8,7 @@ import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import { Draggable } from "react-beautiful-dnd";
+import { Socket } from "socket.io-client";
 interface Issue {
   id: number;
   type: string;
@@ -31,6 +32,7 @@ interface Props {
   issue: any;
   index: number;
   isOpen: boolean;
+  socket: Socket;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
 }
@@ -40,9 +42,15 @@ const Issue = ({
   index,
   isOpen,
   setIsOpen,
+  socket,
   setUpdateIssueDetails,
 }: Props) => {
-  const { sprints, setSprints } = ProjectState();
+  const {
+    sprints,
+    setSprints,
+    project: { id },
+    members,
+  } = ProjectState();
   console.log(sprints);
   const [openOption, setOpenOption] = useState<boolean>(false);
 
@@ -63,19 +71,15 @@ const Issue = ({
         })
 
         .then((response) => {
-          const sprintIndex: number = sprints.findIndex(
-            (sprint: any) => sprint.id === sprintId
-          );
-
-          const sprint = JSON.parse(JSON.stringify(sprints));
-
-          sprint[sprintIndex].issues = [
-            ...sprint[sprintIndex].issues.filter(
-              (issue: any) => issue.id !== issueId
-            ),
-          ];
-
-          setSprints(sprint);
+          socket.emit("issueCreated", {
+            projectId: id,
+            members,
+            sprintId: sprintId,
+            issue: response.data,
+            section: "backlog",
+            type: "deleteissue",
+            sprints,
+          });
           setOpenOption(!openOption);
 
           Toast.success("Issue Deleted!", {

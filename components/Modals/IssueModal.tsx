@@ -4,9 +4,7 @@ import { ProjectState } from "../../Context/ProjectContext";
 import Toast from "react-hot-toast";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
-import io from "socket.io-client";
-
-let socket: any;
+import io, { Socket } from "socket.io-client";
 
 type UpdateIssue = {
   type: string;
@@ -26,6 +24,7 @@ interface Props {
     React.SetStateAction<{ id: number; sprintName: string }>
   >;
   sprintDetails: { id: number; sprintName: string };
+  socket: Socket;
 }
 
 interface Item {
@@ -60,6 +59,7 @@ const IssueModal = ({
   setIssueCheck,
   setSprintDetails,
   sprintDetails,
+  socket,
 }: Props) => {
   const {
     setIssues,
@@ -73,14 +73,7 @@ const IssueModal = ({
     (item) => item.title == updateIssueDetails.type
   );
 
-  const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
-
-    socket = io();
-  };
-
   useEffect(() => {
-    socketInit();
     if (Object.keys(updateIssueDetails).length > 0) {
       setSelectedItem(
         updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
@@ -173,12 +166,6 @@ const IssueModal = ({
           issue: issueName,
         })
         .then((res) => {
-          // const sprint: any = sprints.filter(
-          //   (sprint: any) => sprint.id === updateIssueDetails.sprintId
-          // );
-          // sprint[0].issues[updateIssueDetails.index].issue = res.data.issue;
-          // sprint[0].issues[updateIssueDetails.index].type = res.data.type;
-
           socket.emit("issueCreated", {
             projectId: id,
             members,
