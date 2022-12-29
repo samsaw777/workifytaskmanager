@@ -4,6 +4,9 @@ import { ProjectState } from "../../Context/ProjectContext";
 import Toast from "react-hot-toast";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
+import io from "socket.io-client";
+
+let socket: any;
 
 type UpdateIssue = {
   type: string;
@@ -61,7 +64,7 @@ const IssueModal = ({
   const {
     setIssues,
     issues,
-    project: { id, board },
+    project: { id, board, members },
     loggedInUser,
     sprints,
   } = ProjectState();
@@ -69,7 +72,15 @@ const IssueModal = ({
   const updateItem = MenuItems.filter(
     (item) => item.title == updateIssueDetails.type
   );
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
   useEffect(() => {
+    socketInit();
     if (Object.keys(updateIssueDetails).length > 0) {
       setSelectedItem(
         updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
@@ -132,6 +143,16 @@ const IssueModal = ({
             (s: any) => s.id === sprintDetails.id
           );
           sprint[0]?.issues?.push(res.data);
+
+          socket.emit("issueCreated", {
+            projectId: id,
+            members,
+            sprintId: sprintDetails.id,
+            issue: res.data,
+            section: "backlog",
+            type: "addissue",
+            sprints,
+          });
           setIsOpen(!isOpen);
           Toast.success("Issue Created!", { id: notification });
         });

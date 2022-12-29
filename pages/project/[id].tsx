@@ -10,12 +10,12 @@ import io from "socket.io-client";
 import { ProjectState } from "../../Context/ProjectContext";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
+let socket: any;
+
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
   throw new Error("No Secret");
 }
-
-let socket: any;
 
 interface User {
   id: string;
@@ -31,7 +31,7 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  const { setMembers, setLoggedInUser, setProject, setSprints, setSections } =
+  const { setMembers, setLoggedInUser, setProject, setSprints } =
     ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
@@ -40,8 +40,31 @@ const ProjectDetails = ({
     await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
-
     socket.emit("joinproject", { id: projectId });
+
+    socket.on(
+      "issues",
+      ({ sprintId, issue, ProjectId, section, type, sprints }: any) => {
+        console.log("called");
+        if (
+          projectId === ProjectId &&
+          section == "backlog" &&
+          type == "addissue"
+        ) {
+          let newSprintArray = JSON.parse(JSON.stringify(sprints));
+          const sprintIndex = newSprintArray.findIndex(
+            (sprint: any) => sprint.id == sprintId
+          );
+          newSprintArray[sprintIndex].issues = [
+            ...newSprintArray[sprintIndex].issues,
+            issue,
+          ];
+          setSprints(newSprintArray);
+        }
+        console.log(sprints);
+      }
+    );
+
     socket.on("members", (memberDetails: any) => {
       if (
         memberDetails.project.projectId === projectId &&
@@ -86,13 +109,23 @@ const ProjectDetails = ({
     });
   };
 
+  const value = async () => {
+    // let socket = await socketInit();
+  };
+
   useEffect(() => {
     setLoggedInUser(loggedInUser);
-    socketInit();
+
     setProject(project);
+    socketInit();
+
+    return () => {
+      socket.off("members");
+      socket.off("issues");
+    };
   }, []);
 
-  useEffect(() => {});
+  // useEffect(() => {});
   return (
     <div className="flex h-screen">
       <ProjectSidebar
@@ -145,6 +178,7 @@ export async function getServerSideProps(context: any) {
       id: projectId,
     },
     include: {
+      members: true,
       board: {
         include: {
           sprints: {

@@ -33,6 +33,7 @@ const Scrum = () => {
   };
   useEffect(() => {
     fetchSprints();
+    console.log("running");
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);

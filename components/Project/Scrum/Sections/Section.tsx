@@ -30,8 +30,7 @@ const Section = ({ id, title, issues }: Props) => {
       <Droppable key={id} droppableId={id.toString()}>
         {(provided) => (
           <div
-            className="flex flex-col space-y-2 h-[90%] px-2 overflow-scroll
-                "
+            className="flex flex-col space-y-2 px-2"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
