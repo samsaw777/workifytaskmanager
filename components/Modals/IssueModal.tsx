@@ -173,12 +173,21 @@ const IssueModal = ({
           issue: issueName,
         })
         .then((res) => {
-          const sprint: any = sprints.filter(
-            (sprint: any) => sprint.id === updateIssueDetails.sprintId
-          );
-          sprint[0].issues[updateIssueDetails.index].issue = res.data.issue;
-          sprint[0].issues[updateIssueDetails.index].type = res.data.type;
+          // const sprint: any = sprints.filter(
+          //   (sprint: any) => sprint.id === updateIssueDetails.sprintId
+          // );
+          // sprint[0].issues[updateIssueDetails.index].issue = res.data.issue;
+          // sprint[0].issues[updateIssueDetails.index].type = res.data.type;
 
+          socket.emit("issueCreated", {
+            projectId: id,
+            members,
+            sprintId: sprintDetails.id,
+            issue: res.data,
+            section: "backlog",
+            type: "updateissue",
+            sprints,
+          });
           setIssueName("");
           setIssueCheck("");
           setSelectedItem(MenuItems[0]);

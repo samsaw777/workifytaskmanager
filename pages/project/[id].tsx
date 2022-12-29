@@ -60,52 +60,69 @@ const ProjectDetails = ({
             );
             newSprintArray[sprintIndex].issues.push(issue);
             setSprints(newSprintArray);
+          } else if (
+            projectId === ProjectId &&
+            section == "backlog" &&
+            type == "updateissue"
+          ) {
+            let newSprintArray = JSON.parse(JSON.stringify(sprints));
+            const sprintIndex = newSprintArray.findIndex(
+              (sprint: any) => sprint.id === sprintId
+            );
+
+            const issueIndex = newSprintArray[sprintIndex].issues.findIndex(
+              (i: any) => i.id == issue.id
+            );
+
+            newSprintArray[sprintIndex].issues[issueIndex].issue = issue.issue;
+            newSprintArray[sprintIndex].issues[issueIndex].type = issue.type;
+            setSprints(newSprintArray);
           }
         }
       );
 
-    // socket.on("members", (memberDetails: any) => {
-    //   if (
-    //     memberDetails.project.projectId === projectId &&
-    //     memberDetails.section == "members" &&
-    //     memberDetails.type == "addmember"
-    //   ) {
-    //     setMembers((current: any) => [
-    //       ...current,
-    //       memberDetails.newMemberDetails,
-    //     ]);
-    //   } else if (
-    //     memberDetails.project.projectId === projectId &&
-    //     memberDetails.section == "members" &&
-    //     memberDetails.type == "removemember"
-    //   ) {
-    //     setMembers((current: any) =>
-    //       current.filter(
-    //         (member: any) => member.id != memberDetails.newMemberDetails.id
-    //       )
-    //     );
-    //   } else if (
-    //     memberDetails.project.projectId === projectId &&
-    //     memberDetails.section == "members" &&
-    //     memberDetails.type == "makeadmin"
-    //   ) {
-    //     const newMembers = JSON.parse(
-    //       JSON.stringify(memberDetails.project.members)
-    //     );
-    //     newMembers[memberDetails.index].role = "ADMIN";
-    //     setMembers(newMembers);
-    //   } else if (
-    //     memberDetails.project.projectId === projectId &&
-    //     memberDetails.section == "members" &&
-    //     memberDetails.type == "makemember"
-    //   ) {
-    //     const newMembers = JSON.parse(
-    //       JSON.stringify(memberDetails.project.members)
-    //     );
-    //     newMembers[memberDetails.index].role = "MEMBER";
-    //     setMembers(newMembers);
-    //   }
-    // });
+    socket.on("members", (memberDetails: any) => {
+      if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "addmember"
+      ) {
+        setMembers((current: any) => [
+          ...current,
+          memberDetails.newMemberDetails,
+        ]);
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "removemember"
+      ) {
+        setMembers((current: any) =>
+          current.filter(
+            (member: any) => member.id != memberDetails.newMemberDetails.id
+          )
+        );
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "makeadmin"
+      ) {
+        const newMembers = JSON.parse(
+          JSON.stringify(memberDetails.project.members)
+        );
+        newMembers[memberDetails.index].role = "ADMIN";
+        setMembers(newMembers);
+      } else if (
+        memberDetails.project.projectId === projectId &&
+        memberDetails.section == "members" &&
+        memberDetails.type == "makemember"
+      ) {
+        const newMembers = JSON.parse(
+          JSON.stringify(memberDetails.project.members)
+        );
+        newMembers[memberDetails.index].role = "MEMBER";
+        setMembers(newMembers);
+      }
+    });
   };
 
   useEffect(() => {

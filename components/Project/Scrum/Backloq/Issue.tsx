@@ -42,7 +42,8 @@ const Issue = ({
   setIsOpen,
   setUpdateIssueDetails,
 }: Props) => {
-  const { issues, setIssues } = ProjectState();
+  const { sprints, setSprints } = ProjectState();
+  console.log(sprints);
   const [openOption, setOpenOption] = useState<boolean>(false);
 
   const updateIssue = (issue: UpdateIssue) => {
@@ -52,7 +53,7 @@ const Issue = ({
   };
 
   //Delete Issue.
-  const deleteIssue = async (issueId: number) => {
+  const deleteIssue = async (issueId: number, sprintId: number) => {
     const notification = Toast.loading("Deleting Issue!");
 
     try {
@@ -60,10 +61,22 @@ const Issue = ({
         .post(`${urlFetcher()}/api/scrum/issue/deleteissue`, {
           issueId,
         })
+
         .then((response) => {
-          setIssues([
-            ...issues.filter((issue) => issue.id != response.data.id),
-          ]);
+          const sprintIndex: number = sprints.findIndex(
+            (sprint: any) => sprint.id === sprintId
+          );
+
+          const sprint = JSON.parse(JSON.stringify(sprints));
+
+          sprint[sprintIndex].issues = [
+            ...sprint[sprintIndex].issues.filter(
+              (issue: any) => issue.id !== issueId
+            ),
+          ];
+
+          setSprints(sprint);
+          setOpenOption(!openOption);
 
           Toast.success("Issue Deleted!", {
             id: notification,
@@ -134,7 +147,7 @@ const Issue = ({
                   </div>
                   <div
                     className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
-                    onClick={() => deleteIssue(issue.id)}
+                    onClick={() => deleteIssue(issue.id, issue.sprintId)}
                   >
                     <AiOutlineDelete className="text-red-500" />
                     <span className="text-sm">Delete Issue</span>
