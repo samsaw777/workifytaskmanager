@@ -69,7 +69,7 @@ const Sprint = ({
         </div>
 
         {sprint.isPrimary && (
-          <SprintModal>
+          <SprintModal socket={socket}>
             <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
               create sprint
             </div>

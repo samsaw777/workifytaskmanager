@@ -31,7 +31,7 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  const { setMembers, setLoggedInUser, setProject, setSprints } =
+  const { setMembers, setLoggedInUser, setProject, setSprints, sprints } =
     ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
@@ -141,6 +141,20 @@ const ProjectDetails = ({
         setMembers(newMembers);
       }
     });
+
+    socket
+      .off("sprints")
+      .on("sprints", ({ ProjectId, sprint, type, section }: any) => {
+        if (
+          ProjectId === projectId &&
+          section === "backlog" &&
+          type === "addsprint"
+        ) {
+          const newSPrint = { ...sprint };
+          newSPrint.issues = [];
+          setSprints((current: any) => [newSPrint, ...current]);
+        }
+      });
   };
 
   useEffect(() => {
@@ -152,6 +166,7 @@ const ProjectDetails = ({
     return () => {
       // socket.off("members");
       socket.off("issues");
+      socket.off("sprints");
     };
   }, []);
 

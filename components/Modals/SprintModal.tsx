@@ -3,9 +3,12 @@ import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import { ProjectState } from "../../Context/ProjectContext";
+import io, { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 const SprintModal = ({ children }: any) => {
-  const { sprints, setSprints, project } = ProjectState();
+  const { sprints, setSprints, project, members } = ProjectState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [sprintName, setSprintName] = useState<string>("");
 
@@ -13,6 +16,16 @@ const SprintModal = ({ children }: any) => {
     setSprintName("");
     setIsOpen(!isOpen);
   };
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  React.useEffect(() => {
+    socketInit();
+  }, []);
 
   //function to create Sprints.
   const createSprint = async (e: any) => {
@@ -25,7 +38,14 @@ const SprintModal = ({ children }: any) => {
           boardId: parseInt(project.board[0].id),
         })
         .then((res) => {
-          setSprints([...sprints, res.data]);
+          socket.emit("sprintCreated", {
+            ProjectId: project.id,
+            sprint: res.data,
+            members,
+            type: "addsprint",
+            section: "backlog",
+          });
+          // setSprints([...sprints, res.data]);
           cancelSprint();
           Toast.success("Sprint Created!", {
             id: notification,

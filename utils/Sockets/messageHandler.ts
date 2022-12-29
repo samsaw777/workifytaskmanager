@@ -64,4 +64,28 @@ export default (io: any, socket: any) => {
       });
     }
   );
+
+  //Creating, Updating, Deleting sprints in backlogs and sprints.
+  //SprintDetails -> projectId, members, sprint, type, section
+  socket.on(
+    "sprintCreated",
+    (sprintDetails: {
+      ProjectId: number;
+      members: any;
+      sprint: any;
+      type: string;
+      section: string;
+    }) => {
+      const { members, ProjectId, sprint, type, section } = sprintDetails;
+
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("sprints", {
+        ProjectId,
+        sprint,
+        type,
+        section,
+      });
+    }
+  );
 };
