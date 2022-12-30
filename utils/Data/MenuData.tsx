@@ -32,7 +32,7 @@ export const projectMenu = [
     title: "Scrum",
     icon: <BiTask />,
     isSubMenu: true,
-    subMenu: [{ title: "sboard" }, { title: "backlog" }],
+    subMenu: [{ title: "scrumboard" }, { title: "backlog" }],
   },
   // {
   //   title: "KanBan",

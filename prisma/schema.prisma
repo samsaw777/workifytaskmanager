@@ -15,6 +15,7 @@ model User {
   profile   String
   password  String
   project Project[]
+  issues Issues[]
 }
 
 model Project{
@@ -28,7 +29,7 @@ model Project{
   isPrivate Boolean
   User User @relation(fields: [userId], references: [id],onDelete: Cascade)
   members Members[]
-
+  board Board[]
 }
 
 model Members{
@@ -40,3 +41,52 @@ model Members{
   projectId Int
   Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
 }
+
+model Issues{
+  id Int @id @default(autoincrement())
+  type String
+  issue String
+  projectId Int
+  username String
+  profile String
+  userId String
+  position Int
+  sectionId Int
+  sectionName String
+  sprintId Int
+  sprintName String
+  isUnderStartSprint Boolean
+  Sprint Sprint @relation(fields: [sprintId], references:[id], onDelete: Cascade)
+  Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Board{
+    id Int   @id @default(autoincrement())
+    type String
+    projectId Int
+    Project Project @relation(fields: [projectId], references: [id],onDelete: Cascade)
+    sections Section[]
+    sprints Sprint[]
+}
+
+model Section{
+  id Int @id @default(autoincrement())
+  title String
+  boardId Int
+  Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
+  issues Issues[]
+}
+
+model Sprint{
+  id Int @id @default(autoincrement())
+  sprintName String @unique
+  boardId Int
+  isUnderStartSprint Boolean
+  isPrimary Boolean
+  Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
+  issues Issues[]
+}
+
+

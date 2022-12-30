@@ -34,12 +34,72 @@ export default (io: any, socket: any) => {
     if (!project.members) return console.log("Members not Found!");
 
     socket.to(project.projectId).emit("members", memberDetails);
-
-    project.members.forEach((member: any) => {
-      if (member.userId == memberDetails.senderId) return;
-
-      // socket.in(member.userId).emit("memberlist", memberDetails);
-      // socket.in(project.projectId).emit("members", memberDetails);
-    });
   });
+
+  //Creating socket to send the issues created in backlog and sprints.
+  //IssueDetails -> members, projectId, sprints, sprintId, issuesDetails
+  socket.on(
+    "issueCreated",
+    (issueDetails: {
+      projectId: number;
+      members: any;
+      sprintId: number;
+      issue: any;
+      section: string;
+      type: string;
+      sprints: any;
+    }) => {
+      const { projectId, members, sprintId, issue, section, type, sprints } =
+        issueDetails;
+
+      if (!members) return console.log("Members not found!");
+
+      socket.to(projectId).emit("issues", {
+        sprintId,
+        issue,
+        ProjectId: projectId,
+        section,
+        type,
+        sprints,
+      });
+    }
+  );
+
+  //Creating, Updating, Deleting sprints in backlogs and sprints.
+  //SprintDetails -> projectId, members, sprint, type, section
+  socket.on(
+    "sprintCreated",
+    (sprintDetails: {
+      ProjectId: number;
+      members: any;
+      sprint: any;
+      type: string;
+      section: string;
+    }) => {
+      const { members, ProjectId, sprint, type, section } = sprintDetails;
+
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("sprints", {
+        ProjectId,
+        sprint,
+        type,
+        section,
+      });
+    }
+  );
+
+  socket.on(
+    "issueDraggedInSprint",
+    ({ ProjectId, members, type, section, sprint }: any) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("draggedInSprint", {
+        ProjectId,
+        type,
+        section,
+        sprint,
+      });
+    }
+  );
 };
