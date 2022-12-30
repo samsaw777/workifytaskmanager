@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RiArrowDropUpLine } from "react-icons/Ri";
+import { MdArrowDropDown } from "react-icons/md";
 
 interface Item {
   id: number;
@@ -67,9 +67,9 @@ const Dropdown = ({
           ></div>
           <span className="text-sm font-normal">{selectedItem?.title}</span>
         </div>
-        <RiArrowDropUpLine
-          className={`text-2xl rotate-180 ${
-            isOpen && "rotate-0"
+        <MdArrowDropDown
+          className={`text-2xl  ${
+            isOpen && "rotate-180"
           } transition duration-150`}
         />
       </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import { AiFillEdit, AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
-import { RiArrowDropDownLine } from "react-icons/Ri";
+import { MdArrowDropDown } from "react-icons/md";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
 import SprintModal from "../../../Modals/SprintModal";
@@ -123,7 +123,7 @@ const Sprint = ({
           className="flex space-x-1 items-center cursor-pointer flex-1 py-1"
           onClick={() => setOpenSprint(!openSprint)}
         >
-          <RiArrowDropDownLine
+          <MdArrowDropDown
             className={`text-2xl ${
               !openSprint && "-rotate-90"
             } transition duration-150`}
