@@ -172,13 +172,7 @@ const Scrum = () => {
             />
           );
         })}
-        {/* <Backlog
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setUpdateIssueDetails={setUpdateIssueDetails}
-          setIssueCheck={setIssueCheck}
-          setIndex={setIndex}
-        /> */}
+
         <IssueModal
           isOpen={isOpen}
           setIsOpen={setIsOpen}
@@ -189,7 +183,6 @@ const Scrum = () => {
           sprintDetails={sprintDetails}
           socket={socket}
         />
-        {/* <SprintModal /> */}
       </div>
     </DragDropContext>
   );
