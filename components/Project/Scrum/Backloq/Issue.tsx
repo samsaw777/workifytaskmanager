@@ -32,7 +32,7 @@ interface Props {
   issue: any;
   index: number;
   isOpen: boolean;
-  socket: Socket;
+  socket?: Socket;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
 }
@@ -71,7 +71,7 @@ const Issue = ({
         })
 
         .then((response) => {
-          socket.emit("issueCreated", {
+          socket?.emit("issueCreated", {
             projectId: id,
             members,
             sprintId: sprintId,

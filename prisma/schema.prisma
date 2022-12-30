@@ -56,7 +56,7 @@ model Issues{
   sprintId Int
   sprintName String
   isUnderStartSprint Boolean
-  Sprint Sprint @relation(fields: [sprintName], references:[sprintName], onDelete: Cascade)
+  Sprint Sprint @relation(fields: [sprintId], references:[id], onDelete: Cascade)
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

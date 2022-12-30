@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { ProjectState } from "../../../../Context/ProjectContext";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiFillEdit, AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 import { RiArrowDropDownLine } from "react-icons/Ri";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "../Backloq/Issue";
 import SprintModal from "../../../Modals/SprintModal";
 import { Socket } from "socket.io-client";
+import { BiDotsVerticalRounded } from "react-icons/bi";
+
 interface Sprint {
   sprintName: string;
   boardId: number;
@@ -30,6 +32,18 @@ interface Props {
     React.SetStateAction<{ id: number; sprintName: string }>
   >;
   socket: Socket;
+  setUpdateSprintDetails: React.Dispatch<
+    React.SetStateAction<{
+      sprintId: number;
+      index: number;
+      sprintName: string;
+    }>
+  >;
+  updateSprintDetails: {
+    sprintId: number;
+    index: number;
+    sprintName: string;
+  };
 }
 
 const Sprint = ({
@@ -40,14 +54,27 @@ const Sprint = ({
   index,
   setSprintDetails,
   socket,
+  setUpdateSprintDetails,
+  updateSprintDetails,
 }: Props) => {
   const openIssueModal = () => {
     setIsOpen(!isOpen);
     setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
   };
+  const [isSprintModalOpen, setIsSprintModalOpen] = useState<boolean>(false);
 
-  const { issues } = ProjectState();
   const [openSprint, setOpenSprint] = useState<boolean>(true);
+  const [openOptions, setOpenOptions] = useState<boolean>(false);
+
+  const openUpdateModal = (
+    sprintId: number,
+    sprintIndex: number,
+    sprintName: string
+  ) => {
+    setUpdateSprintDetails({ sprintId, index: sprintIndex, sprintName });
+    setIsSprintModalOpen(!isSprintModalOpen);
+    setOpenOptions(!openOptions);
+  };
   return (
     <div
       className={`flex flex-col space-y-2 ${
@@ -69,11 +96,12 @@ const Sprint = ({
         </div>
 
         {sprint.isPrimary && (
-          <SprintModal socket={socket}>
-            <div className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-              create sprint
-            </div>
-          </SprintModal>
+          <div
+            className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200"
+            onClick={() => setIsSprintModalOpen(!isSprintModalOpen)}
+          >
+            create sprint
+          </div>
         )}
 
         {!sprint.isPrimary && (
@@ -81,6 +109,48 @@ const Sprint = ({
             start sprint
           </div>
         )}
+
+        <div className="relative mx-2 cursor-pointer">
+          <BiDotsVerticalRounded
+            className="curosr-pointer hover:bg-blue-200 text-2xl rounded-sm p-1"
+            onClick={() => setOpenOptions(!openOptions)}
+          />
+          {openOptions && (
+            <div className="absolute w-[140px] bg-white shadow-md rounded-md right-2 top-8 z-10  flex flex-col">
+              <div
+                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                // onClick={() =>
+                //   updateIssue({
+                //     id: issue.id,
+                //     issue: issue.issue,
+                //     type: issue.type,
+                //     sprintId: issue.sprintId,
+                //     index,
+                //   })
+                // }
+              >
+                <AiFillEdit className="text-green-500" />
+
+                <span
+                  className="text-sm"
+                  onClick={() =>
+                    openUpdateModal(sprint.id, index, sprint.sprintName)
+                  }
+                >
+                  Edit Sprint
+                </span>
+              </div>
+
+              <div
+                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                // onClick={() => deleteIssue(issue.id, issue.sprintId)}
+              >
+                <AiOutlineDelete className="text-red-500" />
+                <span className="text-sm">Delete Sprint</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       {openSprint && (
         <Droppable key="sprintOne" droppableId={sprint.id.toString()}>
@@ -131,6 +201,12 @@ const Sprint = ({
           )}
         </Droppable>
       )}
+      <SprintModal
+        setUpdateSprintDetails={setUpdateSprintDetails}
+        updateSprintDetails={updateSprintDetails}
+        setIsSprintModalOpen={setIsSprintModalOpen}
+        isSprintModalOpen={isSprintModalOpen}
+      />
     </div>
   );
 };

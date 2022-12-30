@@ -44,6 +44,7 @@ const Scrum = () => {
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);
+
   const [updateIssueDetails, setUpdateIssueDetails] = useState<{
     type: string;
     id: number;
@@ -51,8 +52,14 @@ const Scrum = () => {
     sprintId: number;
     index: number;
   }>({ type: "Story", id: 0, issue: "", sprintId: 0, index: -1 });
+
+  const [updateSprintDetails, setUpdateSprintDetails] = useState<{
+    sprintId: number;
+    index: number;
+    sprintName: string;
+  }>({ sprintId: 0, index: -1, sprintName: "" });
   const [issueCheck, setIssueCheck] = useState<string>("");
-  // const [index, setIndex] = useState<number>(-1);
+
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
     sprintName: string;
@@ -143,6 +150,8 @@ const Scrum = () => {
               setUpdateIssueDetails={setUpdateIssueDetails}
               setSprintDetails={setSprintDetails}
               socket={socket}
+              setUpdateSprintDetails={setUpdateSprintDetails}
+              updateSprintDetails={updateSprintDetails}
             />
           );
         })}
