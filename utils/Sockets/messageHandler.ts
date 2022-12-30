@@ -88,4 +88,18 @@ export default (io: any, socket: any) => {
       });
     }
   );
+
+  socket.on(
+    "issueDraggedInSprint",
+    ({ ProjectId, members, type, section, sprint }: any) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("draggedInSprint", {
+        ProjectId,
+        type,
+        section,
+        sprint,
+      });
+    }
+  );
 };

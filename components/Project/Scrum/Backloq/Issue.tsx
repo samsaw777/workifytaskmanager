@@ -94,7 +94,11 @@ const Issue = ({
   };
 
   return (
-    <Draggable index={index} key={index} draggableId={issue.id.toString()}>
+    <Draggable
+      index={index}
+      key={issue.id.toString()}
+      draggableId={issue.id.toString()}
+    >
       {(provided, snapshot) => (
         <div
           className={`${

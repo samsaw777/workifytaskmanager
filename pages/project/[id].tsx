@@ -172,6 +172,19 @@ const ProjectDetails = ({
           setSprints([...sprints]);
         }
       });
+
+    socket.on(
+      "draggedInSprint",
+      ({ ProjectId, type, section, sprint }: any) => {
+        if (
+          ProjectId === projectId &&
+          type == "issuedrag" &&
+          section == "backlog"
+        ) {
+          setSprints([...sprint]);
+        }
+      }
+    );
   };
 
   useEffect(() => {
@@ -184,6 +197,7 @@ const ProjectDetails = ({
       // socket.off("members");
       socket.off("issues");
       socket.off("sprints");
+      socket.off("draggedInSprint");
     };
   }, []);
 

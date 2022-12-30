@@ -15,6 +15,7 @@ const Scrum = () => {
     project: { id, board },
     sprints,
     setSprints,
+    members,
   } = ProjectState();
 
   console.log(board);
@@ -69,11 +70,19 @@ const Scrum = () => {
   });
 
   const onDragEnd = async ({ source, destination }: DropResult) => {
-    const notification = Toast.loading("Changing Position!");
+    let notification: any;
     try {
       if (!destination) return;
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
 
-      //Create a new sprint array to update.
+      notification = Toast.loading("Changing Position!");
+
+      // Create a new sprint array to update.
       let newSprintArray = JSON.parse(JSON.stringify(sprints));
 
       //Find the source and destination index.
@@ -130,6 +139,14 @@ const Scrum = () => {
         .catch((error) => {
           console.log(error);
         });
+
+      socket.emit("issueDraggedInSprint", {
+        ProjectId: id,
+        members,
+        sprint: newSprintArray,
+        type: "issuedrag",
+        section: "backlog",
+      });
     } catch (error: any) {
       Toast.error(error.message, {
         id: notification,

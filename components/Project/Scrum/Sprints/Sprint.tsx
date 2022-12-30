@@ -191,7 +191,10 @@ const Sprint = ({
         )}
       </div>
       {openSprint && (
-        <Droppable key="sprintOne" droppableId={sprint.id.toString()}>
+        <Droppable
+          key={sprint.id.toString()}
+          droppableId={sprint.id.toString()}
+        >
           {(provided) => (
             <div
               ref={provided.innerRef}

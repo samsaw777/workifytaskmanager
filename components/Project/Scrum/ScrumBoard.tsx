@@ -31,9 +31,20 @@ const ScrumBoard = () => {
   }, []);
 
   const onDragEnd = async ({ source, destination }: DropResult) => {
-    const notification = Toast.loading("Changing Position");
+    let notification: any;
+
     try {
       if (!destination) return;
+
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
+
+      notification = Toast.loading("Changing Position");
+
       let sectionData = JSON.parse(JSON.stringify(sections));
 
       //Find the source and destination column index.
@@ -97,9 +108,9 @@ const ScrumBoard = () => {
   };
 
   return (
-    <div className="px-2">
+    <div className="px-2 overflow-x-auto w-full">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-5 w-full overflow-x-auto mt-2 h-[85vh] pb-2">
+        <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
           {sections.map(({ id, title, issues }: any, index: number) => {
             return (
               <div key={index}>

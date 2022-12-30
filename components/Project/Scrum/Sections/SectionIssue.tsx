@@ -11,7 +11,7 @@ interface Props {
 
 const SectionIssue = ({ issue, id, type, index }: Props) => {
   return (
-    <Draggable key={id} draggableId={id.toString()} index={index}>
+    <Draggable key={id.toString()} draggableId={id.toString()} index={index}>
       {(provided) => (
         <div
           className="p-2 rounded-md bg-white flex flex-col space-y-4 cursor-pointer"
