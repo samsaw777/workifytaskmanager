@@ -31,8 +31,14 @@ const ProjectDetails = ({
   projectTitle,
   project,
 }: any) => {
-  const { setMembers, setLoggedInUser, setProject, setSprints, sprints } =
-    ProjectState();
+  const {
+    setMembers,
+    setLoggedInUser,
+    setProject,
+    setSprints,
+    sprints,
+    setSections,
+  } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -182,6 +188,12 @@ const ProjectDetails = ({
           section == "backlog"
         ) {
           setSprints([...sprint]);
+        } else if (
+          ProjectId === projectId &&
+          type === "dragged" &&
+          section === "scrumboard"
+        ) {
+          setSections([...sprint]);
         }
       }
     );

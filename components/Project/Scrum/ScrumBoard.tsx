@@ -5,14 +5,23 @@ import Section from "./Sections/Section";
 import Toast from "react-hot-toast";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import axios from "axios";
+import io, { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 const ScrumBoard = () => {
   const {
     sections,
     setSections,
-    project: { board },
+    project: { board, id },
+    members,
   } = ProjectState();
 
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
   const fetchSprints = async () => {
     try {
       await axios
@@ -28,6 +37,7 @@ const ScrumBoard = () => {
   };
   useEffect(() => {
     fetchSprints();
+    socketInit();
   }, []);
 
   const onDragEnd = async ({ source, destination }: DropResult) => {
@@ -102,6 +112,13 @@ const ScrumBoard = () => {
         .catch((error) => {
           console.log(error);
         });
+      socket.emit("issueDraggedInSprint", {
+        ProjectId: id,
+        members,
+        sprint: sectionData,
+        type: "dragged",
+        section: "scrumboard",
+      });
     } catch (error: any) {
       console.log(Error);
     }
