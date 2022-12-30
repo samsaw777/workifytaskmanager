@@ -60,7 +60,12 @@ const Sprint = ({
   setUpdateSprintDetails,
   updateSprintDetails,
 }: Props) => {
-  const { sprints, setSprints } = ProjectState();
+  const {
+    sprints,
+    setSprints,
+    members,
+    project: { id },
+  } = ProjectState();
   const openIssueModal = () => {
     setIsOpen(!isOpen);
     setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
@@ -88,9 +93,13 @@ const Sprint = ({
           sprintId,
         })
         .then((res) => {
-          setSprints(
-            sprints.filter((sprint: any) => sprint.id !== res.data.id)
-          );
+          socket.emit("sprintCreated", {
+            ProjectId: id,
+            sprint: res.data,
+            members,
+            type: "deletesprint",
+            section: "backlog",
+          });
           setOpenOptions(openOptions);
           Toast.success("Sprint Deleted!", {
             id: notification,
@@ -137,47 +146,49 @@ const Sprint = ({
           </div>
         )}
 
-        <div className="relative mx-2 cursor-pointer">
-          <BiDotsVerticalRounded
-            className="curosr-pointer hover:bg-blue-200 text-2xl rounded-sm p-1"
-            onClick={() => setOpenOptions(!openOptions)}
-          />
-          {openOptions && (
-            <div className="absolute w-[140px] bg-white shadow-md rounded-md right-2 top-8 z-10  flex flex-col">
-              <div
-                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
-                // onClick={() =>
-                //   updateIssue({
-                //     id: issue.id,
-                //     issue: issue.issue,
-                //     type: issue.type,
-                //     sprintId: issue.sprintId,
-                //     index,
-                //   })
-                // }
-              >
-                <AiFillEdit className="text-green-500" />
-
-                <span
-                  className="text-sm"
-                  onClick={() =>
-                    openUpdateModal(sprint.id, index, sprint.sprintName)
-                  }
+        {sprint.sprintName != "BACKLOG" && (
+          <div className="relative mx-2 cursor-pointer">
+            <BiDotsVerticalRounded
+              className="curosr-pointer hover:bg-blue-200 text-2xl rounded-sm p-1"
+              onClick={() => setOpenOptions(!openOptions)}
+            />
+            {openOptions && (
+              <div className="absolute w-[140px] bg-white shadow-md rounded-md right-2 top-8 z-10  flex flex-col">
+                <div
+                  className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                  // onClick={() =>
+                  //   updateIssue({
+                  //     id: issue.id,
+                  //     issue: issue.issue,
+                  //     type: issue.type,
+                  //     sprintId: issue.sprintId,
+                  //     index,
+                  //   })
+                  // }
                 >
-                  Edit Sprint
-                </span>
-              </div>
+                  <AiFillEdit className="text-green-500" />
 
-              <div
-                className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
-                onClick={() => deleteSprint(sprint.id)}
-              >
-                <AiOutlineDelete className="text-red-500" />
-                <span className="text-sm">Delete Sprint</span>
+                  <span
+                    className="text-sm"
+                    onClick={() =>
+                      openUpdateModal(sprint.id, index, sprint.sprintName)
+                    }
+                  >
+                    Edit Sprint
+                  </span>
+                </div>
+
+                <div
+                  className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
+                  onClick={() => deleteSprint(sprint.id)}
+                >
+                  <AiOutlineDelete className="text-red-500" />
+                  <span className="text-sm">Delete Sprint</span>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
       {openSprint && (
         <Droppable key="sprintOne" droppableId={sprint.id.toString()}>

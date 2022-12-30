@@ -98,7 +98,13 @@ const SprintModal = ({
           sprintId: updateSprintDetails.sprintId,
         })
         .then((res) => {
-          sprints[updateSprintDetails.index].sprintName = res.data.sprintName;
+          socket.emit("sprintCreated", {
+            ProjectId: project.id,
+            sprint: res.data,
+            members,
+            type: "updatesprint",
+            section: "backlog",
+          });
           cancelSprint();
           Toast.success("Sprint Updated!", {
             id: notification,

@@ -153,6 +153,23 @@ const ProjectDetails = ({
           const newSPrint = { ...sprint };
           newSPrint.issues = [];
           setSprints((current: any) => [newSPrint, ...current]);
+        } else if (
+          ProjectId === projectId &&
+          section === "backlog" &&
+          type === "deletesprint"
+        ) {
+          setSprints(sprints.filter((s: any) => s.id != sprint.id));
+        } else if (
+          ProjectId === projectId &&
+          section === "backlog" &&
+          type === "updatesprint"
+        ) {
+          const sprintIndex = sprints.findIndex(
+            (Sprint: any) => Sprint.id !== sprint.id
+          );
+
+          sprints[sprintIndex].sprintName = sprint.sprintName;
+          setSprints([...sprints]);
         }
       });
   };
