@@ -7,6 +7,9 @@ import Issue from "../Backloq/Issue";
 import SprintModal from "../../../Modals/SprintModal";
 import { Socket } from "socket.io-client";
 import { BiDotsVerticalRounded } from "react-icons/bi";
+import Toast from "react-hot-toast";
+import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
+import axios from "axios";
 
 interface Sprint {
   sprintName: string;
@@ -57,6 +60,7 @@ const Sprint = ({
   setUpdateSprintDetails,
   updateSprintDetails,
 }: Props) => {
+  const { sprints, setSprints } = ProjectState();
   const openIssueModal = () => {
     setIsOpen(!isOpen);
     setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
@@ -74,6 +78,29 @@ const Sprint = ({
     setUpdateSprintDetails({ sprintId, index: sprintIndex, sprintName });
     setIsSprintModalOpen(!isSprintModalOpen);
     setOpenOptions(!openOptions);
+  };
+
+  const deleteSprint = async (sprintId: number) => {
+    const notification = Toast.loading("Deleting Sprint!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/sprint/deletesprint`, {
+          sprintId,
+        })
+        .then((res) => {
+          setSprints(
+            sprints.filter((sprint: any) => sprint.id !== res.data.id)
+          );
+          setOpenOptions(openOptions);
+          Toast.success("Sprint Deleted!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
   };
   return (
     <div
@@ -143,7 +170,7 @@ const Sprint = ({
 
               <div
                 className="flex space-x-2 items-center cursor-pointer hover:bg-gray-100 px-4 py-2"
-                // onClick={() => deleteIssue(issue.id, issue.sprintId)}
+                onClick={() => deleteSprint(sprint.id)}
               >
                 <AiOutlineDelete className="text-red-500" />
                 <span className="text-sm">Delete Sprint</span>
