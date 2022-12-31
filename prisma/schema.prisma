@@ -16,6 +16,7 @@ model User {
   password  String
   project Project[]
   issues Issues[]
+  tasks Task[]
 }
 
 model Project{
@@ -94,10 +95,15 @@ model Task{
   id String @id @default(uuid())
   title String
   description String?
+  username String
+  profile String
+    userId String
   position Int
   sectionId Int
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   comments TaskComments[]
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   labels TaskLabels[]
 }
 

@@ -1,6 +1,9 @@
 import React from "react";
 import SectionIssue from "./SectionIssue";
 import { Droppable } from "react-beautiful-dnd";
+import { ProjectState } from "../../../../Context/ProjectContext";
+import axios from "axios";
+import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 
 interface Issue {
   id: number;
@@ -22,6 +25,22 @@ interface Props {
 }
 
 const Section = ({ id, title, issues, type }: Props) => {
+  const { loggedInUser } = ProjectState();
+  const createTask = async (sectionId: number) => {
+    console.log("Starting");
+    await axios
+      .post(`${urlFetcher()}/api/kanban/createtask`, {
+        sectionId,
+        title: "First Task",
+        userId: loggedInUser.id,
+        username: loggedInUser.username,
+        profile: loggedInUser.profile,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+  };
+
   return (
     <div
       key={id}
@@ -49,7 +68,11 @@ const Section = ({ id, title, issues, type }: Props) => {
                 ))}
               </div>
             ) : (
-              <div>Tasks</div>
+              <div>
+                <div className=" cursor-pointer" onClick={() => createTask(id)}>
+                  Create Task
+                </div>
+              </div>
             )}
             {provided.placeholder}
           </div>
