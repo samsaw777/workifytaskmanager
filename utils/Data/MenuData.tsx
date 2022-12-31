@@ -34,12 +34,12 @@ export const projectMenu = [
     isSubMenu: true,
     subMenu: [{ title: "scrumboard" }, { title: "backlog" }],
   },
-  // {
-  //   title: "KanBan",
-  //   icon: <BiTask />,
-  //   isSubMenu: true,
-  //   subMenu: [{ title: "kboard" }],
-  // },
+  {
+    title: "KanBan",
+    icon: <BiTask />,
+    isSubMenu: true,
+    subMenu: [{ title: "kboard" }],
+  },
   // {
   //   title: "Bug",
   //   icon: <BiTask />,

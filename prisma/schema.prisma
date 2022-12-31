@@ -77,6 +77,7 @@ model Section{
   boardId Int
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
+  tasks Task[]
 }
 
 model Sprint{
@@ -87,6 +88,33 @@ model Sprint{
   isPrimary Boolean
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
+}
+
+model Task{
+  id String @id @default(uuid())
+  title String
+  description String?
+  position Int
+  sectionId Int
+  Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
+  comments TaskComments[]
+  labels TaskLabels[]
+}
+
+model TaskComments{
+  id Int @id @default(autoincrement())
+  userEmail String?
+  userProfile String?
+  comment String
+  taskId String
+  Task Task @relation(fields: [taskId], references: [id],onDelete: Cascade)
+}
+
+model TaskLabels{
+  id Int @id @default(autoincrement())
+  name String
+  taskId String
+  Task Task @relation(fields: [taskId], references: [id],onDelete: Cascade)
 }
 
 

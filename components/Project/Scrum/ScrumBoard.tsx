@@ -27,6 +27,7 @@ const ScrumBoard = () => {
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[0].id,
+          type: "SCRUM",
         })
         .then((res) => {
           setSections(res.data);
@@ -131,7 +132,7 @@ const ScrumBoard = () => {
           {sections.map(({ id, title, issues }: any, index: number) => {
             return (
               <div key={index}>
-                <Section id={id} title={title} issues={issues} />
+                <Section id={id} title={title} issues={issues} type="SCRUM" />
               </div>
             );
           })}

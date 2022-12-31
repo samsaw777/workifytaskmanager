@@ -18,9 +18,10 @@ interface Props {
   id: number;
   title: string;
   issues: Issue[];
+  type: string;
 }
 
-const Section = ({ id, title, issues }: Props) => {
+const Section = ({ id, title, issues, type }: Props) => {
   return (
     <div
       key={id}
@@ -34,16 +35,22 @@ const Section = ({ id, title, issues }: Props) => {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {issues.map((issue: Issue, index: number) => (
-              <div key={index}>
-                <SectionIssue
-                  id={issue.id}
-                  type={issue.type}
-                  issue={issue.issue}
-                  index={index}
-                />
+            {type == "SCRUM" ? (
+              <div>
+                {issues.map((issue: Issue, index: number) => (
+                  <div key={index}>
+                    <SectionIssue
+                      id={issue.id}
+                      type={issue.type}
+                      issue={issue.issue}
+                      index={index}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div>Tasks</div>
+            )}
             {provided.placeholder}
           </div>
         )}
