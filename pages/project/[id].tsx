@@ -40,7 +40,7 @@ const ProjectDetails = ({
     setSections,
   } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
-  const [showContent, setShowContent] = useState<string>("kboard");
+  const [showContent, setShowContent] = useState<string>("view");
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);

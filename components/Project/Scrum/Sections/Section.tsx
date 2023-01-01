@@ -4,6 +4,7 @@ import { Droppable } from "react-beautiful-dnd";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
+import KanbanTask from "../../Kanban/KanbanTask";
 
 interface Issue {
   id: number;
@@ -69,9 +70,17 @@ const Section = ({ id, title, issues, type }: Props) => {
               </div>
             ) : (
               <div>
-                <div className=" cursor-pointer" onClick={() => createTask(id)}>
-                  Create Task
-                </div>
+                {issues.map((issue: any, index: number) => (
+                  <div key={index}>
+                    <KanbanTask issue={issue} index={index} />
+                    {/* <div
+                      className=" cursor-pointer"
+                      onClick={() => createTask(id)}
+                    >
+                      Create Task
+                    </div> */}
+                  </div>
+                ))}
               </div>
             )}
             {provided.placeholder}
