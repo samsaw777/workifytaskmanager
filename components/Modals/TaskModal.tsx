@@ -25,14 +25,18 @@ interface Props {
   isOpen: boolean;
   task: Task;
   sectionName: string;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const TaskModal: FunctionComponent<Props> = ({
   isOpen,
   task,
   sectionName,
+  setIsOpen,
 }: Props) => {
-  const closeTaskModal = () => {};
+  const closeTaskModal = () => {
+    setIsOpen(!isOpen);
+  };
   const [loading, setLoading] = useState(false);
   const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");

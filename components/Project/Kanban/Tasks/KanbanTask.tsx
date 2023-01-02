@@ -3,11 +3,12 @@ import TaskModal from "../../../Modals/TaskModal";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <div
       className={`bg-white rounded-md p-2 flex flex-col space-y-2 border-t-4 border-t-blue-300  mb-3`}
+      onClick={() => setIsOpen(!isOpen)}
     >
       <form className="flex space-x-1 px-1">
         <input
@@ -65,7 +66,12 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
         )}
       </form>
 
-      <TaskModal isOpen={isOpen} task={issue} sectionName={sectionName} />
+      <TaskModal
+        isOpen={isOpen}
+        task={issue}
+        sectionName={sectionName}
+        setIsOpen={setIsOpen}
+      />
     </div>
   );
 };
