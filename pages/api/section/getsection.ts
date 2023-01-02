@@ -34,6 +34,13 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                 orderBy: {
                   position: "asc",
                 },
+                include: {
+                  labels: {
+                    orderBy: {
+                      id: "asc",
+                    },
+                  },
+                },
               }
             : false,
       },

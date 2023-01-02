@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import TaskModal from "../../Modals/TaskModal";
+import TaskModal from "../../../Modals/TaskModal";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
     <div

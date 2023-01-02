@@ -4,7 +4,7 @@ import { Droppable } from "react-beautiful-dnd";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
-import KanbanTask from "../../Kanban/KanbanTask";
+import KanbanTask from "../../Kanban/Tasks/KanbanTask";
 
 interface Issue {
   id: number;
