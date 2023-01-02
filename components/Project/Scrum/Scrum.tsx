@@ -156,7 +156,7 @@ const Scrum = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd} key="fdfd">
-      <div className="w-ful p-2 flex flex-col space-y-3">
+      <div className="w-full p-2 flex flex-col space-y-3">
         {sprints.map((sprint: any, index: number) => {
           return (
             <Sprint

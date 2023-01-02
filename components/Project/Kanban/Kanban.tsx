@@ -3,7 +3,7 @@ import axios from "axios";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import { ProjectState } from "../../../Context/ProjectContext";
 import Section from "../Scrum/Sections/Section";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const Kanban = () => {
   const {
@@ -48,59 +48,27 @@ const Kanban = () => {
   const onDragEnd = () => {};
 
   return (
-    <div className="mx-2 px-2 w-full">
-      <div
-        className="p-2 bg-blue-500 text-white w-fit rounded-md cursor-pointer"
-        onClick={createSection}
-      >
-        create section
-      </div>
+    <div className="px-2 mx-2 w-full">
+      <div onClick={() => createSection()}>Create Section</div>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-5 w-[90%] overflow-x-auto  mt-2 h-[70vh] pb-2 section-title">
+        <div className="flex space-x-5 w-full overflow-x-auto mt-2 h-[70vh] pb-2">
           {sections.map((section: any, index: number) => {
             return (
-              <div
-                className="h-full flex-none bg-gray-100 w-[350px] rounded-md"
-                key={index}
-              >
-                {/* <Section
+              <div key={index}>
+                <Section
                   id={section.id}
                   title={section.title}
                   issues={
                     board[1].type == "KANBAN" ? section.tasks : section.issues
                   }
                   type="KANBAN"
-                /> */}
+                />
               </div>
             );
           })}
         </div>
       </DragDropContext>
     </div>
-    // <div className="px-2 mx-2">
-    //   <div onClick={() => createSection()}>Create Section</div>
-    //   <DragDropContext onDragEnd={onDragEnd}>
-    //     <div className="flex space-x-5 w-full overflow-x-auto mt-2 h-[70vh] pb-2">
-    //       {sections.map((section: any, index: number) => {
-    //         return (
-    //           <div
-    //             key={index}
-    //             className="h-full flex-none w-[350px] rounded-md"
-    //           >
-    //             <Section
-    //               id={section.id}
-    //               title={section.title}
-    //               issues={
-    //                 board[1].type == "KANBAN" ? section.tasks : section.issues
-    //               }
-    //               type="KANBAN"
-    //             />
-    //           </div>
-    //         );
-    //       })}
-    //     </div>
-    //   </DragDropContext>
-    // </div>
   );
 };
 

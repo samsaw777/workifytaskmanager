@@ -215,15 +215,17 @@ const ProjectDetails = ({
 
   // useEffect(() => {});
   return (
-    <div className="flex h-screen">
-      <ProjectSidebar
-        openSidebar={openSideBar}
-        setShowContent={setShowContent}
-        projectTitle={projectTitle}
-        // showContent={showContent}
-      />
+    <div className="flex h-screen w-full">
+      <div className="">
+        <ProjectSidebar
+          openSidebar={openSideBar}
+          setShowContent={setShowContent}
+          projectTitle={projectTitle}
+          // showContent={showContent}
+        />
+      </div>
 
-      <div className="bg-gray-200 bg-opacity-5 flex-grow">
+      <div className="bg-gray-200 bg-opacity-5 overflow-hidden flex-grow">
         <TopBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
         {/* <ProjectMembers members={projectsDetail?.members} /> */}
         {/* hello */}
