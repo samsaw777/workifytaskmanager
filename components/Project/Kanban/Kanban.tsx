@@ -49,7 +49,7 @@ const Kanban = () => {
 
   return (
     <div className="px-2 w-full">
-      <div onClick={() => createSection()}>Create Section</div>
+      {/* <div onClick={() => createSection()}>Create Section</div> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex space-x-5 mt-2 h-[85vh] pb-2  overflow-x-auto">
           {sections.map((section: any, index: number) => {

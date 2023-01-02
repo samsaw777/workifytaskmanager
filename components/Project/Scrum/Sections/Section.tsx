@@ -72,7 +72,11 @@ const Section = ({ id, title, issues, type }: Props) => {
               <div>
                 {issues.map((issue: any, index: number) => (
                   <div key={index}>
-                    <KanbanTask issue={issue} index={index} />
+                    <KanbanTask
+                      issue={issue}
+                      index={index}
+                      sectionName={title}
+                    />
                     {/* <div
                       className=" cursor-pointer"
                       onClick={() => createTask(id)}
