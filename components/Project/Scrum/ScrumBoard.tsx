@@ -131,7 +131,7 @@ const ScrumBoard = () => {
         <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
           {sections.map(({ id, title, issues }: any, index: number) => {
             return (
-              <div key={index}>
+              <div key={index} className="h-full flex-non w-[350px] rounded-md">
                 <Section id={id} title={title} issues={issues} type="SCRUM" />
               </div>
             );

@@ -43,21 +43,18 @@ const Section = ({ id, title, issues, type }: Props) => {
   };
 
   return (
-    <div
-      key={id}
-      className="h-[100%] flex-none bg-gray-100 w-[350px] rounded-md"
-    >
+    <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
       <div className="p-2 px-4 text-gray-500">{title}</div>
       <Droppable key="{id.toString()}" droppableId={id.toString()}>
         {(provided) => (
           <div
-            className="flex flex-col h-[100%] space-y-2 px-2"
+            className="flex flex-col space-y-2 px-2"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
             {type == "SCRUM" ? (
               <div>
-                {issues.map((issue: Issue, index: number) => (
+                {issues?.map((issue: Issue, index: number) => (
                   <div key={index}>
                     <SectionIssue
                       id={issue.id}
@@ -70,7 +67,7 @@ const Section = ({ id, title, issues, type }: Props) => {
               </div>
             ) : (
               <div>
-                {issues.map((issue: any, index: number) => (
+                {issues?.map((issue: any, index: number) => (
                   <div key={index}>
                     <KanbanTask
                       issue={issue}

@@ -222,6 +222,7 @@ const ProjectDetails = ({
         projectTitle={projectTitle}
         // showContent={showContent}
       />
+
       <div className="bg-gray-200 bg-opacity-5 flex-grow">
         <TopBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
         {/* <ProjectMembers members={projectsDetail?.members} /> */}
