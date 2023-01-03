@@ -2,6 +2,7 @@ import { FunctionComponent, useState, useEffect } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import Image from "next/image";
 import TaskLabel from "../Project/Kanban/Tasks/TaskLabels";
+import { ProjectState } from "../../Context/ProjectContext";
 
 export interface Label {
   id: number;
@@ -37,8 +38,9 @@ const TaskModal: FunctionComponent<Props> = ({
   const closeTaskModal = () => {
     setIsOpen(!isOpen);
   };
+  const { setLabels, labels } = ProjectState();
   const [loading, setLoading] = useState(false);
-  const [labels, setLabels] = useState<Label[]>([]);
+  // const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");
   const [showDescription, setShowDescription] = useState<boolean>(false);
   const [descLoading, setDescLoading] = useState<boolean>(false);
@@ -49,7 +51,6 @@ const TaskModal: FunctionComponent<Props> = ({
     if (Object.keys(task).length > 0) {
       setTitle(task.title ? task.title : "");
       setDescription(task.description ? task.description : "");
-      setLabels([...task.labels]);
     }
   }, [isOpen]);
 

@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TaskModal, { Label } from "../../../Modals/TaskModal";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
+import { ProjectState } from "../../../../Context/ProjectContext";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
+  const { setLabels, labels } = ProjectState();
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLabels([...issue.labels]);
+  }, []);
 
   return (
     <div
@@ -68,7 +74,7 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
       </form>
       <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
         <div className="flex flex-wrap p-1 gap-2">
-          {issue?.labels?.map((label: Label, index: number) => (
+          {labels?.map((label: Label, index: number) => (
             <div
               className="bg-gray-100 py-1 px-2 rounded-sm font-medium text-gray-600 text-sm"
               key={index}
@@ -79,14 +85,18 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs">Desc</div>
-          <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
-            <Image
-              src={issue.profile}
-              width={100}
-              height={100}
-              alt="UserProfile"
-            />
-          </div>
+          {issue.profile !== "" ? (
+            <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+              <Image
+                src={issue.profile}
+                width={100}
+                height={100}
+                alt="UserProfile"
+              />
+            </div>
+          ) : (
+            <FaUserCircle className="text-2xl text-violet-400 cursor-pointer" />
+          )}
         </div>
       </div>
       <TaskModal
