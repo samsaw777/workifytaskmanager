@@ -24,9 +24,26 @@ interface Props {
   issues: Issue[];
   type: string;
   boardId: number;
+  deleteSection: (sectionId: number) => Promise<void>;
+  updateSection: (
+    e: any,
+    boardId: number,
+    title: string,
+    id: number,
+    setSectionTitle: React.Dispatch<React.SetStateAction<string>>,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ) => Promise<void>;
 }
 
-const Section = ({ id, title, issues, type, boardId }: Props) => {
+const Section = ({
+  id,
+  title,
+  issues,
+  type,
+  boardId,
+  deleteSection,
+  updateSection,
+}: Props) => {
   const { loggedInUser } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,30 +63,39 @@ const Section = ({ id, title, issues, type, boardId }: Props) => {
       });
   };
 
-  const updateSection = async (e: any) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await axios
-        .post(`${urlFetcher()}/api/section/updatesection`, {
-          boardId,
-          title: sectionTitle,
-          id,
-        })
-        .then((response) => {
-          setSectionTitle(response.data.title);
-          setLoading(false);
-        });
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
+  // const updateSection = async (e: any) => {
+  //   e.preventDefault();
+  //   try {
+  //     setLoading(true);
+  //     await axios
+  //       .post(`${urlFetcher()}/api/section/updatesection`, {
+  //         boardId,
+  //         title: sectionTitle,
+  //         id,
+  //       })
+  //       .then((response) => {
+  //         setSectionTitle(response.data.title);
+  //         setLoading(false);
+  //       });
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   return (
     <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
       <form
         className="flex space-x-1 px-2 py-2 border-b-2 border-b-gray-300"
-        onSubmit={(e) => updateSection(e)}
+        onSubmit={(e) =>
+          updateSection(
+            e,
+            boardId,
+            sectionTitle,
+            id,
+            setSectionTitle,
+            setLoading
+          )
+        }
       >
         <input
           onChange={(e) => setSectionTitle(e.target.value)}
@@ -89,7 +115,7 @@ const Section = ({ id, title, issues, type, boardId }: Props) => {
               strokeWidth={1.5}
               stroke="currentColor"
               className="w-6 h-6 text-red-300 cursor-pointer"
-              // onClick={() => deleteSection(section.id)}
+              onClick={() => deleteSection(id)}
             >
               <path
                 strokeLinecap="round"
