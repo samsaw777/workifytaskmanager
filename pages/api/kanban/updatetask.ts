@@ -3,16 +3,29 @@ import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { taskId, title } = req.body;
+    const { taskId, value, type } = req.body;
 
-    const updatedTask = await prisma.task.update({
-      where: {
-        id: taskId,
-      },
-      data: {
-        title,
-      },
-    });
+    let updatedTask;
+
+    if (type == "title") {
+      updatedTask = await prisma.task.update({
+        where: {
+          id: taskId,
+        },
+        data: {
+          title: value,
+        },
+      });
+    } else {
+      updatedTask = await prisma.task.update({
+        where: {
+          id: taskId,
+        },
+        data: {
+          description: value,
+        },
+      });
+    }
 
     res.status(200).json(updatedTask);
   } catch (error: any) {

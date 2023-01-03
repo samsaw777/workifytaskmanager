@@ -9,8 +9,11 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 const Kanban = () => {
   const {
     project: { board },
+
+    sections,
+    setSections,
   } = ProjectState();
-  const [sections, setSections] = useState<{}[]>([]);
+  // const [sections, setSections] = useState<{}[]>([]);
 
   const fetchKanbanSections = async () => {
     try {

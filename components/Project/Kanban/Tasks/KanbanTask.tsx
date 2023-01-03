@@ -3,25 +3,58 @@ import TaskModal, { Label } from "../../../Modals/TaskModal";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
 import { ProjectState } from "../../../../Context/ProjectContext";
+import axios from "axios";
+import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
-  // const { setLabels, labels } = ProjectState();
+  const { setSections, sections } = ProjectState();
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [labels, setLabels] = useState<Label[] | []>(issue.labels);
+  const [taskTitle, setTaskTitle] = useState<string>(issue.title);
 
   // useEffect(() => {
   //   setLabels([...issue.labels]);
   // }, []);
 
+  const updateTaskTitle = async (e: any) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/updatetasktitle`, {
+          taskId: issue.id,
+          title: taskTitle,
+        })
+        .then((response) => {
+          let sectionIndex = sections.findIndex(
+            (section) => section.id == issue.sectionId
+          );
+          let newData: any = JSON.parse(JSON.stringify(sections));
+          const index = newData[sectionIndex].tasks.findIndex(
+            (e: any) => e.id === issue.id
+          );
+          newData[sectionIndex].tasks[index].title = response.data.title;
+          setSections(newData);
+          setLoading(false);
+        });
+    } catch (error: any) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className={`bg-white rounded-md p-2 flex flex-col space-y-2 border-t-4 border-t-blue-300  mb-3`}
     >
-      <form className="flex space-x-1 px-1">
+      <form
+        className="flex space-x-1 px-1"
+        onSubmit={(e) => updateTaskTitle(e)}
+      >
         <input
-          onChange={(e) => {}}
-          value={issue.title}
+          onChange={(e) => setTaskTitle(e.target.value)}
+          value={taskTitle}
           className="w-full bg-transparent focus:border-2  focus:border-blue-700 focus:outline-none focus:bg-white p-1 rounded-md font-medium"
           placeholder="Untitled"
         />

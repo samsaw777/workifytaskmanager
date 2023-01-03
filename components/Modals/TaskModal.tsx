@@ -3,6 +3,8 @@ import { BiChevronDown } from "react-icons/bi";
 import Image from "next/image";
 import TaskLabel from "../Project/Kanban/Tasks/TaskLabels";
 import { ProjectState } from "../../Context/ProjectContext";
+import axios from "axios";
+import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
 export interface Label {
   id: number;
@@ -42,7 +44,7 @@ const TaskModal: FunctionComponent<Props> = ({
   const closeTaskModal = () => {
     setIsOpen(!isOpen);
   };
-  // const { setTask, task } = ProjectState();
+  const { sections, setSections } = ProjectState();
   const [loading, setLoading] = useState(false);
   // const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -57,6 +59,53 @@ const TaskModal: FunctionComponent<Props> = ({
       setDescription(task.description ? task.description : "");
     }
   }, [isOpen]);
+
+  const updateTaskInformation = async (e: any, type: string) => {
+    e.preventDefault();
+    try {
+      if (type == "title") {
+        setLoading(true);
+      } else {
+        setShowDescription(true);
+      }
+      await axios
+        .post(`${urlFetcher()}/api/kanban/updatetask`, {
+          taskId: task.id,
+          value: type == "title" ? title : description,
+          type,
+        })
+        .then((response) => {
+          let sectionIndex = sections.findIndex(
+            (section) => section.id == task.sectionId
+          );
+          let newData: any = JSON.parse(JSON.stringify(sections));
+          const index = newData[sectionIndex].tasks.findIndex(
+            (e: any) => e.id === task.id
+          );
+
+          if (type == "title") {
+            setTitle(response.data.title);
+            newData[sectionIndex].tasks[index].title = response.data.title;
+            setLoading(false);
+          } else {
+            setDescription(response.data.description);
+            task.description = response.data.description;
+            newData[sectionIndex].tasks[index].description =
+              response.data.description;
+
+            setShowDescription(false);
+          }
+          setSections(newData);
+        });
+    } catch (error: any) {
+      console.log(error.message);
+      if (type == "title") {
+        setLoading(false);
+      } else {
+        setShowDescription(false);
+      }
+    }
+  };
 
   return (
     <div
@@ -88,18 +137,9 @@ const TaskModal: FunctionComponent<Props> = ({
           <div className="w-[65%] pr-5">
             <div className="mt-2">
               <form
-                onSubmit={
-                  (e) => {}
-                  //   updateTask(
-                  //     e,
-                  //     taskDetails.taskId,
-                  //     taskDetails.sectionIndex,
-                  //     taskDetails.taskIndex,
-                  //     taskDetails.title,
-                  //     setCurrentTask,
-                  //     setLoading
-                  //   )
-                }
+                onSubmit={(e) => {
+                  updateTaskInformation(e, "title");
+                }}
               >
                 {/* Project Title */}
                 <div className="flex space-x-2">
@@ -179,15 +219,9 @@ const TaskModal: FunctionComponent<Props> = ({
                   } px-2`}
                 >
                   <form
-                    onSubmit={
-                      (e) => {}
-                      //   updateTaskDescription(
-                      //     e,
-                      //     taskDetails.taskId,
-                      //     taskDetails.sectionIndex,
-                      //     taskDetails.description
-                      //   )
-                    }
+                    onSubmit={(e) => {
+                      updateTaskInformation(e, "description");
+                    }}
                   >
                     <input
                       value={description}
