@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import TaskModal from "../../../Modals/TaskModal";
+import TaskModal, { Label } from "../../../Modals/TaskModal";
+import { FaUserCircle } from "react-icons/fa";
+import Image from "next/image";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -8,7 +10,6 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
   return (
     <div
       className={`bg-white rounded-md p-2 flex flex-col space-y-2 border-t-4 border-t-blue-300  mb-3`}
-      onClick={() => setIsOpen(!isOpen)}
     >
       <form className="flex space-x-1 px-1">
         <input
@@ -65,7 +66,29 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           </div>
         )}
       </form>
-
+      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+        <div className="flex flex-wrap p-1 gap-2">
+          {issue?.labels?.map((label: Label, index: number) => (
+            <div
+              className="bg-gray-100 py-1 px-2 rounded-sm font-medium text-gray-600 text-sm"
+              key={index}
+            >
+              {label.name}
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="text-xs">Desc</div>
+          <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+            <Image
+              src={issue.profile}
+              width={100}
+              height={100}
+              alt="UserProfile"
+            />
+          </div>
+        </div>
+      </div>
       <TaskModal
         isOpen={isOpen}
         task={issue}

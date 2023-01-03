@@ -3,6 +3,7 @@ import { Label } from "../../../Modals/TaskModal";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import Toast from "react-hot-toast";
+import TaskLabel from "./Label";
 
 interface Props {
   labels: Label[];
@@ -63,18 +64,16 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             onClick={() => setShowLabelInput(!showLabelInput)}
           >
             {labels?.map((label: Label, index: number) => (
-              <div key={index} className="flex">
-                <div className="bg-white px-2 text-sm text-gray-600 font-mediun ">
-                  {label.name}
-                </div>
-                {showLabelInput && (
-                  <div
-                    className="text-xs bg-red-400  px-1 cursor-pointer"
-                    onClick={() => deleteTaskLabel(label.id)}
-                  >
-                    X
-                  </div>
-                )}
+              <div key={index}>
+                <TaskLabel
+                  id={label.id}
+                  name={label.name}
+                  index={index}
+                  setLabels={setLabels}
+                  labels={labels}
+                  isInsideModal={true}
+                  showLabelInput={showLabelInput}
+                />
               </div>
             ))}
           </div>
