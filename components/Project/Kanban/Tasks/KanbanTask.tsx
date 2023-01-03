@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
+import Toast from "react-hot-toast";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
   const { setSections, sections } = ProjectState();
@@ -44,6 +45,34 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
     }
   };
 
+  const deleteTask = async (sectionId: number, taskId: string) => {
+    const notification = Toast.loading("Deleting Task!");
+
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/deletetask`, {
+          sectionId,
+          taskId,
+        })
+        .then((res) => {
+          Toast.success("Task Deleted!", {
+            id: notification,
+          });
+          const newData = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = newData.findIndex((e: any) => e.id == sectionId);
+          const taskIndex = newData[sectionIndex].tasks.findIndex(
+            (e: any) => e.id == taskId
+          );
+          newData[sectionIndex].tasks.splice(taskIndex, 1);
+          setSections(newData);
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
   return (
     <div
       className={`bg-white rounded-md p-2 flex flex-col space-y-2 border-t-4 border-t-blue-300  mb-3`}
@@ -71,7 +100,7 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
               stroke="currentColor"
               className="w-8 h-8 text-red-500 cursor-pointer hover:bg-red-200 hover:rounded-md p-2"
               // onClick={() => deleteSection(section.id)}
-              //   onClick={() => deleteTask(section.id, task.id)}
+              onClick={() => deleteTask(issue.sectionId, issue.id)}
             >
               <path
                 strokeLinecap="round"

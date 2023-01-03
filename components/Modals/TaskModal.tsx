@@ -66,7 +66,7 @@ const TaskModal: FunctionComponent<Props> = ({
       if (type == "title") {
         setLoading(true);
       } else {
-        setShowDescription(true);
+        setDescLoading(true);
       }
       await axios
         .post(`${urlFetcher()}/api/kanban/updatetask`, {
@@ -94,6 +94,7 @@ const TaskModal: FunctionComponent<Props> = ({
               response.data.description;
 
             setShowDescription(false);
+            setDescLoading(false);
           }
           setSections(newData);
         });
