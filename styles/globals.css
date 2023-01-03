@@ -46,3 +46,15 @@
   display: flex;
   overflow-x: scroll;
 }
+
+.section-title::-webkit-scrollbar {
+  border-radius: 20px;
+  height: 5px;
+  background: #e5e7eb;
+}
+
+.section-title::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 20px;
+  cursor: pointer;
+}
