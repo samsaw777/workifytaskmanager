@@ -10,7 +10,7 @@ export interface Label {
   taskId: number;
 }
 
-interface Task {
+export interface Task {
   id: number;
   title: string;
   description: string;
@@ -27,6 +27,8 @@ interface Props {
   task: Task;
   sectionName: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
+  labels: Label[] | [];
 }
 
 const TaskModal: FunctionComponent<Props> = ({
@@ -34,11 +36,13 @@ const TaskModal: FunctionComponent<Props> = ({
   task,
   sectionName,
   setIsOpen,
+  setLabels,
+  labels,
 }: Props) => {
   const closeTaskModal = () => {
     setIsOpen(!isOpen);
   };
-  const { setLabels, labels } = ProjectState();
+  // const { setTask, task } = ProjectState();
   const [loading, setLoading] = useState(false);
   // const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -250,9 +254,10 @@ const TaskModal: FunctionComponent<Props> = ({
                     </div>
                   </div>
                   <TaskLabel
-                    labels={labels}
                     taskId={task.id}
                     setLabels={setLabels}
+                    labels={labels}
+                    task={task}
                   />
                 </div>
               </div>

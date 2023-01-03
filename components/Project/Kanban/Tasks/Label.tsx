@@ -2,16 +2,15 @@ import React from "react";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import Toast from "react-hot-toast";
-import { Label } from "../../../Modals/TaskModal";
+import { Task } from "../../../Modals/TaskModal";
 
 interface Props {
   name: string;
   index: number;
   id: number;
   showLabelInput?: boolean;
-  labels: Label[];
-  setLabels: React.Dispatch<React.SetStateAction<Label[]>>;
   isInsideModal: boolean;
+  deleteTaskLabel: (labelId: number) => Promise<void>;
 }
 
 const Label: React.FunctionComponent<Props> = ({
@@ -19,27 +18,11 @@ const Label: React.FunctionComponent<Props> = ({
   name,
   id,
   showLabelInput,
-  labels,
-  setLabels,
   isInsideModal,
+  deleteTaskLabel,
 }: Props) => {
-  const deleteTaskLabel = async (labelId: number) => {
-    const notification = Toast.loading("Deleting Task");
-    try {
-      await axios
-        .post(`${urlFetcher()}/api/kanban/task/deletelabel`, {
-          labelId,
-        })
-        .then((res) => {
-          Toast.success("Label Deleted!", { id: notification });
-          setLabels(labels.filter((label: Label) => label.id !== res.data.id));
-        });
-    } catch (error: any) {
-      Toast.error(error.message, { id: notification });
-    }
-  };
   return (
-    <div key={index} className="flex">
+    <div key={index} className="flex items-center">
       <div
         className={`${
           isInsideModal ? "bg-white" : "bg-gray-100"
@@ -47,7 +30,7 @@ const Label: React.FunctionComponent<Props> = ({
       >
         {name}
       </div>
-      {showLabelInput && isInsideModal && (
+      {!showLabelInput && isInsideModal && (
         <div
           className="text-xs bg-red-400  px-1 cursor-pointer"
           onClick={() => deleteTaskLabel(id)}

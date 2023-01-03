@@ -5,13 +5,14 @@ import Image from "next/image";
 import { ProjectState } from "../../../../Context/ProjectContext";
 
 const KanbanTask = ({ issue, index, sectionName }: any) => {
-  const { setLabels, labels } = ProjectState();
+  // const { setLabels, labels } = ProjectState();
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [labels, setLabels] = useState<Label[] | []>(issue.labels);
 
-  useEffect(() => {
-    setLabels([...issue.labels]);
-  }, []);
+  // useEffect(() => {
+  //   setLabels([...issue.labels]);
+  // }, []);
 
   return (
     <div
@@ -104,6 +105,8 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
         task={issue}
         sectionName={sectionName}
         setIsOpen={setIsOpen}
+        setLabels={setLabels}
+        labels={labels}
       />
     </div>
   );

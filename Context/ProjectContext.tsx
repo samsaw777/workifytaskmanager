@@ -46,6 +46,18 @@ export interface Label {
   taskId: number;
 }
 
+interface Task {
+  id: number;
+  title: string;
+  profile: string;
+  username: string;
+  userId: string;
+  description: string;
+  positon: number;
+  sectionId: number;
+  labels: Label[] | [];
+}
+
 interface Context {
   loggedInUser: loggedInUser;
   members: Member[];
