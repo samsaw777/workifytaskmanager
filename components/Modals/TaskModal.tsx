@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from "react";
+import { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import Image from "next/image";
 import TaskLabel from "../Project/Kanban/Tasks/TaskLabels";
@@ -46,6 +46,10 @@ const TaskModal: FunctionComponent<Props> = ({
   };
   const { sections, setSections } = ProjectState();
   const [loading, setLoading] = useState(false);
+
+  const open = useMemo(() => {
+    return { isOpen: true };
+  }, [isOpen]);
   // const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");
   const [showDescription, setShowDescription] = useState<boolean>(false);
@@ -54,11 +58,12 @@ const TaskModal: FunctionComponent<Props> = ({
   const [showDetails, setShowDetails] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log("called");
     if (Object.keys(task).length > 0) {
       setTitle(task.title ? task.title : "");
       setDescription(task.description ? task.description : "");
     }
-  }, [isOpen]);
+  }, [open.isOpen]);
 
   const updateTaskInformation = async (e: any, type: string) => {
     e.preventDefault();
