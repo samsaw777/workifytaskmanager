@@ -47,20 +47,45 @@ const TaskModal: FunctionComponent<Props> = ({
   const { sections, setSections } = ProjectState();
   const [loading, setLoading] = useState(false);
 
-  // const [labels, setLabels] = useState<Label[]>([]);
-  const [title, setTitle] = useState<string>("");
+  const [title, setTitle] = useState<string>(task.title);
   const [showDescription, setShowDescription] = useState<boolean>(false);
   const [descLoading, setDescLoading] = useState<boolean>(false);
-  const [description, setDescription] = useState<string>("");
+  const [description, setDescription] = useState<string>(task.description);
   const [showDetails, setShowDetails] = useState<boolean>(true);
+  const [comments, setComments] = useState<{}[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
+
+  const fetchTaskComments = async (cancel: boolean) => {
+    try {
+      setCommentsLoading(true);
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/getcomments`, {
+          taskId: task.id,
+        })
+        .then((res) => {
+          if (!cancel) {
+            setComments(res.data);
+
+            setCommentsLoading(false);
+          }
+        });
+    } catch (error: any) {
+      console.log(error);
+      setCommentsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    console.log("called");
-    if (Object.keys(task).length > 0) {
-      setTitle(task.title ? task.title : "");
-      setDescription(task.description ? task.description : "");
-    }
-  }, [isOpen]);
+    // console.log("Fetching");
+    let cancel = false;
+
+    fetchTaskComments(cancel);
+
+    return () => {
+      cancel = true;
+      console.log("Cancelled");
+    };
+  }, []);
 
   const updateTaskInformation = async (e: any, type: string) => {
     e.preventDefault();
@@ -147,9 +172,10 @@ const TaskModal: FunctionComponent<Props> = ({
                 {/* Project Title */}
                 <div className="flex space-x-2">
                   <input
+                    placeholder="Add task a title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="py-1 px-2 text-gray-900 hover:bg-gray-200 w-full text-2xl font-medium focus:bg-white focus:border-2 focus:border-blue-400 focus:outline-none rounded-md"
+                    className="py-1 px-2 text-gray-900 hover:bg-gray-200 w-full text-2xl font-medium focus:bg-white focus:border-2 focus:border-blue-400 focus:outline-none rounded-md placeholder:text-md"
                   />
                   <button type="submit" className="hidden">
                     Bubmit
@@ -250,6 +276,15 @@ const TaskModal: FunctionComponent<Props> = ({
                   </form>
                 </div>
               </div>
+              {commentsLoading ? (
+                <div>Loading Comments...</div>
+              ) : (
+                <div>
+                  {comments?.map((comment: any, index: number) => (
+                    <div key={index}>{comment.comment}</div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="w-[35%]">

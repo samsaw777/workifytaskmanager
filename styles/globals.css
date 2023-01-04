@@ -58,3 +58,16 @@
   border-radius: 20px;
   cursor: pointer;
 }
+
+.taskarea::-webkit-scrollbar {
+  border-radius: 20px;
+  background: #e5e7eb;
+  width: 3px;
+}
+
+.taskarea::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  opacity: 20;
+  border-radius: 20px;
+  cursor: pointer;
+}

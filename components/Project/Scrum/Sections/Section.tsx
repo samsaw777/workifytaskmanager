@@ -164,7 +164,7 @@ const Section = ({
       <Droppable key="{id.toString()}" droppableId={id.toString()}>
         {(provided) => (
           <div
-            className="flex flex-col space-y-2 px-2 mt-2"
+            className="flex flex-col space-y-2 px-2 mt-2 h-[65vh] overflow-y-auto taskarea"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >

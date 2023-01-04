@@ -162,14 +162,16 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           )}
         </div>
       </div>
-      <TaskModal
-        isOpen={isOpen}
-        task={issue}
-        sectionName={sectionName}
-        setIsOpen={setIsOpen}
-        setLabels={setLabels}
-        labels={labels}
-      />
+      {isOpen && (
+        <TaskModal
+          isOpen={isOpen}
+          task={issue}
+          sectionName={sectionName}
+          setIsOpen={setIsOpen}
+          setLabels={setLabels}
+          labels={labels}
+        />
+      )}
     </div>
   );
 };
