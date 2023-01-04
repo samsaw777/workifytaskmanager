@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import TaskModal, { Label } from "../../../Modals/TaskModal";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
@@ -14,9 +14,7 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
   const [labels, setLabels] = useState<Label[] | []>(issue.labels);
   const [taskTitle, setTaskTitle] = useState<string>(issue.title);
 
-  // useEffect(() => {
-  //   setLabels([...issue.labels]);
-  // }, []);
+  const taskTitleTRef = useRef<HTMLInputElement>(null);
 
   const updateTaskTitle = async (e: any) => {
     e.preventDefault();
@@ -38,6 +36,7 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           newData[sectionIndex].tasks[index].title = response.data.title;
           setSections(newData);
           setLoading(false);
+          taskTitleTRef.current?.blur();
         });
     } catch (error: any) {
       console.log(error);
@@ -86,6 +85,7 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           value={taskTitle}
           className="w-full bg-transparent focus:border-2  focus:border-blue-700 focus:outline-none focus:bg-white p-1 rounded-md font-medium"
           placeholder="Untitled"
+          ref={taskTitleTRef}
         />
         <button type="submit" className="hidden">
           sumit

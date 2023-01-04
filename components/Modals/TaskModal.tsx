@@ -47,9 +47,6 @@ const TaskModal: FunctionComponent<Props> = ({
   const { sections, setSections } = ProjectState();
   const [loading, setLoading] = useState(false);
 
-  const open = useMemo(() => {
-    return { isOpen: true };
-  }, [isOpen]);
   // const [labels, setLabels] = useState<Label[]>([]);
   const [title, setTitle] = useState<string>("");
   const [showDescription, setShowDescription] = useState<boolean>(false);
@@ -63,7 +60,7 @@ const TaskModal: FunctionComponent<Props> = ({
       setTitle(task.title ? task.title : "");
       setDescription(task.description ? task.description : "");
     }
-  }, [open.isOpen]);
+  }, [isOpen]);
 
   const updateTaskInformation = async (e: any, type: string) => {
     e.preventDefault();

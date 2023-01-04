@@ -5,6 +5,7 @@ import { ProjectState } from "../../../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import KanbanTask from "../../Kanban/Tasks/KanbanTask";
+import Toast from "react-hot-toast";
 
 interface Issue {
   id: number;
@@ -44,23 +45,35 @@ const Section = ({
   deleteSection,
   updateSection,
 }: Props) => {
-  const { loggedInUser } = ProjectState();
+  const { loggedInUser, sections, setSections } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
 
   const createTask = async (sectionId: number) => {
-    await axios
-      .post(`${urlFetcher()}/api/kanban/createtask`, {
-        sectionId,
-        title: "First Task",
-        userId: loggedInUser.id,
-        username: loggedInUser.username,
-        profile: loggedInUser.profile,
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
+    const notification = Toast.loading("Creating Task");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/createtask`, {
+          sectionId,
+          title: "",
+          userId: loggedInUser.id,
+          username: loggedInUser.username,
+          profile: loggedInUser.profile,
+        })
+        .then((res) => {
+          let newSection = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section) => section.id === sectionId
+          );
+
+          newSection[sectionIndex].tasks.push(res.data);
+          setSections(newSection);
+          Toast.success("Task Created!", { id: notification });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, { id: notification });
+    }
   };
 
   // const updateSection = async (e: any) => {
@@ -177,17 +190,19 @@ const Section = ({
                       index={index}
                       sectionName={title}
                     />
-                    {/* <div
-                      className=" cursor-pointer"
-                      onClick={() => createTask(id)}
-                    >
-                      Create Task
-                    </div> */}
                   </div>
                 ))}
               </div>
             )}
             {provided.placeholder}
+            {type !== "SCRUM" && (
+              <div
+                className="text-md rounded-md p-2 font-medium hover:bg-gray-200 cursor-pointer text-gray-700"
+                onClick={() => createTask(id)}
+              >
+                + Add Task
+              </div>
+            )}
           </div>
         )}
       </Droppable>
