@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
+import axios from "axios";
+import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
+import toast from "react-hot-toast";
 
 interface Props {
   comment: string;
   username: string;
+  comments: {}[];
+  setComments: React.Dispatch<React.SetStateAction<{}[]>>;
   id: number;
   index: number;
   profile: string;
-  deleteTaskComment: (commentId: number) => Promise<void>;
-  updateTaskComment: (
-    commentId: number,
-    e: any,
-    index: number,
-    comment: string
-  ) => Promise<void>;
 }
 
 const Comment = ({
@@ -23,33 +21,96 @@ const Comment = ({
   id,
   index,
   profile,
-  deleteTaskComment,
-  updateTaskComment,
+  comments,
+  setComments,
 }: Props) => {
   const [userComment, setUserComment] = useState<string>(comment);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
+  const deleteTaskComment = async (commentId: number) => {
+    const notification = toast.loading("Deleting Comment!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/deletecomment`, {
+          id: commentId,
+        })
+        .then((res) => {
+          const allData = JSON.parse(JSON.stringify(comments));
+
+          const commentIndex = allData?.findIndex(
+            (comment: any) => comment.id === commentId
+          );
+
+          allData.splice(commentIndex, 1);
+
+          setComments(allData);
+
+          toast.success("Deleted Comment!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const updateTaskComment = async (
+    commentId: number,
+    e: any,
+    index: number,
+    comment: string
+  ) => {
+    e.preventDefault();
+    const notification = toast.loading("Updating Comment!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/updatecomment`, {
+          id: commentId,
+          comment,
+        })
+        .then((res) => {
+          const newTaskComments = JSON.parse(JSON.stringify(comments));
+
+          newTaskComments[index].comment = comment;
+
+          setComments(newTaskComments);
+
+          toast.success("Updated Comment!", {
+            id: notification,
+          });
+
+          setCurrentIndex(-1);
+        });
+    } catch (error: any) {
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
   return (
-    <div className="flex space-x-2 items-center mt-2 px-3">
+    <div className="flex space-x-2 mt-2 px-3">
       {profile == "" ? (
-        <FaUserCircle className="text-3xl text-violet-400 cursor-pointer" />
+        <FaUserCircle className="text-3xl text-violet-400 cursor-pointer mt-2" />
       ) : (
-        <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+        <div className="w-7 h-7 rounded-full items-center flex overflow-hidden mt-2">
           <Image src={profile} width={100} height={100} alt="UserProfile" />
         </div>
       )}
-      <div className="flex flex-col space-y-1 w-full">
-        <div className="text-sm font-medium text-gray-600">{username}</div>
+      <div className="flex flex-col w-full">
+        <div className="text-sm font-medium text-gray-500">{username}</div>
         <form
           className="w-full"
           onSubmit={(e) => updateTaskComment(id, e, index, userComment)}
         >
           <input
-            className={`text-md w-full  ${
+            className={`text-md w-full font-medium  ${
               currentIndex == index
-                ? "border-2 border-blue-500 p-2 rounded"
+                ? "border-2 border-blue-500 p-2 rounded font-normal"
                 : ""
-            } focus:outline-none`}
+            } focus:outline-none `}
             value={userComment}
             readOnly={currentIndex == index ? false : true}
             onChange={(e) => setUserComment(e.target.value)}
@@ -72,13 +133,13 @@ const Comment = ({
           ) : (
             <div className="flex space-x-2">
               <div
-                className="text-sm text-gray-500 font-semibold cursor-pointer"
+                className="text-xs text-gray-400 font-semibold cursor-pointer hover:text-gray-500"
                 onClick={() => setCurrentIndex(index)}
               >
                 Edit
               </div>
               <div
-                className="text-sm text-gray-500 font-semibold cursor-pointer"
+                className="text-xs text-gray-400 font-semibold cursor-pointer hover:text-gray-500"
                 onClick={() => deleteTaskComment(id)}
               >
                 Delete
