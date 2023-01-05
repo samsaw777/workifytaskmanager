@@ -281,15 +281,13 @@ const TaskModal: FunctionComponent<Props> = ({
                 <div className="px-2 text-gray-700 font-medium text-[15px]">
                   Activity
                 </div>
-                {commentsLoading ? (
-                  <div className="text-sm px-2">Loading Comments...</div>
-                ) : (
-                  <TaskComments
-                    setComments={setComments}
-                    comments={comments}
-                    taskId={task.id.toString()}
-                  />
-                )}
+
+                <TaskComments
+                  setComments={setComments}
+                  comments={comments}
+                  taskId={task.id.toString()}
+                  loading={commentsLoading}
+                />
               </div>
             </div>
           </div>
