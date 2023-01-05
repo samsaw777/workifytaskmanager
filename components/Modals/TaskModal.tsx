@@ -5,6 +5,7 @@ import TaskLabel from "../Project/Kanban/Tasks/TaskLabels";
 import { ProjectState } from "../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
+import TaskComments from "../Project/Kanban/Tasks/TaskComments";
 
 export interface Label {
   id: number;
@@ -276,15 +277,20 @@ const TaskModal: FunctionComponent<Props> = ({
                   </form>
                 </div>
               </div>
-              {commentsLoading ? (
-                <div>Loading Comments...</div>
-              ) : (
-                <div>
-                  {comments?.map((comment: any, index: number) => (
-                    <div key={index}>{comment.comment}</div>
-                  ))}
+              <div className="flex flex-col space-y-3 mt-2">
+                <div className="px-2 text-gray-700 font-medium text-[15px]">
+                  Activity
                 </div>
-              )}
+                {commentsLoading ? (
+                  <div className="text-sm px-2">Loading Comments...</div>
+                ) : (
+                  <TaskComments
+                    setComments={setComments}
+                    comments={comments}
+                    taskId={task.id.toString()}
+                  />
+                )}
+              </div>
             </div>
           </div>
           <div className="w-[35%]">

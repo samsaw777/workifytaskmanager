@@ -109,7 +109,7 @@ model Task{
 
 model TaskComments{
   id Int @id @default(autoincrement())
-  userEmail String?
+  username String?
   userProfile String?
   comment String
   taskId String
