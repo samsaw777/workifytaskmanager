@@ -83,7 +83,7 @@ model Section{
 
 model Sprint{
   id Int @id @default(autoincrement())
-  sprintName String @unique
+  sprintName String 
   boardId Int
   isUnderStartSprint Boolean
   isPrimary Boolean

@@ -8,9 +8,24 @@ interface Props {
   id: number;
   index: number;
   profile: string;
+  deleteTaskComment: (commentId: number) => Promise<void>;
+  updateTaskComment: (
+    commentId: number,
+    e: any,
+    index: number,
+    comment: string
+  ) => Promise<void>;
 }
 
-const Comment = ({ comment, username, id, index, profile }: Props) => {
+const Comment = ({
+  comment,
+  username,
+  id,
+  index,
+  profile,
+  deleteTaskComment,
+  updateTaskComment,
+}: Props) => {
   const [userComment, setUserComment] = useState<string>(comment);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
@@ -27,7 +42,7 @@ const Comment = ({ comment, username, id, index, profile }: Props) => {
         <div className="text-sm font-medium text-gray-600">{username}</div>
         <form
           className="w-full"
-          //   onSubmit={(e) => updateCommentTitle(e, id, index)}
+          onSubmit={(e) => updateTaskComment(id, e, index, userComment)}
         >
           <input
             className={`text-md w-full  ${
@@ -64,7 +79,7 @@ const Comment = ({ comment, username, id, index, profile }: Props) => {
               </div>
               <div
                 className="text-sm text-gray-500 font-semibold cursor-pointer"
-                // onClick={() => deleteTaskComment(id)}
+                onClick={() => deleteTaskComment(id)}
               >
                 Delete
               </div>

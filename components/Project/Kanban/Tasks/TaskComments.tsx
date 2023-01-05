@@ -41,7 +41,70 @@ const TaskComments = ({ comments, setComments, taskId, loading }: Props) => {
           setComment("");
         });
     } catch (error: any) {
-      console.log();
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const deleteTaskComment = async (commentId: number) => {
+    const notification = toast.loading("Deleting Comment!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/deletecomment`, {
+          id: commentId,
+        })
+        .then((res) => {
+          const allData = JSON.parse(JSON.stringify(comments));
+
+          const commentIndex = allData?.findIndex(
+            (comment: any) => comment.id === commentId
+          );
+
+          allData.splice(commentIndex, 1);
+
+          setComments(allData);
+
+          toast.success("Deleted Comment!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const updateTaskComment = async (
+    commentId: number,
+    e: any,
+    index: number,
+    comment: string
+  ) => {
+    e.preventDefault();
+    const notification = toast.loading("Updating Comment!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/task/updatecomment`, {
+          id: commentId,
+          comment,
+        })
+        .then((res) => {
+          const newTaskComments = JSON.parse(JSON.stringify(comments));
+
+          newTaskComments[index].comment = comment;
+
+          setComments(newTaskComments);
+
+          toast.success("Updated Comment!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      toast.error(error.message, {
+        id: notification,
+      });
     }
   };
   return (
@@ -88,6 +151,8 @@ const TaskComments = ({ comments, setComments, taskId, loading }: Props) => {
                   comment={comment.comment}
                   profile={comment.userProfile}
                   username={comment.username}
+                  deleteTaskComment={deleteTaskComment}
+                  updateTaskComment={updateTaskComment}
                 />
               ))}
             </div>

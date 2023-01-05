@@ -62,13 +62,19 @@ const Section = ({
           profile: loggedInUser.profile,
         })
         .then((res) => {
-          let newSection = JSON.parse(JSON.stringify(sections));
+          let newSections = JSON.parse(JSON.stringify(sections));
           const sectionIndex = sections.findIndex(
             (section) => section.id === sectionId
           );
 
-          newSection[sectionIndex].tasks.push(res.data);
-          setSections(newSection);
+          newSections[sectionIndex].tasks =
+            newSections[sectionIndex]?.tasks?.length > 0
+              ? newSections[sectionIndex].tasks
+              : [];
+
+          newSections[sectionIndex]?.tasks?.push(res.data);
+
+          setSections(newSections);
           Toast.success("Task Created!", { id: notification });
         });
     } catch (error: any) {
