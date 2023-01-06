@@ -4,7 +4,7 @@ import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import { ProjectState } from "../../../Context/ProjectContext";
 import KanbanSection from "./KanbanSection";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 const Kanban = () => {
   const {
@@ -49,7 +49,71 @@ const Kanban = () => {
     }
   };
 
-  const onDragEnd = () => {};
+  const onDragEnd = ({ source, destination }: DropResult) => {
+    if (!destination) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+    let newData: any = JSON.parse(JSON.stringify(sections));
+    //find the source and destination column index.
+    const sourceColIndex = newData.findIndex(
+      (section: any) => section.id === parseInt(source.droppableId)
+    );
+    const destinationColIndex = newData.findIndex(
+      (e: any) => e.id === parseInt(destination.droppableId)
+    );
+
+    //get the sourceSection and the destinationSection.
+    const sourceCol = newData[sourceColIndex];
+    const destinationCol = newData[destinationColIndex];
+
+    //get the of both source and destination.
+    const sourceSectionId = sourceCol.id;
+    const destinationSectionId = destinationCol.id;
+
+    //source and destination tasks.
+    const sourceTasks =
+      sourceCol?.tasks?.length > 0 ? [...sourceCol?.tasks] : [];
+    const destinationTasks =
+      destinationCol?.tasks?.length > 0 ? [...destinationCol?.tasks] : [];
+
+    //Logic
+    if (parseInt(source.droppableId) !== parseInt(destination.droppableId)) {
+      const [removed] = sourceTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+      newData[sourceColIndex].tasks = sourceTasks;
+      newData[destinationColIndex].tasks = destinationTasks;
+      setSections(newData);
+    } else {
+      const [removed] = destinationTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+      newData[destinationColIndex].tasks = destinationTasks;
+      setSections(newData);
+    }
+
+    const notification = Toast.loading("Changing Position!");
+
+    axios
+      .post(`${urlFetcher()}/api/kanban/task/updatetaskposition`, {
+        resourceList: sourceTasks,
+        destinationList: destinationTasks,
+        resourceSectionId: sourceSectionId,
+        destinationSectionId: destinationSectionId,
+      })
+      .then((res) => {
+        Toast.success("Position Changed!", {
+          id: notification,
+        });
+      })
+      .catch((error) => {
+        Toast.error(error, {
+          id: notification,
+        });
+      });
+  };
 
   return (
     <div className="px-2 mx-2 w-full">
