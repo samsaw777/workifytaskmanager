@@ -22,22 +22,23 @@ const ScrumBoard = () => {
 
     socket = io();
   };
-  const fetchSprints = async () => {
+  const fetchSections = async () => {
     try {
+      setSections([]);
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[0].id,
           type: "SCRUM",
         })
         .then((res) => {
-          setSections(res.data);
+          setSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
     }
   };
   useEffect(() => {
-    fetchSprints();
+    fetchSections();
     socketInit();
   }, []);
 
@@ -129,13 +130,23 @@ const ScrumBoard = () => {
     <div className="px-2 overflow-x-auto w-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
-          {sections.map(({ id, title, issues }: any, index: number) => {
-            return (
-              <div key={index} className="h-full flex-non w-[350px] rounded-md">
-                <Section id={id} title={title} issues={issues} type="SCRUM" />
-              </div>
-            );
-          })}
+          {sections.map(
+            ({ id, title, issues, boardId }: any, index: number) => {
+              return (
+                <div
+                  key={index}
+                  className="h-full flex-non w-[350px] rounded-md"
+                >
+                  <Section
+                    id={id}
+                    title={title}
+                    issues={issues}
+                    boardId={boardId}
+                  />
+                </div>
+              );
+            }
+          )}
         </div>
       </DragDropContext>
     </div>

@@ -1,40 +1,125 @@
-import React, { EventHandler, useState } from "react";
-import SectionIssue from "./SectionIssue";
+import React, { useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
-import { ProjectState } from "../../../../Context/ProjectContext";
+import KanbanTask from "./Tasks/KanbanTask";
+import { ProjectState } from "../../../Context/ProjectContext";
 import axios from "axios";
-import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
-import KanbanTask from "../../Kanban/Tasks/KanbanTask";
+import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import {
-  updateSection,
   deleteSection,
-} from "../../../../utils/Helper/SectionFIle";
+  updateSection,
+} from "../../../utils/Helper/SectionFIle";
 
-interface Issue {
-  id: number;
-  issue: string;
-  username: string;
+interface Task {
+  id: string;
+  title: string;
+  description: string;
   userId: string;
-  profille: string;
+  profile: string;
+  username: string;
   position: number;
   sectionId: number;
-  sprintId: number;
-  type: string;
 }
 
 interface Props {
   id: number;
   title: string;
-  issues: Issue[];
+  tasks: Task[];
   boardId: number;
 }
 
-const Section = ({ id, title, issues, boardId }: Props) => {
+const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
   const { loggedInUser, sections, setSections } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
+
+  //   const deleteSection = async (sectionId: number) => {
+  //     const notification = Toast.loading("Deleting Section!");
+  //     try {
+  //       await axios
+  //         .post(`${urlFetcher()}/api/section/deletesection`, {
+  //           id: sectionId,
+  //         })
+  //         .then((res) => {
+  //           const newData = sections.filter(
+  //             (section: any) => section.id != sectionId
+  //           );
+  //           setSections(newData);
+  //           Toast.success("Section Deleted!", { id: notification });
+  //         });
+  //     } catch (error: any) {
+  //       Toast.error(error.message, { id: notification });
+  //     }
+  //   };
+
+  //   const updateSection = async (
+  //     e: any,
+  //     boardId: number,
+  //     title: string,
+  //     id: number,
+  //     setSectionTitle: React.Dispatch<React.SetStateAction<string>>,
+  //     setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  //   ) => {
+  //     e.preventDefault();
+  //     try {
+  //       setLoading(true);
+  //       await axios
+  //         .post(`${urlFetcher()}/api/section/updatesection`, {
+  //           boardId,
+  //           title,
+  //           id,
+  //         })
+  //         .then((response) => {
+  //           setSectionTitle(response.data.title);
+  //           setLoading(false);
+  //           let newData: any = JSON.parse(JSON.stringify(sections));
+
+  //           const index = newData.findIndex(
+  //             (e: any) => e.id === response.data.id
+  //           );
+
+  //           newData[index].title = response.data.title;
+
+  //           setSections(newData);
+  //         });
+  //     } catch (error: any) {
+  //       console.log(error.message);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  const createTask = async (sectionId: number) => {
+    const notification = Toast.loading("Creating Task");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/kanban/createtask`, {
+          sectionId,
+          title: "",
+          userId: loggedInUser.id,
+          username: loggedInUser.username,
+          profile: loggedInUser.profile,
+        })
+        .then((res) => {
+          let newSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section) => section.id === sectionId
+          );
+
+          newSections[sectionIndex].tasks =
+            newSections[sectionIndex]?.tasks?.length > 0
+              ? newSections[sectionIndex].tasks
+              : [];
+
+          newSections[sectionIndex]?.tasks?.push(res.data);
+
+          setSections(newSections);
+          Toast.success("Task Created!", { id: notification });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, { id: notification });
+    }
+  };
 
   return (
     <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
@@ -112,19 +197,21 @@ const Section = ({ id, title, issues, boardId }: Props) => {
             {...provided.droppableProps}
           >
             <div>
-              {issues?.map((issue: Issue, index: number) => (
+              {tasks?.map((task: Task, index: number) => (
                 <div key={index}>
-                  <SectionIssue
-                    id={issue.id}
-                    type={issue.type}
-                    issue={issue.issue}
-                    index={index}
-                  />
+                  <KanbanTask issue={task} index={index} sectionName={title} />
                 </div>
               ))}
             </div>
 
             {provided.placeholder}
+
+            <div
+              className="text-md rounded-md p-2 font-medium hover:bg-gray-200 cursor-pointer text-gray-700"
+              onClick={() => createTask(id)}
+            >
+              + Add Task
+            </div>
           </div>
         )}
       </Droppable>
@@ -132,4 +219,4 @@ const Section = ({ id, title, issues, boardId }: Props) => {
   );
 };
 
-export default Section;
+export default KanbanSection;
