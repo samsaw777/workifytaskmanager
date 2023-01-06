@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { urlFetcher } from "./urlFetcher";
 import Toast from "react-hot-toast";
+import { Socket } from "socket.io-client";
 
 interface Section {
   id: number;
@@ -11,8 +12,9 @@ interface Section {
 
 export const deleteSection = async (
   sectionId: number,
-  setSections: React.Dispatch<React.SetStateAction<Section[]>>,
-  sections: Section[]
+  socket: Socket,
+  ProjectId: number,
+  members: any
 ) => {
   const notification = Toast.loading("Deleting Section!");
   try {
@@ -21,10 +23,13 @@ export const deleteSection = async (
         id: sectionId,
       })
       .then((res) => {
-        const newData = sections.filter(
-          (section: any) => section.id != sectionId
-        );
-        setSections(newData);
+        socket.emit("sectionCreated", {
+          ProjectId,
+          members,
+          kanbansection: res.data,
+          type: "deletesection",
+          dashboardsection: "kanban",
+        });
         Toast.success("Section Deleted!", { id: notification });
       });
   } catch (error: any) {

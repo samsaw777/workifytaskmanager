@@ -11,8 +11,8 @@ let socket: Socket;
 
 const ScrumBoard = () => {
   const {
-    sections,
-    setSections,
+    scrumSections,
+    setScrumSections,
     project: { board, id },
     members,
   } = ProjectState();
@@ -24,14 +24,13 @@ const ScrumBoard = () => {
   };
   const fetchSections = async () => {
     try {
-      setSections([]);
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[0].id,
           type: "SCRUM",
         })
         .then((res) => {
-          setSections([...res.data]);
+          setScrumSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
@@ -57,7 +56,7 @@ const ScrumBoard = () => {
 
       notification = Toast.loading("Changing Position");
 
-      let sectionData = JSON.parse(JSON.stringify(sections));
+      let sectionData = JSON.parse(JSON.stringify(scrumSections));
 
       //Find the source and destination column index.
       const sourceColIndex = sectionData.findIndex(
@@ -89,12 +88,12 @@ const ScrumBoard = () => {
         sectionData[sourceColIndex].issues = sourceIssues;
         sectionData[destinationColIndex].issues = destinationIssues;
 
-        setSections(sectionData);
+        setScrumSections(sectionData);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         sectionData[destinationColIndex].issues = destinationIssues;
-        setSections(sectionData);
+        setScrumSections(sectionData);
       }
 
       await axios
@@ -130,7 +129,7 @@ const ScrumBoard = () => {
     <div className="px-2 overflow-x-auto w-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
-          {sections.map(
+          {scrumSections.map(
             ({ id, title, issues, boardId }: any, index: number) => {
               return (
                 <div

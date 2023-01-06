@@ -40,18 +40,18 @@ const Section = ({ id, title, issues, boardId }: Props) => {
     <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
       <form
         className="flex space-x-1 px-2 py-2 border-b-2 border-b-gray-300"
-        onSubmit={(e) =>
-          updateSection(
-            e,
-            boardId,
-            sectionTitle,
-            id,
-            setSectionTitle,
-            setLoading,
-            setSections,
-            sections
-          )
-        }
+        // onSubmit={(e) =>
+        //   updateSection(
+        //     e,
+        //     boardId,
+        //     sectionTitle,
+        //     id,
+        //     setSectionTitle,
+        //     setLoading,
+        //     setSections,
+        //     sections
+        //   )
+        // }
       >
         <input
           onChange={(e) => setSectionTitle(e.target.value)}
@@ -71,7 +71,7 @@ const Section = ({ id, title, issues, boardId }: Props) => {
               strokeWidth={1.5}
               stroke="currentColor"
               className="w-6 h-6 text-red-300 cursor-pointer"
-              onClick={() => deleteSection(id, setSections, sections)}
+              // onClick={() => deleteSection(id)}
             >
               <path
                 strokeLinecap="round"

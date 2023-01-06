@@ -102,4 +102,19 @@ export default (io: any, socket: any) => {
       });
     }
   );
+
+  socket.on(
+    "sectionCreated",
+    ({ ProjectId, members, kanbansection, type, dashboardsection }: any) => {
+      console.log(members);
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("sectionCreation", {
+        ProjectId,
+        kanbansection,
+        type,
+        dashboardsection,
+      });
+    }
+  );
 };

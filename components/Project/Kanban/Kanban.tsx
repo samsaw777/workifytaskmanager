@@ -5,19 +5,27 @@ import Toast from "react-hot-toast";
 import { ProjectState } from "../../../Context/ProjectContext";
 import KanbanSection from "./KanbanSection";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import io, { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 const Kanban = () => {
   const {
-    project: { board },
-
+    project: { id, board },
+    members,
     sections,
     setSections,
   } = ProjectState();
   // const [sections, setSections] = useState<{}[]>([]);
 
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
   const fetchKanbanSections = async () => {
     try {
-      setSections([]);
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[1].id,
@@ -33,19 +41,33 @@ const Kanban = () => {
 
   useEffect(() => {
     fetchKanbanSections();
+    socketInit();
   }, []);
 
   const createSection = async () => {
+    const notification = Toast.loading("Creating Section!");
+
     try {
       await axios
         .post(`${urlFetcher()}/api/section/createsection`, {
           boardId: board[1].id,
         })
         .then((res) => {
-          setSections([...sections, res.data]);
+          socket.emit("sectionCreated", {
+            ProjectId: id,
+            members,
+            kanbansection: res.data,
+            type: "createsection",
+            dashboardsection: "kanban",
+          });
+          Toast.success("Section Created!", {
+            id: notification,
+          });
         });
     } catch (error: any) {
-      console.error(error);
+      Toast.error(error.message, {
+        id: notification,
+      });
     }
   };
 

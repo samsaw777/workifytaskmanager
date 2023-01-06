@@ -38,6 +38,9 @@ const ProjectDetails = ({
     setSprints,
     sprints,
     setSections,
+    sections,
+    scrumSections,
+    setScrumSections,
   } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
@@ -193,7 +196,28 @@ const ProjectDetails = ({
           type === "dragged" &&
           section === "scrumboard"
         ) {
-          setSections([...sprint]);
+          setScrumSections([...sprint]);
+        }
+      }
+    );
+
+    socket.on(
+      "sectionCreation",
+      ({ ProjectId, type, kanbansection, dashboardsection }: any) => {
+        if (
+          ProjectId === projectId &&
+          type === "createsection" &&
+          dashboardsection === "kanban"
+        ) {
+          setSections((section) => [...section, kanbansection]);
+        } else if (
+          ProjectId === projectId &&
+          type === "deletesection" &&
+          dashboardsection === "kanban"
+        ) {
+          setSections((section) =>
+            section.filter((s) => s.id !== kanbansection.id)
+          );
         }
       }
     );
@@ -210,6 +234,7 @@ const ProjectDetails = ({
       socket.off("issues");
       socket.off("sprints");
       socket.off("draggedInSprint");
+      socket.off("sectionCreation");
     };
   }, []);
 

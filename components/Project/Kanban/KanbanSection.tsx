@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import KanbanTask from "./Tasks/KanbanTask";
 import { ProjectState } from "../../../Context/ProjectContext";
@@ -9,6 +9,8 @@ import {
   deleteSection,
   updateSection,
 } from "../../../utils/Helper/SectionFIle";
+import io, { Socket } from "socket.io-client";
+let socket: Socket;
 
 interface Task {
   id: string;
@@ -29,10 +31,26 @@ interface Props {
 }
 
 const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
-  const { loggedInUser, sections, setSections } = ProjectState();
+  const {
+    loggedInUser,
+    sections,
+    setSections,
+    members,
+    project: { id: projectId },
+  } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
 
   //   const deleteSection = async (sectionId: number) => {
   //     const notification = Toast.loading("Deleting Section!");
@@ -156,7 +174,7 @@ const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
               strokeWidth={1.5}
               stroke="currentColor"
               className="w-6 h-6 text-red-300 cursor-pointer"
-              onClick={() => deleteSection(id, setSections, sections)}
+              onClick={() => deleteSection(id, socket, projectId, members)}
             >
               <path
                 strokeLinecap="round"
