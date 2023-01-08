@@ -155,6 +155,7 @@ const Kanban = () => {
                   title={section.title}
                   tasks={section.tasks}
                   boardId={section.boardId}
+                  index={index}
                 />
               </div>
             );

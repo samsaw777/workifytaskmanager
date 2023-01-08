@@ -105,7 +105,14 @@ export default (io: any, socket: any) => {
 
   socket.on(
     "sectionCreated",
-    ({ ProjectId, members, kanbansection, type, dashboardsection }: any) => {
+    ({
+      ProjectId,
+      members,
+      kanbansection,
+      type,
+      dashboardsection,
+      sections,
+    }: any) => {
       console.log(members);
       if (!members) return console.log("Members not found!");
 
@@ -114,6 +121,7 @@ export default (io: any, socket: any) => {
         kanbansection,
         type,
         dashboardsection,
+        kanbansections: sections,
       });
     }
   );

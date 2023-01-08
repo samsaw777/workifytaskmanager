@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import KanbanTask from "./Tasks/KanbanTask";
 import { ProjectState } from "../../../Context/ProjectContext";
@@ -28,9 +28,13 @@ interface Props {
   title: string;
   tasks: Task[];
   boardId: number;
+  index: number;
 }
 
-const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
+export let kanbanSectionHeader: HTMLInputElement | any;
+
+const KanbanSection = ({ id, title, tasks, boardId, index }: Props) => {
+  console.log(title);
   const {
     loggedInUser,
     sections,
@@ -41,6 +45,7 @@ const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
+  kanbanSectionHeader = useRef<HTMLInputElement | any>(null);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -51,6 +56,10 @@ const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
   useEffect(() => {
     socketInit();
   }, []);
+
+  useEffect(() => {
+    setSectionTitle(title);
+  }, [title]);
 
   //   const deleteSection = async (sectionId: number) => {
   //     const notification = Toast.loading("Deleting Section!");
@@ -151,7 +160,9 @@ const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
             id,
             setSectionTitle,
             setLoading,
-            setSections,
+            socket,
+            projectId,
+            members,
             sections
           )
         }
@@ -159,6 +170,7 @@ const KanbanSection = ({ id, title, tasks, boardId }: Props) => {
         <input
           onChange={(e) => setSectionTitle(e.target.value)}
           value={sectionTitle}
+          ref={kanbanSectionHeader}
           className="w-full bg-transparent focus:border-2  focus:border-blue-300 focus:outline-none focus:bg-white p-1 rounded-md font-medium"
           placeholder="Untitled"
         />

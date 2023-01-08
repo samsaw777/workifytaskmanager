@@ -3,6 +3,7 @@ import axios from "axios";
 import { urlFetcher } from "./urlFetcher";
 import Toast from "react-hot-toast";
 import { Socket } from "socket.io-client";
+import { kanbanSectionHeader } from "../../components/Project/Kanban/KanbanSection";
 
 interface Section {
   id: number;
@@ -44,8 +45,10 @@ export const updateSection = async (
   id: number,
   setSectionTitle: React.Dispatch<React.SetStateAction<string>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setSections: React.Dispatch<React.SetStateAction<Section[]>>,
-  sections: Section[]
+  socket: Socket,
+  ProjectId: number,
+  members: any,
+  sections: any
 ) => {
   e.preventDefault();
   try {
@@ -57,15 +60,19 @@ export const updateSection = async (
         id,
       })
       .then((response) => {
-        setSectionTitle(response.data.title);
+        // setSectionTitle(response.data.title);
+
         setLoading(false);
-        let newData: any = JSON.parse(JSON.stringify(sections));
+        socket.emit("sectionCreated", {
+          ProjectId,
+          members,
+          kanbansection: response.data,
+          type: "updatesection",
+          dashboardsection: "kanban",
+          sections,
+        });
 
-        const index = newData.findIndex((e: any) => e.id === response.data.id);
-
-        newData[index].title = response.data.title;
-
-        setSections(newData);
+        kanbanSectionHeader?.current?.blur();
       });
   } catch (error: any) {
     console.log(error.message);

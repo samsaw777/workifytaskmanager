@@ -179,7 +179,7 @@ const TaskModal: FunctionComponent<Props> = ({
                     className="py-1 px-2 text-gray-900 hover:bg-gray-200 w-full text-2xl font-medium focus:bg-white focus:border-2 focus:border-blue-400 focus:outline-none rounded-md placeholder:text-md"
                   />
                   <button type="submit" className="hidden">
-                    Bubmit
+                    Submit
                   </button>
                   {loading && (
                     <div className="text-center flex items-center justify-center">

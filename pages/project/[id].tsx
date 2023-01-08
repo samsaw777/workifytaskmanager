@@ -42,6 +42,7 @@ const ProjectDetails = ({
     scrumSections,
     setScrumSections,
   } = ProjectState();
+  console.log(sections);
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -203,7 +204,13 @@ const ProjectDetails = ({
 
     socket.on(
       "sectionCreation",
-      ({ ProjectId, type, kanbansection, dashboardsection }: any) => {
+      ({
+        ProjectId,
+        type,
+        kanbansection,
+        dashboardsection,
+        kanbansections,
+      }: any) => {
         if (
           ProjectId === projectId &&
           type === "createsection" &&
@@ -218,6 +225,20 @@ const ProjectDetails = ({
           setSections((section) =>
             section.filter((s) => s.id !== kanbansection.id)
           );
+        } else if (
+          ProjectId == projectId &&
+          type === "updatesection" &&
+          dashboardsection === "kanban"
+        ) {
+          const sectionIndex = kanbansections.findIndex(
+            (s: any) => s.id === kanbansection.id
+          );
+
+          kanbansections[sectionIndex].title = kanbansection.title;
+          setSections([...kanbansections]);
+
+          // sections[sectionIndex].title = kanbansection.title;
+          // setSections(sections);
         }
       }
     );
