@@ -34,7 +34,6 @@ interface Props {
 export let kanbanSectionHeader: HTMLInputElement | any;
 
 const KanbanSection = ({ id, title, tasks, boardId, index }: Props) => {
-  console.log(title);
   const {
     loggedInUser,
     sections,

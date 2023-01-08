@@ -42,7 +42,7 @@ const ProjectDetails = ({
     scrumSections,
     setScrumSections,
   } = ProjectState();
-  console.log(sections);
+
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -236,9 +236,6 @@ const ProjectDetails = ({
 
           kanbansections[sectionIndex].title = kanbansection.title;
           setSections([...kanbansections]);
-
-          // sections[sectionIndex].title = kanbansection.title;
-          // setSections(sections);
         }
       }
     );
