@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import TaskModal, { Label } from "../../../Modals/TaskModal";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
@@ -7,9 +7,35 @@ import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import { Draggable } from "react-beautiful-dnd";
+import io, { Socket } from "socket.io-client";
+let socket: Socket;
+interface Props {
+  issue: any;
+  index: any;
+  sectionName: string;
+}
 
-const KanbanTask = ({ issue, index, sectionName }: any) => {
-  const { setSections, sections } = ProjectState();
+const KanbanTask = ({ issue, index, sectionName }: Props) => {
+  const {
+    setSections,
+    sections,
+    project: { id },
+    members,
+  } = ProjectState();
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
+
+  useEffect(() => {
+    setTaskTitle(issue.title);
+  }, [issue.title]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [labels, setLabels] = useState<Label[] | []>(issue.labels);
@@ -27,15 +53,14 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           title: taskTitle,
         })
         .then((response) => {
-          let sectionIndex = sections.findIndex(
-            (section) => section.id == issue.sectionId
-          );
-          let newData: any = JSON.parse(JSON.stringify(sections));
-          const index = newData[sectionIndex].tasks.findIndex(
-            (e: any) => e.id === issue.id
-          );
-          newData[sectionIndex].tasks[index].title = response.data.title;
-          setSections(newData);
+          socket.emit("taskCreated", {
+            ProjectId: id,
+            members,
+            task: response.data,
+            type: "updatetask",
+            section: "kanban",
+            sections,
+          });
           setLoading(false);
           taskTitleTRef.current?.blur();
         });
@@ -58,13 +83,15 @@ const KanbanTask = ({ issue, index, sectionName }: any) => {
           Toast.success("Task Deleted!", {
             id: notification,
           });
-          const newData = JSON.parse(JSON.stringify(sections));
-          const sectionIndex = newData.findIndex((e: any) => e.id == sectionId);
-          const taskIndex = newData[sectionIndex].tasks.findIndex(
-            (e: any) => e.id == taskId
-          );
-          newData[sectionIndex].tasks.splice(taskIndex, 1);
-          setSections(newData);
+
+          socket.emit("taskCreated", {
+            ProjectId: id,
+            members,
+            task: res.data,
+            type: "deletetask",
+            section: "kanban",
+            sections,
+          });
         });
     } catch (error: any) {
       Toast.error(error.message, {

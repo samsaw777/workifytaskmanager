@@ -127,19 +127,15 @@ const KanbanSection = ({ id, title, tasks, boardId, index }: Props) => {
           profile: loggedInUser.profile,
         })
         .then((res) => {
-          let newSections = JSON.parse(JSON.stringify(sections));
-          const sectionIndex = sections.findIndex(
-            (section) => section.id === sectionId
-          );
+          socket.emit("taskCreated", {
+            ProjectId: projectId,
+            members,
+            task: res.data,
+            type: "createtask",
+            section: "kanban",
+            sections,
+          });
 
-          newSections[sectionIndex].tasks =
-            newSections[sectionIndex]?.tasks?.length > 0
-              ? newSections[sectionIndex].tasks
-              : [];
-
-          newSections[sectionIndex]?.tasks?.push(res.data);
-
-          setSections(newSections);
           Toast.success("Task Created!", { id: notification });
         });
     } catch (error: any) {

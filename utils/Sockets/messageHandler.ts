@@ -113,7 +113,6 @@ export default (io: any, socket: any) => {
       dashboardsection,
       sections,
     }: any) => {
-      console.log(members);
       if (!members) return console.log("Members not found!");
 
       socket.to(ProjectId).emit("sectionCreation", {
@@ -122,6 +121,22 @@ export default (io: any, socket: any) => {
         type,
         dashboardsection,
         kanbansections: sections,
+      });
+    }
+  );
+
+  //Socket to creaate task.
+  socket.on(
+    "taskCreated",
+    ({ ProjectId, members, task, type, section, sections }: any) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("tasks", {
+        ProjectId,
+        task,
+        type,
+        section,
+        sections,
       });
     }
   );
