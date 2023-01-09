@@ -45,7 +45,7 @@ const TaskModal: FunctionComponent<Props> = ({
   const closeTaskModal = () => {
     setIsOpen(!isOpen);
   };
-  const { sections, setSections } = ProjectState();
+  const { sections, setSections, comments, setComments } = ProjectState();
   const [loading, setLoading] = useState(false);
 
   const [title, setTitle] = useState<string>(task.title);
@@ -53,7 +53,7 @@ const TaskModal: FunctionComponent<Props> = ({
   const [descLoading, setDescLoading] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(task.description);
   const [showDetails, setShowDetails] = useState<boolean>(true);
-  const [comments, setComments] = useState<{}[]>([]);
+  // const [comments, setComments] = useState<{}[]>([]);
   const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
 
   const fetchTaskComments = async (cancel: boolean) => {
@@ -283,8 +283,6 @@ const TaskModal: FunctionComponent<Props> = ({
                 </div>
 
                 <TaskComments
-                  setComments={setComments}
-                  comments={comments}
                   taskId={task.id.toString()}
                   loading={commentsLoading}
                 />

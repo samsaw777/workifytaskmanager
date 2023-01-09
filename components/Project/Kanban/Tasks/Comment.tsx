@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
 import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import toast from "react-hot-toast";
+import io, { Socket } from "socket.io-client";
+import { ProjectState } from "../../../../Context/ProjectContext";
+let socket: Socket;
 
 interface Props {
   comment: string;
@@ -27,6 +30,26 @@ const Comment = ({
   const [userComment, setUserComment] = useState<string>(comment);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
+  const {
+    project: { id: ProjectId },
+    loggedInUser,
+    members,
+  } = ProjectState();
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
+
+  useEffect(() => {
+    setUserComment(comment);
+  }, [comment]);
+
   const deleteTaskComment = async (commentId: number) => {
     const notification = toast.loading("Deleting Comment!");
     try {
@@ -35,15 +58,14 @@ const Comment = ({
           id: commentId,
         })
         .then((res) => {
-          const allData = JSON.parse(JSON.stringify(comments));
-
-          const commentIndex = allData?.findIndex(
-            (comment: any) => comment.id === commentId
-          );
-
-          allData.splice(commentIndex, 1);
-
-          setComments(allData);
+          socket.emit("commentCreated", {
+            ProjectId,
+            members,
+            comment: res.data,
+            type: "deleteComment",
+            section: "kanban",
+            comments,
+          });
 
           toast.success("Deleted Comment!", {
             id: notification,
@@ -71,11 +93,14 @@ const Comment = ({
           comment,
         })
         .then((res) => {
-          const newTaskComments = JSON.parse(JSON.stringify(comments));
-
-          newTaskComments[index].comment = comment;
-
-          setComments(newTaskComments);
+          socket.emit("commentCreated", {
+            ProjectId,
+            members,
+            comment: res.data,
+            type: "updateComment",
+            section: "kanban",
+            comments,
+          });
 
           toast.success("Updated Comment!", {
             id: notification,
@@ -132,12 +157,14 @@ const Comment = ({
             </div>
           ) : (
             <div className="flex space-x-2">
-              <div
-                className="text-xs text-gray-400 font-semibold cursor-pointer hover:text-gray-500"
-                onClick={() => setCurrentIndex(index)}
-              >
-                Edit
-              </div>
+              {loggedInUser.username === username && (
+                <div
+                  className="text-xs text-gray-400 font-semibold cursor-pointer hover:text-gray-500"
+                  onClick={() => setCurrentIndex(index)}
+                >
+                  Edit
+                </div>
+              )}
               <div
                 className="text-xs text-gray-400 font-semibold cursor-pointer hover:text-gray-500"
                 onClick={() => deleteTaskComment(id)}

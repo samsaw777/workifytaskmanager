@@ -11,6 +11,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       where: {
         taskId,
       },
+      orderBy: {
+        id: "desc",
+      },
     });
 
     res.status(200).json(comments);

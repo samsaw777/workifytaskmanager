@@ -75,6 +75,8 @@ interface Context {
   setScrumSections: React.Dispatch<React.SetStateAction<Section[]>>;
   labels: Label[];
   setLabels: React.Dispatch<React.SetStateAction<Label[]>>;
+  comments: {}[];
+  setComments: React.Dispatch<React.SetStateAction<{}[]>>;
 }
 
 const ProjectContext = createContext<Context>({
@@ -100,6 +102,8 @@ const ProjectContext = createContext<Context>({
   setLabels: () => [],
   scrumSections: [],
   setScrumSections: () => [],
+  setComments: () => [],
+  comments: [],
 });
 
 const ProjectProvider = ({ children }: any) => {
@@ -118,6 +122,7 @@ const ProjectProvider = ({ children }: any) => {
   const [sections, setSections] = useState<Section[]>([]);
   const [scrumSections, setScrumSections] = useState<Section[]>([]);
   const [labels, setLabels] = useState<Label[]>([]);
+  const [comments, setComments] = useState<{}[]>([]);
   return (
     <ProjectContext.Provider
       value={{
@@ -137,6 +142,8 @@ const ProjectProvider = ({ children }: any) => {
         setLabels,
         scrumSections,
         setScrumSections,
+        comments,
+        setComments,
       }}
     >
       {children}

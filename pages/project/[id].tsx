@@ -17,12 +17,12 @@ if (!secret) {
   throw new Error("No Secret");
 }
 
-interface User {
-  id: string;
-  email: string;
+interface Comment {
+  id: number;
+  userProfile: string;
+  comment: string;
+  taskId: string;
   username: string;
-  profile: string;
-  password: string;
 }
 
 const ProjectDetails = ({
@@ -41,6 +41,7 @@ const ProjectDetails = ({
     sections,
     scrumSections,
     setScrumSections,
+    setComments,
   } = ProjectState();
 
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
@@ -289,6 +290,56 @@ const ProjectDetails = ({
         setSections(sections);
       }
     });
+
+    socket.on(
+      "commentCreation",
+      ({
+        ProjectId,
+        comment,
+        type,
+        section,
+        comments,
+      }: {
+        ProjectId: number;
+        members: {}[];
+        comment: Comment;
+        type: string;
+        section: string;
+        comments: Comment[];
+      }) => {
+        if (
+          ProjectId === projectId &&
+          type === "createComment" &&
+          section === "kanban"
+        ) {
+          setComments([comment, ...comments]);
+        } else if (
+          ProjectId == projectId &&
+          type == "deleteComment" &&
+          section === "kanban"
+        ) {
+          const allData = JSON.parse(JSON.stringify(comments));
+
+          const commentIndex = allData?.findIndex(
+            (c: any) => c.id === comment?.id
+          );
+
+          allData.splice(commentIndex, 1);
+
+          setComments(allData);
+        } else if (
+          ProjectId == projectId &&
+          type === "updateComment" &&
+          section === "kanban"
+        ) {
+          const index = comments.findIndex((c: any) => c.id === comment.id);
+
+          comments[index].comment = comment.comment;
+
+          setComments(comments);
+        }
+      }
+    );
   };
 
   useEffect(() => {

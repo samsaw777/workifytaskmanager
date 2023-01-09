@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import Image from "next/image";
@@ -6,17 +6,33 @@ import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import toast from "react-hot-toast";
 import Comment from "./Comment";
+import io, { Socket } from "socket.io-client";
+let socket: Socket;
 
 interface Props {
-  comments: {}[];
-  setComments: React.Dispatch<React.SetStateAction<{}[]>>;
   taskId: string;
   loading: boolean;
 }
 
-const TaskComments = ({ comments, setComments, taskId, loading }: Props) => {
-  const { loggedInUser } = ProjectState();
+const TaskComments = ({ taskId, loading }: Props) => {
+  const {
+    loggedInUser,
+    project: { id: ProjectId },
+    members,
+    comments,
+    setComments,
+  } = ProjectState();
   const [comment, setComment] = useState<string>("");
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
 
   //Create Task Comment Function.
   const createTaskComment = async (e: any) => {
@@ -34,7 +50,15 @@ const TaskComments = ({ comments, setComments, taskId, loading }: Props) => {
           userProfile: loggedInUser.profile,
         })
         .then((response) => {
-          setComments((current) => [...current, response.data]);
+          socket.emit("commentCreated", {
+            ProjectId,
+            members,
+            comment: response.data,
+            type: "createComment",
+            section: "kanban",
+            comments,
+          });
+          // setComments((current) => [...current, response.data]);
           toast.success("Added Comment", {
             id: notification,
           });
