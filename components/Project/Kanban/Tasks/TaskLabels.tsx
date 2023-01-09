@@ -6,8 +6,7 @@ import Toast from "react-hot-toast";
 import TaskLabel from "./Label";
 import { Task } from "../../../Modals/TaskModal";
 import { ProjectState } from "../../../../Context/ProjectContext";
-import io, { Socket } from "socket.io-client";
-
+import { io, Socket } from "socket.io-client";
 let socket: Socket;
 
 interface Props {
@@ -24,7 +23,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   labels,
 }: Props) => {
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

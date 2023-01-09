@@ -6,11 +6,11 @@ import * as jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma";
 import Members from "../../components/Project/addMembers";
 import { ProjectContents } from "../../utils/Helper/ProjectContents";
-import io from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { ProjectState } from "../../Context/ProjectContext";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
-let socket: any;
+export let socket: Socket;
 
 const secret = process.env.JWT_SECRET || "workify";
 if (!secret) {
@@ -358,6 +358,7 @@ const ProjectDetails = ({
     socket.on(
       "labelCreation",
       ({ ProjectId, label, task, type, section, sections }: any) => {
+        console.log("Landed");
         if (
           ProjectId === projectId &&
           type === "createTask" &&

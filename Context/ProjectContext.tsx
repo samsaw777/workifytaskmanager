@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import io, { Socket } from "socket.io-client";
 
 interface loggedInUser {
   id: string;
@@ -123,6 +124,7 @@ const ProjectProvider = ({ children }: any) => {
   const [scrumSections, setScrumSections] = useState<Section[]>([]);
   const [labels, setLabels] = useState<Label[]>([]);
   const [comments, setComments] = useState<{}[]>([]);
+
   return (
     <ProjectContext.Provider
       value={{
