@@ -20,7 +20,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   setLabels,
   labels,
 }: Props) => {
-  // const { labels, setLabels } = ProjectState();
+  const { sections, setSections } = ProjectState();
 
   const [showLabelInput, setShowLabelInput] = useState<boolean>(false);
   const [labelValue, setLabelValue] = useState<string>("");
@@ -37,9 +37,22 @@ const TaskLabels: React.FunctionComponent<Props> = ({
         .then((res) => {
           Toast.success("Label Created!", { id: notification });
           setLabelValue("");
-          task.labels = [...task.labels, res.data];
+          // task.labels = [...task.labels, res.data];
           setShowLabelInput(!showLabelInput);
-          setLabels([...labels, res.data]);
+
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex].tasks.findIndex(
+            (t: any) => t.id === task.id
+          );
+          newSectionObject[sectionIndex].tasks[taskIndex].labels = [
+            ...task.labels,
+            res.data,
+          ];
+
+          setSections(newSectionObject);
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });
@@ -59,9 +72,19 @@ const TaskLabels: React.FunctionComponent<Props> = ({
           const labelIndex = task.labels.findIndex(
             (label: Label) => label.id == labelId
           );
-          task.labels.splice(labelIndex, 1);
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex].tasks.findIndex(
+            (t: any) => t.id === task.id
+          );
+          newSectionObject[sectionIndex].tasks[taskIndex].labels.splice(
+            labelIndex,
+            1
+          );
 
-          setLabels([...labels.filter((label: Label) => label.id !== labelId)]);
+          setSections(newSectionObject);
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });

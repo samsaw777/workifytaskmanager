@@ -174,7 +174,7 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
           </form>
           <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
             <div className="flex flex-wrap p-1 gap-2">
-              {labels?.map((label: Label, index: number) => (
+              {issue?.labels?.map((label: Label, index: number) => (
                 <div
                   className="bg-gray-100 py-1 px-2 rounded-sm font-medium text-gray-600 text-sm"
                   key={index}
