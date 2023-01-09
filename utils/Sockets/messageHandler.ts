@@ -184,25 +184,28 @@ export default (io: any, socket: any) => {
       ProjectId,
       members,
       label,
+      task,
       type,
       section,
-      labels,
+      sections,
     }: {
       ProjectId: number;
       members: any;
       label: { id: number; name: string; taskId: number };
+      task: any;
       type: string;
       section: string;
-      labels: { id: number; name: string; taskId: number }[];
+      sections: {}[];
     }) => {
       if (!members) return console.log("Members not found!");
 
       socket.to(ProjectId).emit("labelCreation", {
         ProjectId,
         label,
+        task,
         type,
         section,
-        labels,
+        sections,
       });
     }
   );

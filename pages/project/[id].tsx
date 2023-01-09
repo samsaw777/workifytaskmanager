@@ -354,6 +354,52 @@ const ProjectDetails = ({
         }
       }
     );
+
+    socket.on(
+      "labelCreation",
+      ({ ProjectId, label, task, type, section, sections }: any) => {
+        if (
+          ProjectId === projectId &&
+          type === "createTask" &&
+          section === "kanban"
+        ) {
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task?.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex]?.tasks?.findIndex(
+            (t: any) => t.id === task?.id
+          );
+          newSectionObject[sectionIndex].tasks[taskIndex].labels = [
+            ...task.labels,
+            label,
+          ];
+
+          setSections(newSectionObject);
+        } else if (
+          ProjectId === projectId &&
+          type === "deleteTask" &&
+          section === "kanban"
+        ) {
+          const labelIndex = task.labels.findIndex(
+            (l: any) => l.id === label.id
+          );
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex].tasks.findIndex(
+            (t: any) => t.id === task.id
+          );
+          newSectionObject[sectionIndex].tasks[taskIndex].labels.splice(
+            labelIndex,
+            1
+          );
+
+          setSections(newSectionObject);
+        }
+      }
+    );
   };
 
   useEffect(() => {

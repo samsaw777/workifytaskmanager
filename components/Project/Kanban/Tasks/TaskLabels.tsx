@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "../../../Modals/TaskModal";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import axios from "axios";
@@ -6,6 +6,9 @@ import Toast from "react-hot-toast";
 import TaskLabel from "./Label";
 import { Task } from "../../../Modals/TaskModal";
 import { ProjectState } from "../../../../Context/ProjectContext";
+import io, { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 interface Props {
   task: Task;
@@ -20,7 +23,21 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   setLabels,
   labels,
 }: Props) => {
-  const { sections, setSections } = ProjectState();
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
+  const {
+    sections,
+    setSections,
+    project: { id: ProjectId },
+    members,
+  } = ProjectState();
 
   const [showLabelInput, setShowLabelInput] = useState<boolean>(false);
   const [labelValue, setLabelValue] = useState<string>("");
@@ -36,23 +53,20 @@ const TaskLabels: React.FunctionComponent<Props> = ({
         })
         .then((res) => {
           Toast.success("Label Created!", { id: notification });
+
+          socket.emit("labelCreated", {
+            ProjectId,
+            members,
+            label: res.data,
+            task,
+            type: "createTask",
+            section: "kanban",
+            sections,
+          });
+
           setLabelValue("");
           // task.labels = [...task.labels, res.data];
           setShowLabelInput(!showLabelInput);
-
-          const newSectionObject = JSON.parse(JSON.stringify(sections));
-          const sectionIndex = sections.findIndex(
-            (s: any) => s.id === task.sectionId
-          );
-          const taskIndex = newSectionObject[sectionIndex].tasks.findIndex(
-            (t: any) => t.id === task.id
-          );
-          newSectionObject[sectionIndex].tasks[taskIndex].labels = [
-            ...task.labels,
-            res.data,
-          ];
-
-          setSections(newSectionObject);
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });
@@ -69,22 +83,15 @@ const TaskLabels: React.FunctionComponent<Props> = ({
         })
         .then((res) => {
           Toast.success("Label Deleted!", { id: notification });
-          const labelIndex = task.labels.findIndex(
-            (label: Label) => label.id == labelId
-          );
-          const newSectionObject = JSON.parse(JSON.stringify(sections));
-          const sectionIndex = sections.findIndex(
-            (s: any) => s.id === task.sectionId
-          );
-          const taskIndex = newSectionObject[sectionIndex].tasks.findIndex(
-            (t: any) => t.id === task.id
-          );
-          newSectionObject[sectionIndex].tasks[taskIndex].labels.splice(
-            labelIndex,
-            1
-          );
-
-          setSections(newSectionObject);
+          socket.emit("labelCreated", {
+            ProjectId,
+            members,
+            label: res.data,
+            task,
+            type: "deleteTask",
+            section: "kanban",
+            sections,
+          });
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });
