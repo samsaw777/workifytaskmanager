@@ -6,6 +6,8 @@ import { ProjectState } from "../../Context/ProjectContext";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import TaskComments from "../Project/Kanban/Tasks/TaskComments";
+import io, { Socket } from "socket.io-client";
+let socket: Socket;
 
 export interface Label {
   id: number;
@@ -45,8 +47,20 @@ const TaskModal: FunctionComponent<Props> = ({
   const closeTaskModal = () => {
     setIsOpen(!isOpen);
   };
-  const { sections, setSections, comments, setComments } = ProjectState();
+  const {
+    sections,
+    setSections,
+    comments,
+    setComments,
+    project: { id: ProjectId },
+    members,
+  } = ProjectState();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setDescription(task.description);
+    setTitle(task.title);
+  }, [task.title, task.description]);
 
   const [title, setTitle] = useState<string>(task.title);
   const [showDescription, setShowDescription] = useState<boolean>(false);
@@ -55,6 +69,16 @@ const TaskModal: FunctionComponent<Props> = ({
   const [showDetails, setShowDetails] = useState<boolean>(true);
   // const [comments, setComments] = useState<{}[]>([]);
   const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
+
+  const socketInit = async () => {
+    await fetch(`${urlFetcher()}/api/socket`);
+
+    socket = io();
+  };
+
+  useEffect(() => {
+    socketInit();
+  }, []);
 
   const fetchTaskComments = async (cancel: boolean) => {
     try {
@@ -103,28 +127,21 @@ const TaskModal: FunctionComponent<Props> = ({
           type,
         })
         .then((response) => {
-          let sectionIndex = sections.findIndex(
-            (section) => section.id == task.sectionId
-          );
-          let newData: any = JSON.parse(JSON.stringify(sections));
-          const index = newData[sectionIndex].tasks.findIndex(
-            (e: any) => e.id === task.id
-          );
+          socket.emit("taskCreated", {
+            ProjectId,
+            members,
+            task: response.data,
+            type: type === "title" ? "updatetask" : "updatedescription",
+            section: "kanban",
+            sections,
+          });
 
           if (type == "title") {
-            setTitle(response.data.title);
-            newData[sectionIndex].tasks[index].title = response.data.title;
             setLoading(false);
           } else {
-            setDescription(response.data.description);
-            task.description = response.data.description;
-            newData[sectionIndex].tasks[index].description =
-              response.data.description;
-
             setShowDescription(false);
             setDescLoading(false);
           }
-          setSections(newData);
         });
     } catch (error: any) {
       console.log(error.message);
@@ -132,6 +149,7 @@ const TaskModal: FunctionComponent<Props> = ({
         setLoading(false);
       } else {
         setShowDescription(false);
+        setDescLoading(false);
       }
     }
   };

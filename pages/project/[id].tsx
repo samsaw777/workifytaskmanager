@@ -288,6 +288,20 @@ const ProjectDetails = ({
         );
         sections[sectionIndex].tasks[index].title = task?.title;
         setSections(sections);
+      } else if (
+        ProjectId === projectId &&
+        type == "updatedescription" &&
+        section == "kanban"
+      ) {
+        let sectionIndex = sections.findIndex(
+          (section: any) => section.id == task?.sectionId
+        );
+
+        const index = sections[sectionIndex].tasks.findIndex(
+          (e: any) => e.id === task?.id
+        );
+        sections[sectionIndex].tasks[index].description = task?.description;
+        setSections(sections);
       }
     });
 

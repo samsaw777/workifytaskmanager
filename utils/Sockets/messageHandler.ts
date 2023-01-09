@@ -177,4 +177,33 @@ export default (io: any, socket: any) => {
       });
     }
   );
+
+  socket.on(
+    "labelCreated",
+    ({
+      ProjectId,
+      members,
+      label,
+      type,
+      section,
+      labels,
+    }: {
+      ProjectId: number;
+      members: any;
+      label: { id: number; name: string; taskId: number };
+      type: string;
+      section: string;
+      labels: { id: number; name: string; taskId: number }[];
+    }) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("labelCreation", {
+        ProjectId,
+        label,
+        type,
+        section,
+        labels,
+      });
+    }
+  );
 };
