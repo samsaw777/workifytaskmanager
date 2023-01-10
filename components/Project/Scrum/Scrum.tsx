@@ -18,8 +18,6 @@ const Scrum = () => {
     members,
   } = ProjectState();
 
-  console.log(board);
-
   const socketInit = async () => {
     // await fetch(`${urlFetcher()}/api/socket`);
 

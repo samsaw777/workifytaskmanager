@@ -76,14 +76,10 @@ const ProjectDetails = ({
             section == "backlog" &&
             type == "updateissue"
           ) {
-            console.log(sprintId);
-
             let newSprintArray = JSON.parse(JSON.stringify(sprints));
             const sprintIndex = newSprintArray.findIndex(
               (sprint: any) => sprint.id === sprintId
             );
-            console.log(newSprintArray);
-            console.log(sprintIndex);
 
             const issueIndex = newSprintArray[sprintIndex]?.issues?.findIndex(
               (i: any) => i.id == issue.id
