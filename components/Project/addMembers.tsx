@@ -26,7 +26,7 @@ const AddMembers = ({ projectId }: Props) => {
   const [optionIndex, setOptionIndex] = useState<number>(-1);
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
 

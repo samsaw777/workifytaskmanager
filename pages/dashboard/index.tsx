@@ -31,7 +31,7 @@ const Dashboard = ({ loggedInUserDetails }: any) => {
   const router = useRouter();
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
 

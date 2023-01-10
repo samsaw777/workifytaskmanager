@@ -24,7 +24,7 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
   } = ProjectState();
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

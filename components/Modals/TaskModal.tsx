@@ -71,7 +71,7 @@ const TaskModal: FunctionComponent<Props> = ({
   const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
