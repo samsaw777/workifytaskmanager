@@ -6,6 +6,7 @@ import Toast from "react-hot-toast";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
+import { AiOutlinePlus } from "react-icons/ai";
 
 let socket: Socket;
 
@@ -125,10 +126,29 @@ const ScrumBoard = () => {
     }
   };
 
+  const createScrumSection = async () => {
+    const notification = Toast.loading("Creating Section!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/section/createsection`, {
+          title: "",
+          boardId: board[0].id,
+        })
+        .then((response) => {
+          Toast.success("Section Created", { id: notification });
+          setScrumSections([...scrumSections, response.data]);
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
   return (
-    <div className="px-2 overflow-x-auto w-full">
+    <div className="px-2 overflow-x-auto w-full pb-1 section-title">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
+        <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
           {scrumSections.map(
             ({ id, title, issues, boardId }: any, index: number) => {
               return (
@@ -146,6 +166,12 @@ const ScrumBoard = () => {
               );
             }
           )}
+          <div className="h-full flex-none w-10 rounded-md">
+            <AiOutlinePlus
+              className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
+              onClick={() => createScrumSection()}
+            />
+          </div>
         </div>
       </DragDropContext>
     </div>

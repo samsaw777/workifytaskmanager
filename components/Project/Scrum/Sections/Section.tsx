@@ -31,10 +31,28 @@ interface Props {
 }
 
 const Section = ({ id, title, issues, boardId }: Props) => {
-  const { loggedInUser, sections, setSections } = ProjectState();
+  const { loggedInUser, scrumSections, setScrumSections } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
+
+  const deleteSection = async (sectionId: number) => {
+    const notification = Toast.loading("Deleting Section!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/section/deletesection`, {
+          id: sectionId,
+        })
+        .then((res) => {
+          Toast.success("Section Deleted!", { id: notification });
+          setScrumSections((current) =>
+            current.filter((section: any) => section.id !== res.data.id)
+          );
+        });
+    } catch (error: any) {
+      Toast.error(error.message, { id: notification });
+    }
+  };
 
   return (
     <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
@@ -71,7 +89,7 @@ const Section = ({ id, title, issues, boardId }: Props) => {
               strokeWidth={1.5}
               stroke="currentColor"
               className="w-6 h-6 text-red-300 cursor-pointer"
-              // onClick={() => deleteSection(id)}
+              onClick={() => deleteSection(id)}
             >
               <path
                 strokeLinecap="round"

@@ -60,25 +60,6 @@ const KanbanSection = ({ id, title, tasks, boardId, index }: Props) => {
     setSectionTitle(title);
   }, [title]);
 
-  //   const deleteSection = async (sectionId: number) => {
-  //     const notification = Toast.loading("Deleting Section!");
-  //     try {
-  //       await axios
-  //         .post(`${urlFetcher()}/api/section/deletesection`, {
-  //           id: sectionId,
-  //         })
-  //         .then((res) => {
-  //           const newData = sections.filter(
-  //             (section: any) => section.id != sectionId
-  //           );
-  //           setSections(newData);
-  //           Toast.success("Section Deleted!", { id: notification });
-  //         });
-  //     } catch (error: any) {
-  //       Toast.error(error.message, { id: notification });
-  //     }
-  //   };
-
   //   const updateSection = async (
   //     e: any,
   //     boardId: number,
