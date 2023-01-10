@@ -205,14 +205,16 @@ const Sprint = ({
                 <div>
                   {sprint?.issues?.map((issue: any, index: number) => {
                     return (
-                      <Issue
-                        issue={issue}
-                        index={index}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        setUpdateIssueDetails={setUpdateIssueDetails}
-                        socket={socket}
-                      />
+                      <div key={index}>
+                        <Issue
+                          issue={issue}
+                          index={index}
+                          isOpen={isOpen}
+                          setIsOpen={setIsOpen}
+                          setUpdateIssueDetails={setUpdateIssueDetails}
+                          socket={socket}
+                        />
+                      </div>
                     );
                   })}
                 </div>

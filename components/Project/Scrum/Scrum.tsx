@@ -159,17 +159,19 @@ const Scrum = () => {
       <div className="w-full p-2 flex flex-col space-y-3">
         {sprints.map((sprint: any, index: number) => {
           return (
-            <Sprint
-              sprint={sprint}
-              index={index}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              setUpdateIssueDetails={setUpdateIssueDetails}
-              setSprintDetails={setSprintDetails}
-              socket={socket}
-              setUpdateSprintDetails={setUpdateSprintDetails}
-              updateSprintDetails={updateSprintDetails}
-            />
+            <div key={index}>
+              <Sprint
+                sprint={sprint}
+                index={index}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                setUpdateIssueDetails={setUpdateIssueDetails}
+                setSprintDetails={setSprintDetails}
+                socket={socket}
+                setUpdateSprintDetails={setUpdateSprintDetails}
+                updateSprintDetails={updateSprintDetails}
+              />
+            </div>
           );
         })}
 
