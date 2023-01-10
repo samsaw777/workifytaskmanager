@@ -371,10 +371,12 @@ const ProjectDetails = ({
           const taskIndex = newSectionObject[sectionIndex]?.tasks?.findIndex(
             (t: any) => t.id === task?.id
           );
-          newSectionObject[sectionIndex].tasks[taskIndex].labels = [
-            ...task.labels,
-            label,
-          ];
+          newSectionObject[sectionIndex].tasks[taskIndex].labels =
+            newSectionObject[sectionIndex]?.tasks[taskIndex]?.labels?.length > 0
+              ? newSectionObject[sectionIndex].tasks[taskIndex].labels
+              : [];
+
+          newSectionObject[sectionIndex].tasks[taskIndex].labels.push(label);
 
           setSections(newSectionObject);
         } else if (
