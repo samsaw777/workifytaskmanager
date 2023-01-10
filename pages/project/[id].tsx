@@ -199,6 +199,12 @@ const ProjectDetails = ({
           section === "scrumboard"
         ) {
           setScrumSections([...sprint]);
+        } else if (
+          ProjectId === projectId &&
+          type == "taskDraged" &&
+          section == "kanban"
+        ) {
+          setSections([...sprint]);
         }
       }
     );

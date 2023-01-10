@@ -71,7 +71,7 @@ const Kanban = () => {
     }
   };
 
-  const onDragEnd = ({ source, destination }: DropResult) => {
+  const onDragEnd = async ({ source, destination }: DropResult) => {
     if (!destination) return;
     if (
       destination.droppableId === source.droppableId &&
@@ -118,7 +118,7 @@ const Kanban = () => {
 
     const notification = Toast.loading("Changing Position!");
 
-    axios
+    await axios
       .post(`${urlFetcher()}/api/kanban/task/updatetaskposition`, {
         resourceList: sourceTasks,
         destinationList: destinationTasks,
@@ -135,6 +135,13 @@ const Kanban = () => {
           id: notification,
         });
       });
+    socket.emit("issueDraggedInSprint", {
+      ProjectId: id,
+      members,
+      sprint: newData,
+      type: "taskDraged",
+      section: "kanban",
+    });
   };
 
   return (
