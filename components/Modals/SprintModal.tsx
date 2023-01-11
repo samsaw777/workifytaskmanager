@@ -47,7 +47,7 @@ const SprintModal = ({
   }, [isSprintModalOpen]);
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

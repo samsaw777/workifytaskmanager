@@ -26,7 +26,7 @@ const AddMembers = ({ projectId }: Props) => {
   const [optionIndex, setOptionIndex] = useState<number>(-1);
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
 
@@ -215,7 +215,7 @@ const AddMembers = ({ projectId }: Props) => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 mt-5">
           {members.map((member: any, index: number) => (
             <div
               className="w-full p-3 rounded-md flex justify-between items-center bg-gray-200 mt-1"

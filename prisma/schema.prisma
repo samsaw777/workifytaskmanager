@@ -16,6 +16,7 @@ model User {
   password  String
   project Project[]
   issues Issues[]
+  tasks Task[]
 }
 
 model Project{
@@ -77,16 +78,49 @@ model Section{
   boardId Int
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
+  tasks Task[]
 }
 
 model Sprint{
   id Int @id @default(autoincrement())
-  sprintName String @unique
+  sprintName String 
   boardId Int
   isUnderStartSprint Boolean
   isPrimary Boolean
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
+}
+
+model Task{
+  id String @id @default(uuid())
+  title String
+  description String?
+  username String
+  profile String
+    userId String
+  position Int
+  sectionId Int
+  Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
+  comments TaskComments[]
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  labels TaskLabels[]
+}
+
+model TaskComments{
+  id Int @id @default(autoincrement())
+  username String?
+  userProfile String?
+  comment String
+  taskId String
+  Task Task @relation(fields: [taskId], references: [id],onDelete: Cascade)
+}
+
+model TaskLabels{
+  id Int @id @default(autoincrement())
+  name String
+  taskId String
+  Task Task @relation(fields: [taskId], references: [id],onDelete: Cascade)
 }
 
 

@@ -27,11 +27,11 @@ let socket: any;
 const Dashboard = ({ loggedInUserDetails }: any) => {
   const { setLoggedInUser } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
-  const [showContent, setShowContent] = useState<string>("Dashboard");
+  const [showContent, setShowContent] = useState<string>("Projects");
   const router = useRouter();
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
 

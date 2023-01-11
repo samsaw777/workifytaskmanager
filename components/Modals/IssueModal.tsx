@@ -169,7 +169,7 @@ const IssueModal = ({
           socket.emit("issueCreated", {
             projectId: id,
             members,
-            sprintId: sprintDetails.id,
+            sprintId: updateIssueDetails.sprintId,
             issue: res.data,
             section: "backlog",
             type: "updateissue",

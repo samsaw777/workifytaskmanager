@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import io, { Socket } from "socket.io-client";
 
 interface loggedInUser {
   id: string;
@@ -40,6 +41,24 @@ interface Section {
   boardId: number;
 }
 
+export interface Label {
+  id: number;
+  name: string;
+  taskId: number;
+}
+
+interface Task {
+  id: number;
+  title: string;
+  profile: string;
+  username: string;
+  userId: string;
+  description: string;
+  positon: number;
+  sectionId: number;
+  labels: Label[] | [];
+}
+
 interface Context {
   loggedInUser: loggedInUser;
   members: Member[];
@@ -53,6 +72,12 @@ interface Context {
   setSprints: React.Dispatch<React.SetStateAction<Sprint[]>>;
   sections: Section[];
   setSections: React.Dispatch<React.SetStateAction<Section[]>>;
+  scrumSections: Section[];
+  setScrumSections: React.Dispatch<React.SetStateAction<Section[]>>;
+  labels: Label[];
+  setLabels: React.Dispatch<React.SetStateAction<Label[]>>;
+  comments: {}[];
+  setComments: React.Dispatch<React.SetStateAction<{}[]>>;
 }
 
 const ProjectContext = createContext<Context>({
@@ -74,6 +99,12 @@ const ProjectContext = createContext<Context>({
   setSprints: () => [],
   sections: [],
   setSections: () => [],
+  labels: [],
+  setLabels: () => [],
+  scrumSections: [],
+  setScrumSections: () => [],
+  setComments: () => [],
+  comments: [],
 });
 
 const ProjectProvider = ({ children }: any) => {
@@ -90,6 +121,10 @@ const ProjectProvider = ({ children }: any) => {
   const [issues, setIssues] = useState<ScrumIssue[]>([]);
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
+  const [scrumSections, setScrumSections] = useState<Section[]>([]);
+  const [labels, setLabels] = useState<Label[]>([]);
+  const [comments, setComments] = useState<{}[]>([]);
+
   return (
     <ProjectContext.Provider
       value={{
@@ -105,6 +140,12 @@ const ProjectProvider = ({ children }: any) => {
         setSprints,
         sections,
         setSections,
+        labels,
+        setLabels,
+        scrumSections,
+        setScrumSections,
+        comments,
+        setComments,
       }}
     >
       {children}

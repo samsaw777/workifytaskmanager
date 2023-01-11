@@ -3,6 +3,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdMenu } from "react-icons/md";
 import { useRouter } from "next/router";
 import { ProjectState } from "../../Context/ProjectContext";
+import Image from "next/image";
 
 type Props = {
   openSideBar: boolean;
@@ -36,7 +37,18 @@ const TopBar = ({ openSideBar, setOpenSideBar }: Props) => {
             {loggedInUser?.email}
           </span>
         </div>
-        <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+        {loggedInUser?.profile !== "" ? (
+          <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+            <Image
+              src={loggedInUser.profile}
+              width={100}
+              height={100}
+              alt="UserProfile"
+            />
+          </div>
+        ) : (
+          <FaUserCircle className="text-2xl text-violet-400 cursor-pointer" />
+        )}
       </div>
     </div>
   );

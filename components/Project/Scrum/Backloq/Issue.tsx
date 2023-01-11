@@ -51,7 +51,6 @@ const Issue = ({
     project: { id },
     members,
   } = ProjectState();
-  console.log(sprints);
   const [openOption, setOpenOption] = useState<boolean>(false);
 
   const updateIssue = (issue: UpdateIssue) => {

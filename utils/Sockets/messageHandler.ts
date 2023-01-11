@@ -1,3 +1,5 @@
+import React from "react";
+
 export default (io: any, socket: any) => {
   const dashboardSocket = (user: any) => {
     socket.join(user.id);
@@ -99,6 +101,111 @@ export default (io: any, socket: any) => {
         type,
         section,
         sprint,
+      });
+    }
+  );
+
+  socket.on(
+    "sectionCreated",
+    ({
+      ProjectId,
+      members,
+      kanbansection,
+      type,
+      dashboardsection,
+      sections,
+    }: any) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("sectionCreation", {
+        ProjectId,
+        kanbansection,
+        type,
+        dashboardsection,
+        kanbansections: sections,
+      });
+    }
+  );
+
+  //Socket to creaate task.
+  socket.on(
+    "taskCreated",
+    ({ ProjectId, members, task, type, section, sections }: any) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("tasks", {
+        ProjectId,
+        task,
+        type,
+        section,
+        sections,
+      });
+    }
+  );
+
+  socket.on(
+    "commentCreated",
+    ({
+      ProjectId,
+      members,
+      comment,
+      type,
+      section,
+      comments,
+    }: {
+      ProjectId: number;
+      members: {}[];
+      comment: {
+        id: number;
+        userProfile: string;
+        comment: string;
+        taskId: string;
+        username: string;
+      };
+      type: string;
+      section: string;
+      comments: {}[];
+    }) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("commentCreation", {
+        ProjectId,
+        comment,
+        type,
+        section,
+        comments,
+      });
+    }
+  );
+
+  socket.on(
+    "labelCreated",
+    ({
+      ProjectId,
+      members,
+      label,
+      task,
+      type,
+      section,
+      sections,
+    }: {
+      ProjectId: number;
+      members: any;
+      label: { id: number; name: string; taskId: number };
+      task: any;
+      type: string;
+      section: string;
+      sections: {}[];
+    }) => {
+      if (!members) return console.log("Members not found!");
+
+      socket.to(ProjectId).emit("labelCreation", {
+        ProjectId,
+        label,
+        task,
+        type,
+        section,
+        sections,
       });
     }
   );

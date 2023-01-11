@@ -3,7 +3,7 @@ import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { boardId } = req.body;
+    const { boardId, type } = req.body;
 
     const sections = await prisma.section.findMany({
       where: {
@@ -12,18 +12,37 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       orderBy: {
         id: "asc",
       },
+
       include: {
-        issues: {
-          where: {
-            isUnderStartSprint: false,
-            NOT: {
-              sprintName: "BACKLOG",
-            },
-          },
-          orderBy: {
-            position: "asc",
-          },
-        },
+        issues:
+          type == "SCRUM"
+            ? {
+                where: {
+                  isUnderStartSprint: false,
+                  NOT: {
+                    sprintName: "BACKLOG",
+                  },
+                },
+                orderBy: {
+                  position: "asc",
+                },
+              }
+            : false,
+        tasks:
+          type == "KANBAN"
+            ? {
+                orderBy: {
+                  position: "asc",
+                },
+                include: {
+                  labels: {
+                    orderBy: {
+                      id: "asc",
+                    },
+                  },
+                },
+              }
+            : false,
       },
     });
 

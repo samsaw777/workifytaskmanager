@@ -6,37 +6,39 @@ import Toast from "react-hot-toast";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
+import { AiOutlinePlus } from "react-icons/ai";
 
 let socket: Socket;
 
 const ScrumBoard = () => {
   const {
-    sections,
-    setSections,
+    scrumSections,
+    setScrumSections,
     project: { board, id },
     members,
   } = ProjectState();
 
   const socketInit = async () => {
-    await fetch(`${urlFetcher()}/api/socket`);
+    // await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
-  const fetchSprints = async () => {
+  const fetchSections = async () => {
     try {
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[0].id,
+          type: "SCRUM",
         })
         .then((res) => {
-          setSections(res.data);
+          setScrumSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
     }
   };
   useEffect(() => {
-    fetchSprints();
+    fetchSections();
     socketInit();
   }, []);
 
@@ -55,7 +57,7 @@ const ScrumBoard = () => {
 
       notification = Toast.loading("Changing Position");
 
-      let sectionData = JSON.parse(JSON.stringify(sections));
+      let sectionData = JSON.parse(JSON.stringify(scrumSections));
 
       //Find the source and destination column index.
       const sourceColIndex = sectionData.findIndex(
@@ -87,12 +89,12 @@ const ScrumBoard = () => {
         sectionData[sourceColIndex].issues = sourceIssues;
         sectionData[destinationColIndex].issues = destinationIssues;
 
-        setSections(sectionData);
+        setScrumSections(sectionData);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         sectionData[destinationColIndex].issues = destinationIssues;
-        setSections(sectionData);
+        setScrumSections(sectionData);
       }
 
       await axios
@@ -124,17 +126,52 @@ const ScrumBoard = () => {
     }
   };
 
+  const createScrumSection = async () => {
+    const notification = Toast.loading("Creating Section!");
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/section/createsection`, {
+          title: "",
+          boardId: board[0].id,
+        })
+        .then((response) => {
+          Toast.success("Section Created", { id: notification });
+          setScrumSections([...scrumSections, response.data]);
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
   return (
-    <div className="px-2 overflow-x-auto w-full">
+    <div className="px-2 overflow-x-auto w-full pb-1 section-title">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-5 mt-2 h-[85vh] pb-2">
-          {sections.map(({ id, title, issues }: any, index: number) => {
-            return (
-              <div key={index}>
-                <Section id={id} title={title} issues={issues} />
-              </div>
-            );
-          })}
+        <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
+          {scrumSections.map(
+            ({ id, title, issues, boardId }: any, index: number) => {
+              return (
+                <div
+                  key={index}
+                  className="h-full flex-non w-[350px] rounded-md"
+                >
+                  <Section
+                    id={id}
+                    title={title}
+                    issues={issues}
+                    boardId={boardId}
+                  />
+                </div>
+              );
+            }
+          )}
+          <div className="h-full flex-none w-10 rounded-md">
+            <AiOutlinePlus
+              className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
+              onClick={() => createScrumSection()}
+            />
+          </div>
         </div>
       </DragDropContext>
     </div>
