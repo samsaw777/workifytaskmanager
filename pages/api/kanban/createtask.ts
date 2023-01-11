@@ -7,7 +7,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     const totalTask = await prisma.task.findMany({
       where: {
-        sectionId,
+        sectionId: sectionId,
       },
     });
 
