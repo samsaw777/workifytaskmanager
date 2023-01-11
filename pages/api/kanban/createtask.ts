@@ -5,7 +5,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const { sectionId, title, userId, username, profile } = req.body;
 
-    const totalTask = await prisma?.task.findMany({
+    const totalTask = await prisma.task.findMany({
       where: {
         sectionId: sectionId,
       },
