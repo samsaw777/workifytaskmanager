@@ -5,11 +5,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const { sectionId, title, userId, username, profile } = req.body;
 
-    // const totalTask = await prisma.task.findMany({
-    //   where: {
-    //     sectionId: sectionId,
-    //   },
-    // });
+    const totalTask = await prisma.task.findMany({
+      where: {
+        sectionId: sectionId,
+      },
+    });
 
     const newTask = await prisma.task.create({
       data: {
@@ -19,7 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         userId,
         username,
         profile,
-        position: 0,
+        position: totalTask.length > 0 ? totalTask.length : 0,
       },
     });
 
