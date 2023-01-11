@@ -50,7 +50,15 @@ const Scrum = () => {
     issue: string;
     sprintId: number;
     index: number;
-  }>({ type: "Story", id: 0, issue: "", sprintId: 0, index: -1 });
+    description: string;
+  }>({
+    type: "Story",
+    id: 0,
+    issue: "",
+    sprintId: 0,
+    index: -1,
+    description: "",
+  });
 
   const [updateSprintDetails, setUpdateSprintDetails] = useState<{
     sprintId: number;

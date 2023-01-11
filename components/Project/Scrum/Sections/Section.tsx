@@ -17,6 +17,7 @@ interface Issue {
   id: number;
   issue: string;
   username: string;
+  description: string;
   userId: string;
   profille: string;
   position: number;

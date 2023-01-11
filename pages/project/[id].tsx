@@ -59,7 +59,6 @@ const ProjectDetails = ({
       .on(
         "issues",
         ({ sprintId, issue, ProjectId, section, type, sprints }: any) => {
-          console.log("called");
           if (
             projectId === ProjectId &&
             section == "backlog" &&
@@ -69,7 +68,7 @@ const ProjectDetails = ({
             const sprintIndex = newSprintArray.findIndex(
               (sprint: any) => sprint.id == sprintId
             );
-            newSprintArray[sprintIndex].issues.push(issue);
+            newSprintArray[sprintIndex]?.issues?.push(issue);
             setSprints(newSprintArray);
           } else if (
             projectId === ProjectId &&

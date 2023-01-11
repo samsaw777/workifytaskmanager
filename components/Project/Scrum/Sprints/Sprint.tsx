@@ -28,6 +28,7 @@ interface Props {
       issue: string;
       sprintId: number;
       index: number;
+      description: string;
     }>
   >;
   index: number;

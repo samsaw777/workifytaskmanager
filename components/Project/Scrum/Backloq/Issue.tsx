@@ -13,6 +13,7 @@ interface Issue {
   id: number;
   type: string;
   issue: string;
+  description: string;
   projectId: number;
   username: string;
   profile: string;
@@ -26,6 +27,7 @@ type UpdateIssue = {
   id: number;
   issue: string;
   sprintId: number;
+  description: string;
   index: number;
 };
 interface Props {
@@ -145,6 +147,7 @@ const Issue = ({
                         issue: issue.issue,
                         type: issue.type,
                         sprintId: issue.sprintId,
+                        description: issue.description,
                         index,
                       })
                     }
