@@ -243,6 +243,25 @@ const ProjectDetails = ({
 
           kanbansections[sectionIndex].title = kanbansection.title;
           setSections([...kanbansections]);
+        } else if (
+          ProjectId == projectId &&
+          type === "updatesection" &&
+          dashboardsection === "scrum"
+        ) {
+          const sectionIndex = kanbansections.findIndex(
+            (s: any) => s.id === kanbansection.id
+          );
+
+          kanbansections[sectionIndex].title = kanbansection.title;
+          setScrumSections([...kanbansections]);
+        } else if (
+          ProjectId === projectId &&
+          type === "deletesection" &&
+          dashboardsection === "scrum"
+        ) {
+          setScrumSections((current) =>
+            current.filter((section: any) => section.id !== kanbansection.id)
+          );
         }
       }
     );

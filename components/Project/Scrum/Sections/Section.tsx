@@ -1,4 +1,4 @@
-import React, { EventHandler, useState } from "react";
+import React, { EventHandler, useState, useRef, useEffect } from "react";
 import SectionIssue from "./SectionIssue";
 import { Droppable } from "react-beautiful-dnd";
 import { ProjectState } from "../../../../Context/ProjectContext";
@@ -10,6 +10,8 @@ import {
   updateSection,
   deleteSection,
 } from "../../../../utils/Helper/SectionFIle";
+import io, { Socket } from "socket.io-client";
+let socket: Socket;
 
 interface Issue {
   id: number;
@@ -31,10 +33,22 @@ interface Props {
 }
 
 const Section = ({ id, title, issues, boardId }: Props) => {
-  const { loggedInUser, scrumSections, setScrumSections } = ProjectState();
+  useEffect(() => {
+    socket = io();
+  }, []);
+  useEffect(() => {
+    setSectionTitle(title);
+  }, [title]);
+  const {
+    project: { id: ProjectId },
+    members,
+    scrumSections,
+    setScrumSections,
+  } = ProjectState();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [sectionTitle, setSectionTitle] = useState<string>(title);
+  const scrumSectionHeader = useRef<HTMLInputElement | any>(null);
 
   const deleteSection = async (sectionId: number) => {
     const notification = Toast.loading("Deleting Section!");
@@ -45,37 +59,60 @@ const Section = ({ id, title, issues, boardId }: Props) => {
         })
         .then((res) => {
           Toast.success("Section Deleted!", { id: notification });
-          setScrumSections((current) =>
-            current.filter((section: any) => section.id !== res.data.id)
-          );
+          socket.emit("sectionCreated", {
+            ProjectId,
+            members,
+            kanbansection: res.data,
+            type: "deletesection",
+            dashboardsection: "scrum",
+            sections: scrumSections,
+          });
         });
     } catch (error: any) {
       Toast.error(error.message, { id: notification });
     }
   };
 
+  const updateScrumSection = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      await axios
+        .post(`${urlFetcher()}/api/section/updatesection`, {
+          boardId,
+          title: sectionTitle,
+          id,
+        })
+        .then((response) => {
+          setLoading(false);
+          socket.emit("sectionCreated", {
+            ProjectId,
+            members,
+            kanbansection: response.data,
+            type: "updatesection",
+            dashboardsection: "scrum",
+            sections: scrumSections,
+          });
+
+          scrumSectionHeader?.current?.blur();
+        })
+        .catch((error: any) => console.log(error.message));
+    } catch (error: any) {}
+  };
+
   return (
     <div key={id} className="h-full flex-none bg-gray-100 w-[350px] rounded-md">
       <form
         className="flex space-x-1 px-2 py-2 border-b-2 border-b-gray-300"
-        // onSubmit={(e) =>
-        //   updateSection(
-        //     e,
-        //     boardId,
-        //     sectionTitle,
-        //     id,
-        //     setSectionTitle,
-        //     setLoading,
-        //     setSections,
-        //     sections
-        //   )
-        // }
+        onSubmit={(e) => updateScrumSection(e)}
       >
         <input
           onChange={(e) => setSectionTitle(e.target.value)}
           value={sectionTitle}
           className="w-full bg-transparent focus:border-2  focus:border-blue-300 focus:outline-none focus:bg-white p-1 rounded-md font-medium"
           placeholder="Untitled"
+          ref={scrumSectionHeader}
         />
         <button className="hidden" type="submit">
           Submit
