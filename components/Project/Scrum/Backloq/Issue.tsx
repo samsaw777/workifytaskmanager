@@ -12,7 +12,7 @@ import { Socket } from "socket.io-client";
 interface Issue {
   id: number;
   type: string;
-  issue: string;
+  titile: string;
   description: string;
   projectId: number;
   username: string;
@@ -25,7 +25,7 @@ interface Issue {
 type UpdateIssue = {
   type: string;
   id: number;
-  issue: string;
+  title: string;
   sprintId: number;
   description: string;
   index: number;
@@ -118,7 +118,7 @@ const Issue = ({
               }}
             ></div>
             <div className=" text-xs">NEW {index + 1}</div>
-            <div className="text-sm">{issue.issue}</div>
+            <div className="text-sm">{issue.title}</div>
           </div>
           <div className="flex space-x-3 items-center">
             <div className="py-1 px-4 bg-gray-300 rounded-sm text-xs">
@@ -144,7 +144,7 @@ const Issue = ({
                     onClick={() =>
                       updateIssue({
                         id: issue.id,
-                        issue: issue.issue,
+                        title: issue.title,
                         type: issue.type,
                         sprintId: issue.sprintId,
                         description: issue.description,

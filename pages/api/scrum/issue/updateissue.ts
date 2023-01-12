@@ -3,13 +3,14 @@ import prisma from "../../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { issueId, issue, type } = req.body;
+    const { issueId, title, type, description } = req.body;
 
     const updatedIssue = await prisma.issues.update({
       where: { id: issueId },
       data: {
-        issue,
+        title,
         type,
+        description,
       },
     });
 

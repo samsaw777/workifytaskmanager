@@ -21,7 +21,8 @@ interface Member {
 interface ScrumIssue {
   id: number;
   type: string;
-  issue: string;
+  title: string;
+  description: string;
   projectId: number;
   username: string;
   profile: string;

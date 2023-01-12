@@ -84,8 +84,10 @@ const ProjectDetails = ({
               (i: any) => i.id == issue.id
             );
 
-            newSprintArray[sprintIndex].issues[issueIndex].issue = issue.issue;
+            newSprintArray[sprintIndex].issues[issueIndex].title = issue.title;
             newSprintArray[sprintIndex].issues[issueIndex].type = issue.type;
+            newSprintArray[sprintIndex].issues[issueIndex].description =
+              issue.description;
             setSprints(newSprintArray);
           } else if (
             projectId === ProjectId &&
@@ -98,13 +100,10 @@ const ProjectDetails = ({
 
             const sprint = JSON.parse(JSON.stringify(sprints));
 
-            sprint[sprintIndex].issues = [
-              ...sprint[sprintIndex].issues.filter(
-                (i: any) => i.id !== issue.id
-              ),
-            ];
-
-            setSprints(sprint);
+            (sprint[sprintIndex].issues = sprint[sprintIndex].issues.filter(
+              (i: any) => i.id !== issue.id
+            )),
+              setSprints(sprint);
           }
         }
       );

@@ -7,6 +7,7 @@ import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import TaskComments from "../Project/Kanban/Tasks/TaskComments";
 import io, { Socket } from "socket.io-client";
+import { number } from "yup";
 let socket: Socket;
 
 export interface Label {
@@ -25,6 +26,18 @@ export interface Task {
   position: number;
   sectionId: number;
   labels: Label[] | [];
+}
+
+//Interface For Issue In Scrumboard.
+interface Issue {
+  id: number;
+  type: string;
+  description: string;
+  title: string;
+  username: string;
+  profile: string;
+  position: number;
+  sectionId: number;
 }
 
 interface Props {

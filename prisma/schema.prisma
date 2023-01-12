@@ -47,7 +47,7 @@ model Issues{
   id Int @id @default(autoincrement())
   type String
   description String
-  issue String
+  title String
   projectId Int
   username String
   profile String

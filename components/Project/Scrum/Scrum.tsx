@@ -47,14 +47,14 @@ const Scrum = () => {
   const [updateIssueDetails, setUpdateIssueDetails] = useState<{
     type: string;
     id: number;
-    issue: string;
+    title: string;
     sprintId: number;
     index: number;
     description: string;
   }>({
     type: "Story",
     id: 0,
-    issue: "",
+    title: "",
     sprintId: 0,
     index: -1,
     description: "",

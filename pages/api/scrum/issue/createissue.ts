@@ -6,7 +6,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const {
       type,
       username,
-      issue,
+      title,
       description,
       profile,
       userId,
@@ -34,7 +34,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         description,
         userId,
         sectionId,
-        issue,
+        title,
         sectionName,
         projectId,
         position: issuesLength,

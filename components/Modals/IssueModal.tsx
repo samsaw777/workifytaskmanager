@@ -9,7 +9,7 @@ import io, { Socket } from "socket.io-client";
 type UpdateIssue = {
   type: string;
   id: number;
-  issue: string;
+  title: string;
   index: number;
   sprintId: number;
   description: string;
@@ -77,10 +77,10 @@ const IssueModal = ({
   useEffect(() => {
     if (Object.keys(updateIssueDetails).length > 0) {
       setSelectedItem(
-        updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
+        updateIssueDetails.title != "" ? updateItem[0] : MenuItems[0]
       );
       setIssueDescription(updateIssueDetails.description);
-      setIssueName(updateIssueDetails.issue);
+      setIssueName(updateIssueDetails.title);
     }
   }, [isOpen]);
 
@@ -100,7 +100,7 @@ const IssueModal = ({
     setUpdateIssueDetails({
       type: "Story",
       id: 0,
-      issue: "",
+      title: "",
       sprintId: 0,
       index: -1,
       description: "",
@@ -121,7 +121,7 @@ const IssueModal = ({
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/createissue`, {
           type: selectedItem.title,
-          issue: issueName,
+          title: issueName,
           description: issueDescription,
           username: loggedInUser.username,
           profile: loggedInUser.profile,
@@ -164,7 +164,8 @@ const IssueModal = ({
         .post(`${urlFetcher()}/api/scrum/issue/updateissue`, {
           issueId: updateIssueDetails.id,
           type: selectedItem.title,
-          issue: issueName,
+          title: issueName,
+          description: issueDescription,
         })
         .then((res) => {
           socket.emit("issueCreated", {
@@ -183,7 +184,7 @@ const IssueModal = ({
           setUpdateIssueDetails({
             type: "Story",
             id: 0,
-            issue: "",
+            title: "",
             sprintId: 0,
             index: -1,
             description: "",
@@ -226,7 +227,7 @@ const IssueModal = ({
         </div>
         <form
           onSubmit={
-            updateIssueDetails.issue != ""
+            updateIssueDetails.title != ""
               ? (e) => updateIssue(e)
               : (e) => createIssue(e)
           }
@@ -272,7 +273,7 @@ const IssueModal = ({
               className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
               type="submit"
             >
-              {updateIssueDetails.issue != "" ? "Update" : "Create"}
+              {updateIssueDetails.title != "" ? "Update" : "Create"}
             </button>
           </div>
         </form>
