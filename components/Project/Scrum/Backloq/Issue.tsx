@@ -9,6 +9,7 @@ import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import { Draggable } from "react-beautiful-dnd";
 import { Socket } from "socket.io-client";
+import IssueInfoModal, { IssueLabels, Label } from "../../../Modals/TaskModal";
 interface Issue {
   id: number;
   type: string;
@@ -61,6 +62,11 @@ const Issue = ({
     setOpenOption(!openOption);
   };
 
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState<boolean>(false);
+  const [labels, setLabels] = useState<IssueLabels[] | [] | Label[]>(
+    issue.labels
+  );
+
   //Delete Issue.
   const deleteIssue = async (issueId: number, sprintId: number) => {
     const notification = Toast.loading("Deleting Issue!");
@@ -110,7 +116,10 @@ const Issue = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <div className="flex space-x-3 items-center">
+          <div
+            className="flex space-x-3 items-center cursor-pointer"
+            onClick={() => setIsIssueModalOpen(!isIssueModalOpen)}
+          >
             <div
               className="w-3 h-3 rounded-sm"
               style={{
@@ -166,6 +175,17 @@ const Issue = ({
               )}
             </div>
           </div>
+          {isIssueModalOpen && (
+            <IssueInfoModal
+              isOpen={isIssueModalOpen}
+              task={issue}
+              sectionName={issue.sprintName}
+              setIsOpen={setIsIssueModalOpen}
+              setLabels={setLabels}
+              labels={labels}
+              type="scrum"
+            />
+          )}
         </div>
       )}
     </Draggable>

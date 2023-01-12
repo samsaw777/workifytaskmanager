@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../lib/prisma";
+import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -9,7 +9,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       throw new Error("Either of comment or id is missing!");
     }
 
-    const updatedComment = await prisma.taskComments.update({
+    const updatedComment = await prisma.issueComments.update({
       where: {
         id,
       },

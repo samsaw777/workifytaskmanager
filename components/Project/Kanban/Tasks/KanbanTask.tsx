@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import TaskModal, { Label } from "../../../Modals/TaskModal";
+import TaskModal, { IssueLabels, Label } from "../../../Modals/TaskModal";
 import { FaUserCircle } from "react-icons/fa";
 import Image from "next/image";
 import { ProjectState } from "../../../../Context/ProjectContext";
@@ -38,7 +38,9 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
   }, [issue.title]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [labels, setLabels] = useState<Label[] | []>(issue.labels);
+  const [labels, setLabels] = useState<Label[] | [] | IssueLabels[]>(
+    issue.labels
+  );
   const [taskTitle, setTaskTitle] = useState<string>(issue.title);
 
   const taskTitleTRef = useRef<HTMLInputElement>(null);
@@ -207,6 +209,7 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
               setIsOpen={setIsOpen}
               setLabels={setLabels}
               labels={labels}
+              type="kanban"
             />
           )}
         </div>

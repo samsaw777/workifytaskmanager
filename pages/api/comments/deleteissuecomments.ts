@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../lib/prisma";
+import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -9,7 +9,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       throw new Error("Id not found!");
     }
 
-    const deletedComment = await prisma.taskComments.delete({
+    const deletedComment = await prisma.issueComments.delete({
       where: {
         id,
       },

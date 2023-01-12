@@ -11,7 +11,7 @@ let socket: Socket;
 interface Props {
   task: Task | Issue;
   taskId: number;
-  setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
+  setLabels: React.Dispatch<React.SetStateAction<[] | Label[] | IssueLabels[]>>;
   labels: Label[] | IssueLabels[] | [];
 }
 

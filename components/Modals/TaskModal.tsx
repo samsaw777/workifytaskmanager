@@ -52,8 +52,9 @@ interface Props {
   task: Task | Issue;
   sectionName: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
-  labels: Label[] | [];
+  setLabels: React.Dispatch<React.SetStateAction<[] | Label[] | IssueLabels[]>>;
+  labels: Label[] | IssueLabels[] | [];
+  type: string;
 }
 
 const TaskModal: FunctionComponent<Props> = ({
@@ -62,6 +63,7 @@ const TaskModal: FunctionComponent<Props> = ({
   sectionName,
   setIsOpen,
   setLabels,
+  type,
   labels,
 }: Props) => {
   const closeTaskModal = () => {
@@ -104,9 +106,14 @@ const TaskModal: FunctionComponent<Props> = ({
     try {
       setCommentsLoading(true);
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/getcomments`, {
-          taskId: task.id,
-        })
+        .post(
+          `${urlFetcher()}/api/comments/${
+            type == "kanban" ? "gettaskcomments" : "getissuecomments"
+          }`,
+          {
+            taskId: task.id,
+          }
+        )
         .then((res) => {
           if (!cancel) {
             setComments(res.data);

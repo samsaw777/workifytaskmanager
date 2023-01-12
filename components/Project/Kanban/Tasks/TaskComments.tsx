@@ -10,7 +10,7 @@ import io, { Socket } from "socket.io-client";
 let socket: Socket;
 
 interface Props {
-  taskId: string;
+  taskId: string | number;
   loading: boolean;
 }
 
