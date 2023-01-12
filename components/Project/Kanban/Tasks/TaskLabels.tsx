@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Label } from "../../../Modals/TaskModal";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import Toast from "react-hot-toast";
 import TaskLabel from "./Label";
-import { Task } from "../../../Modals/TaskModal";
+import { Task, Issue, Label, IssueLabels } from "../../../Modals/TaskModal";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import { io, Socket } from "socket.io-client";
 let socket: Socket;
 
 interface Props {
-  task: Task;
+  task: Task | Issue;
   taskId: number;
   setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
-  labels: Label[] | [];
+  labels: Label[] | IssueLabels[] | [];
 }
 
 const TaskLabels: React.FunctionComponent<Props> = ({
@@ -106,7 +105,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             className="flex p-1 bg-gray-200 rounded-sm mb-1 items-center flex-wrap gap-2"
             onClick={() => setShowLabelInput(!showLabelInput)}
           >
-            {task?.labels?.map((label: Label, index: number) => (
+            {task?.labels?.map((label: Label | IssueLabels, index: number) => (
               <div key={index}>
                 <TaskLabel
                   id={label.id}

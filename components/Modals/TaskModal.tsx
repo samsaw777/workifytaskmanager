@@ -16,6 +16,12 @@ export interface Label {
   taskId: number;
 }
 
+export interface IssueLabels {
+  id: number;
+  name: string;
+  issueId: number;
+}
+
 export interface Task {
   id: number;
   title: string;
@@ -29,7 +35,7 @@ export interface Task {
 }
 
 //Interface For Issue In Scrumboard.
-interface Issue {
+export interface Issue {
   id: number;
   type: string;
   description: string;
@@ -38,11 +44,12 @@ interface Issue {
   profile: string;
   position: number;
   sectionId: number;
+  labels: IssueLabels[] | [];
 }
 
 interface Props {
   isOpen: boolean;
-  task: Task;
+  task: Task | Issue;
   sectionName: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
