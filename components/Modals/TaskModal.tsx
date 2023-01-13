@@ -328,8 +328,9 @@ const TaskModal: FunctionComponent<Props> = ({
                 </div>
 
                 <TaskComments
-                  taskId={task.id.toString()}
+                  taskId={type === "kanban" ? task.id.toString() : task.id}
                   loading={commentsLoading}
+                  type={type}
                 />
               </div>
             </div>
