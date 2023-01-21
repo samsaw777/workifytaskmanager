@@ -23,6 +23,7 @@ interface Issue {
   position: number;
   sectionId: number;
   sprintId: number;
+  sectionName: string;
   type: string;
 }
 
@@ -169,15 +170,9 @@ const Section = ({ id, title, issues, boardId }: Props) => {
           >
             <div>
               {issues?.map((issue: Issue, index: number) => {
-                console.log(issue);
                 return (
                   <div key={index}>
-                    <SectionIssue
-                      id={issue.id}
-                      type={issue.type}
-                      issue={issue.title}
-                      index={index}
-                    />
+                    <SectionIssue issue={issue} index={index} />
                   </div>
                 );
               })}

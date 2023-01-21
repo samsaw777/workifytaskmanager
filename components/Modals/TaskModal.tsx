@@ -75,6 +75,7 @@ const TaskModal: FunctionComponent<Props> = ({
     comments,
     setComments,
     project: { id: ProjectId },
+    scrumSections,
     members,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,27 @@ const TaskModal: FunctionComponent<Props> = ({
   useEffect(() => {
     socketInit();
   }, []);
+
+  const getSectionsForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return sprints;
+      case "kanban":
+        return sections;
+      case "scrumSection":
+        return scrumSections;
+    }
+  };
+  const getSectionForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return "sprint";
+      case "kanban":
+        return "kanban";
+      case "scrumSection":
+        return "scrumSection";
+    }
+  };
 
   const fetchTaskComments = async (cancel: boolean) => {
     try {
@@ -150,7 +172,7 @@ const TaskModal: FunctionComponent<Props> = ({
       await axios
         .patch(
           `${urlFetcher()}${
-            type === "scrum"
+            type === "scrum" || type === "scrumSection"
               ? "/api/scrum/issue/scrumissue"
               : "/api/kanban/kanbantask"
           }`,
@@ -177,8 +199,8 @@ const TaskModal: FunctionComponent<Props> = ({
             members,
             task: response.data,
             type: updateType === "title" ? "updatetask" : "updatedescription",
-            section: type === "scrum" ? "sprint" : "kanban",
-            sections: type === "scrum" ? sprints : sections,
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
           // }
 

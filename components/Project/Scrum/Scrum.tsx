@@ -181,16 +181,18 @@ const Scrum = () => {
           );
         })}
 
-        <IssueModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setUpdateIssueDetails={setUpdateIssueDetails}
-          updateIssueDetails={updateIssueDetails}
-          setIssueCheck={setIssueCheck}
-          setSprintDetails={setSprintDetails}
-          sprintDetails={sprintDetails}
-          socket={socket}
-        />
+        {isOpen && (
+          <IssueModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            setUpdateIssueDetails={setUpdateIssueDetails}
+            updateIssueDetails={updateIssueDetails}
+            setIssueCheck={setIssueCheck}
+            setSprintDetails={setSprintDetails}
+            sprintDetails={sprintDetails}
+            socket={socket}
+          />
+        )}
       </div>
     </DragDropContext>
   );

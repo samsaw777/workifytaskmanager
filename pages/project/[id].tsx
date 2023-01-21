@@ -356,6 +356,37 @@ const ProjectDetails = ({
         newSprints[sprintIndex].issues[issueIndex].description =
           task.description;
         setSprints(newSprints);
+      } else if (
+        projectId === ProjectId &&
+        section === "scrumSection" &&
+        type === "updatetask"
+      ) {
+        const newScrumSections = JSON.parse(JSON.stringify(sections));
+        const sectionIndex = sections.findIndex(
+          (section: any) => section.id === task.sectionId
+        );
+        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newScrumSections[sectionIndex].issues[issueIndex].title = task.title;
+        setScrumSections(newScrumSections);
+      } else if (
+        projectId === ProjectId &&
+        section === "scrumSwction" &&
+        type === "updatedescription"
+      ) {
+        const newScrumSections = JSON.parse(JSON.stringify(sections));
+        const sectionIndex = sections.findIndex(
+          (section: any) => section.id === task.sectionId
+        );
+        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newScrumSections[sectionIndex].issues[issueIndex].description =
+          task.description;
+        setScrumSections(newScrumSections);
       }
     });
 
