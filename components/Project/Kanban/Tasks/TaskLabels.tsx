@@ -13,6 +13,7 @@ interface Props {
   taskId: number;
   setLabels: React.Dispatch<React.SetStateAction<[] | Label[] | IssueLabels[]>>;
   labels: Label[] | IssueLabels[] | [];
+  type: string;
 }
 
 const TaskLabels: React.FunctionComponent<Props> = ({
@@ -20,6 +21,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   task,
   setLabels,
   labels,
+  type,
 }: Props) => {
   const socketInit = async () => {
     // await fetch(`${urlFetcher()}/api/socket`);
@@ -35,7 +37,30 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     setSections,
     project: { id: ProjectId },
     members,
+    sprints,
+    scrumSections,
   } = ProjectState();
+
+  const getSectionsForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return sprints;
+      case "kanban":
+        return sections;
+      case "scrumSection":
+        return scrumSections;
+    }
+  };
+  const getSectionForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return "sprint";
+      case "kanban":
+        return "kanban";
+      case "scrumSection":
+        return "scrumSection";
+    }
+  };
 
   const [showLabelInput, setShowLabelInput] = useState<boolean>(false);
   const [labelValue, setLabelValue] = useState<string>("");
@@ -45,10 +70,17 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     const notification = Toast.loading("Creating Task");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/createlabel`, {
-          taskId,
-          label: labelValue,
-        })
+        .post(
+          `${urlFetcher()}${
+            type == "kanban"
+              ? "/api/kanban/task/createlabel"
+              : "/api/scrum/issue/issuelabel"
+          }`,
+          {
+            id: taskId,
+            label: labelValue,
+          }
+        )
         .then((res) => {
           Toast.success("Label Created!", { id: notification });
 
@@ -58,8 +90,8 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             label: res.data,
             task,
             type: "createTask",
-            section: "kanban",
-            sections,
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
 
           setLabelValue("");
@@ -76,9 +108,16 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     const notification = Toast.loading("Deleting Task");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/deletelabel`, {
-          labelId,
-        })
+        .post(
+          `${urlFetcher()}${
+            type == "kanban"
+              ? "/api/kanban/task/deletelabel"
+              : "/api/scrum/issue/deleteissuelabel"
+          }`,
+          {
+            labelId,
+          }
+        )
         .then((res) => {
           Toast.success("Label Deleted!", { id: notification });
           socket.emit("labelCreated", {
@@ -87,8 +126,8 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             label: res.data,
             task,
             type: "deleteTask",
-            section: "kanban",
-            sections,
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
         });
     } catch (error: any) {

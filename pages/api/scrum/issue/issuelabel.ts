@@ -10,9 +10,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       throw new Error("Either Taskid or Label not provided!");
     }
 
-    const createdLabel = await prisma.taskLabels.create({
+    const createdLabel = await prisma.issueLabels.create({
       data: {
-        taskId: id,
+        issueId: id,
         name: label,
       },
     });

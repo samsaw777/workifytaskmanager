@@ -443,7 +443,6 @@ const ProjectDetails = ({
     socket.on(
       "labelCreation",
       ({ ProjectId, label, task, type, section, sections }: any) => {
-        console.log("Landed");
         if (
           ProjectId === projectId &&
           type === "createTask" &&
@@ -466,6 +465,48 @@ const ProjectDetails = ({
           setSections(newSectionObject);
         } else if (
           ProjectId === projectId &&
+          type === "createTask" &&
+          section === "scrum"
+        ) {
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task?.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex]?.issues?.findIndex(
+            (t: any) => t.id === task?.id
+          );
+          newSectionObject[sectionIndex].issues[taskIndex].labels =
+            newSectionObject[sectionIndex]?.issues[taskIndex]?.labels?.length >
+            0
+              ? newSectionObject[sectionIndex].issues[taskIndex].labels
+              : [];
+
+          newSectionObject[sectionIndex].issues[taskIndex].labels.push(label);
+
+          setSprints(newSectionObject);
+        } else if (
+          ProjectId === projectId &&
+          type === "createTask" &&
+          section === "scrumSection"
+        ) {
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task?.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex]?.issues?.findIndex(
+            (t: any) => t.id === task?.id
+          );
+          newSectionObject[sectionIndex].issues[taskIndex].labels =
+            newSectionObject[sectionIndex]?.issues[taskIndex]?.labels?.length >
+            0
+              ? newSectionObject[sectionIndex].issues[taskIndex].labels
+              : [];
+
+          newSectionObject[sectionIndex].issues[taskIndex].labels.push(label);
+
+          setScrumSections(newSectionObject);
+        } else if (
+          ProjectId === projectId &&
           type === "deleteTask" &&
           section === "kanban"
         ) {
@@ -485,6 +526,48 @@ const ProjectDetails = ({
           );
 
           setSections(newSectionObject);
+        } else if (
+          ProjectId === projectId &&
+          type === "deleteTask" &&
+          section === "scrum"
+        ) {
+          const labelIndex = task.labels.findIndex(
+            (l: any) => l.id === label.id
+          );
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex].issues.findIndex(
+            (t: any) => t.id === task.id
+          );
+          newSectionObject[sectionIndex].issues[taskIndex].labels.splice(
+            labelIndex,
+            1
+          );
+
+          setSprints(newSectionObject);
+        } else if (
+          ProjectId === projectId &&
+          type === "deleteTask" &&
+          section === "scrumSection"
+        ) {
+          const labelIndex = task.labels.findIndex(
+            (l: any) => l.id === label.id
+          );
+          const newSectionObject = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (s: any) => s.id === task.sectionId
+          );
+          const taskIndex = newSectionObject[sectionIndex].issues.findIndex(
+            (t: any) => t.id === task.id
+          );
+          newSectionObject[sectionIndex].issues[taskIndex].labels.splice(
+            labelIndex,
+            1
+          );
+
+          setScrumSections(newSectionObject);
         }
       }
     );

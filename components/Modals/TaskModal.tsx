@@ -183,17 +183,6 @@ const TaskModal: FunctionComponent<Props> = ({
           }
         )
         .then((response) => {
-          // if (type === "scrum") {
-          //   console.log("called scrum Socket");
-          //   socket.emit("taskCreated", {
-          //     projectId: ProjectId,
-          //     members,
-          //     task: response.data,
-          //     section: "backlog",
-          //     type: updateType === "title" ? "updatetask" : "updatedescription",
-          //     sections: sprints,
-          //   });
-          // } else {
           socket.emit("taskCreated", {
             ProjectId,
             members,
@@ -202,7 +191,6 @@ const TaskModal: FunctionComponent<Props> = ({
             section: getSectionForTaskModal(type),
             sections: getSectionsForTaskModal(type),
           });
-          // }
 
           if (updateType == "title") {
             setLoading(false);
@@ -419,6 +407,7 @@ const TaskModal: FunctionComponent<Props> = ({
                     setLabels={setLabels}
                     labels={labels}
                     task={task}
+                    type={type}
                   />
                 </div>
               </div>

@@ -191,7 +191,7 @@ export default (io: any, socket: any) => {
     }: {
       ProjectId: number;
       members: any;
-      label: { id: number; name: string; taskId: number };
+      label: any;
       task: any;
       type: string;
       section: string;
