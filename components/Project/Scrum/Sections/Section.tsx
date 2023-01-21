@@ -15,7 +15,7 @@ let socket: Socket;
 
 interface Issue {
   id: number;
-  issue: string;
+  title: string;
   username: string;
   description: string;
   userId: string;
@@ -168,16 +168,19 @@ const Section = ({ id, title, issues, boardId }: Props) => {
             {...provided.droppableProps}
           >
             <div>
-              {issues?.map((issue: Issue, index: number) => (
-                <div key={index}>
-                  <SectionIssue
-                    id={issue.id}
-                    type={issue.type}
-                    issue={issue.issue}
-                    index={index}
-                  />
-                </div>
-              ))}
+              {issues?.map((issue: Issue, index: number) => {
+                console.log(issue);
+                return (
+                  <div key={index}>
+                    <SectionIssue
+                      id={issue.id}
+                      type={issue.type}
+                      issue={issue.title}
+                      index={index}
+                    />
+                  </div>
+                );
+              })}
             </div>
 
             {provided.placeholder}

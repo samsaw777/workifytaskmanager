@@ -325,6 +325,37 @@ const ProjectDetails = ({
         );
         sections[sectionIndex].tasks[index].description = task?.description;
         setSections(sections);
+      } else if (
+        projectId === ProjectId &&
+        section === "sprint" &&
+        type === "updatetask"
+      ) {
+        const newSprints = JSON.parse(JSON.stringify(sections));
+        const sprintIndex = sections.findIndex(
+          (sprint: any) => sprint.id === task.sprintId
+        );
+        const issueIndex = newSprints[sprintIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newSprints[sprintIndex].issues[issueIndex].title = task.title;
+        setSprints(newSprints);
+      } else if (
+        projectId === ProjectId &&
+        section === "sprint" &&
+        type === "updatedescription"
+      ) {
+        const newSprints = JSON.parse(JSON.stringify(sections));
+        const sprintIndex = sections.findIndex(
+          (sprint: any) => sprint.id === task.sprintId
+        );
+        const issueIndex = newSprints[sprintIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newSprints[sprintIndex].issues[issueIndex].description =
+          task.description;
+        setSprints(newSprints);
       }
     });
 

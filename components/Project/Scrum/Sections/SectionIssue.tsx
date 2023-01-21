@@ -10,6 +10,7 @@ interface Props {
 }
 
 const SectionIssue = ({ issue, id, type, index }: Props) => {
+  console.log(issue);
   return (
     <Draggable key={id.toString()} draggableId={id.toString()} index={index}>
       {(provided) => (

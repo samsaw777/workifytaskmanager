@@ -71,7 +71,7 @@ const TaskModal: FunctionComponent<Props> = ({
   };
   const {
     sections,
-    setSections,
+    sprints,
     comments,
     setComments,
     project: { id: ProjectId },
@@ -139,31 +139,50 @@ const TaskModal: FunctionComponent<Props> = ({
     };
   }, []);
 
-  const updateTaskInformation = async (e: any, type: string) => {
+  const updateTaskInformation = async (e: any, updateType: string) => {
     e.preventDefault();
     try {
-      if (type == "title") {
+      if (updateType == "title") {
         setLoading(true);
       } else {
         setDescLoading(true);
       }
       await axios
-        .post(`${urlFetcher()}/api/kanban/updatetask`, {
-          taskId: task.id,
-          value: type == "title" ? title : description,
-          type,
-        })
+        .patch(
+          `${urlFetcher()}${
+            type === "scrum"
+              ? "/api/scrum/issue/scrumissue"
+              : "/api/kanban/kanbantask"
+          }`,
+          {
+            taskId: task.id,
+            value: updateType == "title" ? title : description,
+            type: updateType,
+          }
+        )
         .then((response) => {
+          // if (type === "scrum") {
+          //   console.log("called scrum Socket");
+          //   socket.emit("taskCreated", {
+          //     projectId: ProjectId,
+          //     members,
+          //     task: response.data,
+          //     section: "backlog",
+          //     type: updateType === "title" ? "updatetask" : "updatedescription",
+          //     sections: sprints,
+          //   });
+          // } else {
           socket.emit("taskCreated", {
             ProjectId,
             members,
             task: response.data,
-            type: type === "title" ? "updatetask" : "updatedescription",
-            section: "kanban",
-            sections,
+            type: updateType === "title" ? "updatetask" : "updatedescription",
+            section: type === "scrum" ? "sprint" : "kanban",
+            sections: type === "scrum" ? sprints : sections,
           });
+          // }
 
-          if (type == "title") {
+          if (updateType == "title") {
             setLoading(false);
           } else {
             setShowDescription(false);
@@ -172,7 +191,7 @@ const TaskModal: FunctionComponent<Props> = ({
         });
     } catch (error: any) {
       console.log(error.message);
-      if (type == "title") {
+      if (updateType == "title") {
         setLoading(false);
       } else {
         setShowDescription(false);
