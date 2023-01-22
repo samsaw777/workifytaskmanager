@@ -9,6 +9,7 @@ import { ProjectContents } from "../../utils/Helper/ProjectContents";
 import { io, Socket } from "socket.io-client";
 import { ProjectState } from "../../Context/ProjectContext";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
+import axios from "axios";
 
 export let socket: Socket;
 
@@ -46,6 +47,16 @@ const ProjectDetails = ({
 
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
+
+  const fetchMembers = async () => {
+    await axios
+      .post(`${urlFetcher()}/api/project/getmembers`, {
+        projectId,
+      })
+      .then(({ data }) => {
+        setMembers(data);
+      });
+  };
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -577,6 +588,7 @@ const ProjectDetails = ({
     setLoggedInUser(loggedInUser);
 
     setProject(project);
+    fetchMembers();
     socketInit();
 
     return () => {

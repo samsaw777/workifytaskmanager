@@ -11,7 +11,7 @@ interface loggedInUser {
 
 interface Member {
   id: number;
-  email: string;
+  username: string;
   userId: string;
   profileImage: string;
   role: string;

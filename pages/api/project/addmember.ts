@@ -3,12 +3,12 @@ import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { projectId, userId, userEmail, userProfile } = req.body;
+    const { projectId, userId, userName, userProfile } = req.body;
 
     const member = await prisma.members.create({
       data: {
         projectId: projectId,
-        email: userEmail,
+        username: userName,
         userId: userId,
         profileImage: userProfile,
         role: "MEMBER",

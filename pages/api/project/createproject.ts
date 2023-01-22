@@ -37,7 +37,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         isKanban: true,
         members: {
           create: {
-            email: user?.email || "",
+            username: user?.username || "",
             userId: user?.id || "",
             profileImage: user?.profile || "",
             role: "ADMIN",

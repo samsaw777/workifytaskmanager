@@ -46,6 +46,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(createdissue);
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 }

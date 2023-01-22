@@ -8,6 +8,7 @@ import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import TaskComments from "../Project/Kanban/Tasks/TaskComments";
 import io, { Socket } from "socket.io-client";
 import { number } from "yup";
+import { FaUserCircle } from "react-icons/fa";
 let socket: Socket;
 
 export interface Label {
@@ -26,6 +27,8 @@ export interface Task {
   id: number;
   title: string;
   description: string;
+  assignedUser: any;
+
   userId: string;
   username: string;
   profile: string;
@@ -39,6 +42,7 @@ export interface Issue {
   id: number;
   type: string;
   description: string;
+  assignedUser: any;
   title: string;
   username: string;
   profile: string;
@@ -79,6 +83,7 @@ const TaskModal: FunctionComponent<Props> = ({
     members,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
+  // console.log(task);
 
   useEffect(() => {
     setDescription(task.description);
@@ -409,6 +414,59 @@ const TaskModal: FunctionComponent<Props> = ({
                     task={task}
                     type={type}
                   />
+                  <div className="grid grid-cols-2 align-middle">
+                    <div className="text-sm text-gray-500 font-medium">
+                      Asignee
+                    </div>
+                    <div>
+                      {task.assignedUser != null ? (
+                        <div></div>
+                      ) : (
+                        <div>
+                          <span>Unassigned</span>
+                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md">
+                            {members.map((member: any, index: number) => (
+                              // <div key={index}>
+                              //   {member.profileImage ? (
+                              //     <div className="w-5 h-5 rounded-full items-center flex overflow-hidden">
+                              //       <Image
+                              //         src={member.profileImage}
+                              //         width={100}
+                              //         height={100}
+                              //         alt="UserProfile"
+                              //       />
+                              //     </div>
+                              //   ) : (
+                              //     <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                              //   )}
+                              //   <span className="text-sm">
+                              //     {member.username}
+                              //   </span>
+                              // </div>
+                              <div
+                                className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center mt-3 justify-center"
+                                key={index}
+                              >
+                                {member.profileImage ? (
+                                  <div className="w-5 h-5 rounded-full items-center flex overflow-hidden">
+                                    <Image
+                                      src={member.profileImage}
+                                      width={100}
+                                      height={100}
+                                      alt="UserProfile"
+                                    />
+                                  </div>
+                                ) : (
+                                  <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                                )}
+                                <div>{member.username}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

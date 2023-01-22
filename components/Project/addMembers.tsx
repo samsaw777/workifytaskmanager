@@ -236,7 +236,7 @@ const AddMembers = ({ projectId }: Props) => {
                 )}
 
                 <div className="flex flex-col space-y-1">
-                  <div className="text-md font-semibold">{member.email}</div>
+                  <div className="text-md font-semibold">{member.username}</div>
                   <div
                     className={`text-sm ${
                       member.role == "ADMIN" ? "text-blue-400" : "text-red-400"

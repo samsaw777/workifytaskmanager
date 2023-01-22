@@ -15,7 +15,8 @@ model User {
   profile   String
   password  String
   project Project[]
-  issues Issues[]
+  issues Issues[] @relation("createdBy")
+  assignedIssues Issues[] @relation("assignedTo")
   tasks Task[]
 }
 
@@ -35,7 +36,7 @@ model Project{
 
 model Members{
   id Int @id @default(autoincrement())
-  email String 
+  username String 
   userId String
   profileImage String
   role String
@@ -58,9 +59,11 @@ model Issues{
   sprintId Int
   sprintName String
   isUnderStartSprint Boolean
+  assignedTo String?
   Sprint Sprint @relation(fields: [sprintId], references:[id], onDelete: Cascade)
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User User @relation("createdBy",fields: [userId], references: [id], onDelete: Cascade)
+  assignedUser User? @relation("assignedTo",fields: [assignedTo], references: [id], onDelete: Cascade)
   comments IssueComments[]
   labels IssueLabels[]
 }
