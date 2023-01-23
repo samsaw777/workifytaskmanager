@@ -84,7 +84,7 @@ const TaskModal: FunctionComponent<Props> = ({
     members,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
-  console.log(task);
+  // console.log(task);
 
   useEffect(() => {
     setDescription(task.description);
@@ -131,7 +131,7 @@ const TaskModal: FunctionComponent<Props> = ({
     }
   };
 
-  const fetchTaskComments = async (cancel: boolean) => {
+  const fetchTaskComments = async () => {
     try {
       setCommentsLoading(true);
       await axios
@@ -144,11 +144,9 @@ const TaskModal: FunctionComponent<Props> = ({
           }
         )
         .then((res) => {
-          if (!cancel) {
-            setComments(res.data);
+          setComments(res.data);
 
-            setCommentsLoading(false);
-          }
+          setCommentsLoading(false);
         });
     } catch (error: any) {
       console.log(error);
@@ -158,14 +156,8 @@ const TaskModal: FunctionComponent<Props> = ({
 
   useEffect(() => {
     // console.log("Fetching");
-    let cancel = false;
 
-    fetchTaskComments(cancel);
-
-    return () => {
-      cancel = true;
-      console.log("Cancelled");
-    };
+    fetchTaskComments();
   }, []);
 
   const updateAssignedUser = async (

@@ -116,7 +116,7 @@ const IssueModal = ({
       );
 
       const sectionInfo = boardInfo[0].sections?.filter(
-        (section: any) => section.title == "To DO"
+        (section: any) => section.title == "To Do"
       );
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/createissue`, {
