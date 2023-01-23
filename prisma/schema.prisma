@@ -15,7 +15,9 @@ model User {
   profile   String
   password  String
   project Project[]
-  issues Issues[]
+  issues Issues[] @relation("createdBy")
+  assignedIssues Issues[] @relation("assignedTo")
+  assignedTask Task[] @relation("assignedTo")
   tasks Task[]
 }
 
@@ -35,7 +37,7 @@ model Project{
 
 model Members{
   id Int @id @default(autoincrement())
-  email String 
+  username String 
   userId String
   profileImage String
   role String
@@ -46,7 +48,8 @@ model Members{
 model Issues{
   id Int @id @default(autoincrement())
   type String
-  issue String
+  description String
+  title String
   projectId Int
   username String
   profile String
@@ -57,9 +60,13 @@ model Issues{
   sprintId Int
   sprintName String
   isUnderStartSprint Boolean
+  assignedTo String?
   Sprint Sprint @relation(fields: [sprintId], references:[id], onDelete: Cascade)
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User User @relation("createdBy",fields: [userId], references: [id], onDelete: Cascade)
+  assignedUser User? @relation("assignedTo",fields: [assignedTo], references: [id], onDelete: Cascade)
+  comments IssueComments[]
+  labels IssueLabels[]
 }
 
 
@@ -102,9 +109,11 @@ model Task{
   sectionId Int
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   comments TaskComments[]
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   labels TaskLabels[]
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedTo String?
+  assignedUser User? @relation("assignedTo",fields: [assignedTo], references: [id], onDelete: Cascade)
+
 }
 
 model TaskComments{
@@ -121,6 +130,21 @@ model TaskLabels{
   name String
   taskId String
   Task Task @relation(fields: [taskId], references: [id],onDelete: Cascade)
+}
+model IssueComments{
+  id Int @id @default(autoincrement())
+  username String?
+  userProfile String?
+  comment String
+  issueId Int
+  Issue Issues @relation(fields: [issueId], references: [id], onDelete: Cascade)
+}
+
+model IssueLabels{
+  id Int @id @default(autoincrement())
+  name String
+  issueId Int
+  Issue Issues @relation(fields: [issueId], references: [id], onDelete: Cascade)
 }
 
 

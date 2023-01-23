@@ -9,9 +9,10 @@ import io, { Socket } from "socket.io-client";
 type UpdateIssue = {
   type: string;
   id: number;
-  issue: string;
+  title: string;
   index: number;
   sprintId: number;
+  description: string;
 };
 
 interface Props {
@@ -76,9 +77,10 @@ const IssueModal = ({
   useEffect(() => {
     if (Object.keys(updateIssueDetails).length > 0) {
       setSelectedItem(
-        updateIssueDetails.issue != "" ? updateItem[0] : MenuItems[0]
+        updateIssueDetails.title != "" ? updateItem[0] : MenuItems[0]
       );
-      setIssueName(updateIssueDetails.issue);
+      setIssueDescription(updateIssueDetails.description);
+      setIssueName(updateIssueDetails.title);
     }
   }, [isOpen]);
 
@@ -86,9 +88,11 @@ const IssueModal = ({
     MenuItems.filter((item) => item.title == updateIssueDetails.type)[0]
   );
   const [issueName, setIssueName] = useState<string>("");
+  const [issueDescription, setIssueDescription] = useState<string>("");
 
   const cancelIssue = () => {
     setIssueName("");
+    setIssueDescription("");
     setIssueCheck("");
     setSelectedItem(MenuItems[0]);
     setIsOpen(!isOpen);
@@ -96,9 +100,10 @@ const IssueModal = ({
     setUpdateIssueDetails({
       type: "Story",
       id: 0,
-      issue: "",
+      title: "",
       sprintId: 0,
       index: -1,
+      description: "",
     });
   };
 
@@ -116,7 +121,8 @@ const IssueModal = ({
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/createissue`, {
           type: selectedItem.title,
-          issue: issueName,
+          title: issueName,
+          description: issueDescription,
           username: loggedInUser.username,
           profile: loggedInUser.profile,
           userId: loggedInUser.id,
@@ -131,11 +137,6 @@ const IssueModal = ({
           setIssueName("");
           setSelectedItem(MenuItems[0]);
           setIssueCheck("");
-          // setIssuesFunction(index, res.data);
-          // const sprint: any = sprints.filter(
-          //   (s: any) => s.id === sprintDetails.id
-          // );
-          // sprint[0]?.issues?.push(res.data);
 
           socket.emit("issueCreated", {
             projectId: id,
@@ -163,7 +164,8 @@ const IssueModal = ({
         .post(`${urlFetcher()}/api/scrum/issue/updateissue`, {
           issueId: updateIssueDetails.id,
           type: selectedItem.title,
-          issue: issueName,
+          title: issueName,
+          description: issueDescription,
         })
         .then((res) => {
           socket.emit("issueCreated", {
@@ -182,9 +184,10 @@ const IssueModal = ({
           setUpdateIssueDetails({
             type: "Story",
             id: 0,
-            issue: "",
+            title: "",
             sprintId: 0,
             index: -1,
+            description: "",
           });
           Toast.success("Issue Updated", { id: notification });
         });
@@ -202,7 +205,7 @@ const IssueModal = ({
       id="overlay"
       //   onClick={() => setIsOpen(!isOpen)}
     >
-      <div className="bg-white w-[550px] h-[200px] py-4 px-4 rounded-md shadow-xl text-gray-800">
+      <div className="bg-white w-[550px] h-[300px] py-4 px-4 rounded-md shadow-xl text-gray-800">
         <div className="flex">
           <span className="flex-grow w-full text-gray-700 text-md font-semibold">
             Scrum / New1
@@ -224,7 +227,7 @@ const IssueModal = ({
         </div>
         <form
           onSubmit={
-            updateIssueDetails.issue != ""
+            updateIssueDetails.title != ""
               ? (e) => updateIssue(e)
               : (e) => createIssue(e)
           }
@@ -249,7 +252,16 @@ const IssueModal = ({
               />
             </div>
           </div>
-          <div className="flex w-full justify-end mt-16 space-x-4">
+          <div>
+            <input
+              type="text"
+              className="py-1 mt-4 px-2 h-[100px] focus:outline-none focus:border-blue-500 border-2 border-gray-200 w-full placeholder:text-gray-500"
+              placeholder="Enter Issue Description"
+              value={issueDescription}
+              onChange={(e) => setIssueDescription(e.target.value)}
+            />
+          </div>
+          <div className="flex w-full justify-end mt-12 space-x-4">
             <button
               className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
               type="button"
@@ -261,7 +273,7 @@ const IssueModal = ({
               className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
               type="submit"
             >
-              {updateIssueDetails.issue != "" ? "Update" : "Create"}
+              {updateIssueDetails.title != "" ? "Update" : "Create"}
             </button>
           </div>
         </form>
@@ -271,3 +283,9 @@ const IssueModal = ({
 };
 
 export default IssueModal;
+
+// setIssuesFunction(index, res.data);
+// const sprint: any = sprints.filter(
+//   (s: any) => s.id === sprintDetails.id
+// );
+// sprint[0]?.issues?.push(res.data);

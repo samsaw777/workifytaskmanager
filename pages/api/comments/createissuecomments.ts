@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../lib/prisma";
+import prisma from "../../../lib/prisma";
 
 export default async function (
   req: NextApiRequest,
@@ -12,9 +12,9 @@ export default async function (
       throw new Error("No Task ID or Comment found!");
     }
 
-    const newComment = await prisma.taskComments.create({
+    const newComment = await prisma.issueComments.create({
       data: {
-        taskId,
+        issueId: taskId,
         comment,
         userProfile,
         username,

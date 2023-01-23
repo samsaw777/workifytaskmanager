@@ -10,7 +10,7 @@ interface Item {
 type UpdateIssue = {
   type: string;
   id: number;
-  issue: string;
+  title: string;
   sprintId: number;
 };
 

@@ -26,6 +26,14 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                 orderBy: {
                   position: "asc",
                 },
+                include: {
+                  assignedUser: true,
+                  labels: {
+                    orderBy: {
+                      id: "asc",
+                    },
+                  },
+                },
               }
             : false,
         tasks:
@@ -35,6 +43,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                   position: "asc",
                 },
                 include: {
+                  assignedUser: true,
                   labels: {
                     orderBy: {
                       id: "asc",

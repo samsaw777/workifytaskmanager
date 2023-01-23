@@ -11,7 +11,7 @@ interface loggedInUser {
 
 interface Member {
   id: number;
-  email: string;
+  username: string;
   userId: string;
   profileImage: string;
   role: string;
@@ -21,7 +21,8 @@ interface Member {
 interface ScrumIssue {
   id: number;
   type: string;
-  issue: string;
+  title: string;
+  description: string;
   projectId: number;
   username: string;
   profile: string;

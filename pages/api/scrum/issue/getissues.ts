@@ -14,6 +14,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       orderBy: {
         position: "asc",
       },
+      include: {
+        assignedUser: true,
+      },
     });
 
     res.status(200).json(issues);

@@ -19,7 +19,7 @@ const Kanban = () => {
   // const [sections, setSections] = useState<{}[]>([]);
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

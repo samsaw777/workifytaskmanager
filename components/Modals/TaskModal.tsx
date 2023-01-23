@@ -7,6 +7,9 @@ import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import TaskComments from "../Project/Kanban/Tasks/TaskComments";
 import io, { Socket } from "socket.io-client";
+import { number } from "yup";
+import { FaUserCircle } from "react-icons/fa";
+import Toast from "react-hot-toast";
 let socket: Socket;
 
 export interface Label {
@@ -15,10 +18,18 @@ export interface Label {
   taskId: number;
 }
 
+export interface IssueLabels {
+  id: number;
+  name: string;
+  issueId: number;
+}
+
 export interface Task {
   id: number;
   title: string;
   description: string;
+  assignedUser: any;
+
   userId: string;
   username: string;
   profile: string;
@@ -27,13 +38,28 @@ export interface Task {
   labels: Label[] | [];
 }
 
+//Interface For Issue In Scrumboard.
+export interface Issue {
+  id: number;
+  type: string;
+  description: string;
+  assignedUser: any;
+  title: string;
+  username: string;
+  profile: string;
+  position: number;
+  sectionId: number;
+  labels: IssueLabels[] | [];
+}
+
 interface Props {
   isOpen: boolean;
-  task: Task;
+  task: Task | Issue;
   sectionName: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
-  labels: Label[] | [];
+  setLabels: React.Dispatch<React.SetStateAction<[] | Label[] | IssueLabels[]>>;
+  labels: Label[] | IssueLabels[] | [];
+  type: string;
 }
 
 const TaskModal: FunctionComponent<Props> = ({
@@ -42,6 +68,7 @@ const TaskModal: FunctionComponent<Props> = ({
   sectionName,
   setIsOpen,
   setLabels,
+  type,
   labels,
 }: Props) => {
   const closeTaskModal = () => {
@@ -49,13 +76,15 @@ const TaskModal: FunctionComponent<Props> = ({
   };
   const {
     sections,
-    setSections,
+    sprints,
     comments,
     setComments,
     project: { id: ProjectId },
+    scrumSections,
     members,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
+  console.log(task);
 
   useEffect(() => {
     setDescription(task.description);
@@ -69,9 +98,10 @@ const TaskModal: FunctionComponent<Props> = ({
   const [showDetails, setShowDetails] = useState<boolean>(true);
   // const [comments, setComments] = useState<{}[]>([]);
   const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
+  const [openAssignUser, setOpenAssignUser] = useState<boolean>(false);
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -80,13 +110,39 @@ const TaskModal: FunctionComponent<Props> = ({
     socketInit();
   }, []);
 
+  const getSectionsForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return sprints;
+      case "kanban":
+        return sections;
+      case "scrumSection":
+        return scrumSections;
+    }
+  };
+  const getSectionForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return "sprint";
+      case "kanban":
+        return "kanban";
+      case "scrumSection":
+        return "scrumSection";
+    }
+  };
+
   const fetchTaskComments = async (cancel: boolean) => {
     try {
       setCommentsLoading(true);
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/getcomments`, {
-          taskId: task.id,
-        })
+        .post(
+          `${urlFetcher()}/api/comments/${
+            type == "kanban" ? "gettaskcomments" : "getissuecomments"
+          }`,
+          {
+            taskId: task.id,
+          }
+        )
         .then((res) => {
           if (!cancel) {
             setComments(res.data);
@@ -112,31 +168,81 @@ const TaskModal: FunctionComponent<Props> = ({
     };
   }, []);
 
-  const updateTaskInformation = async (e: any, type: string) => {
+  const updateAssignedUser = async (
+    userId: string,
+    memberInfo: { username: string; profile: string; userId: string }
+  ) => {
+    const notification = Toast.loading("Assigning to user!");
+    try {
+      await axios
+        .patch(
+          `${urlFetcher()}${
+            type === "scrum" || type === "scrumSection"
+              ? "/api/scrum/issue/scrumissue"
+              : "/api/kanban/kanbantask"
+          }`,
+          {
+            type: "assigned",
+            value: userId,
+            taskId: task.id,
+          }
+        )
+        .then((response) => {
+          socket.emit("taskCreated", {
+            ProjectId,
+            members,
+            task: {
+              memberInfo,
+              id: response.data.id,
+              sectionId: response.data.sectionId,
+              sprintId: response.data.sprintId,
+            },
+            type: "updateAssignTo",
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
+          });
+          setOpenAssignUser(false);
+          Toast.success("User assignment successfully!", { id: notification });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const updateTaskInformation = async (e: any, updateType: string) => {
     e.preventDefault();
     try {
-      if (type == "title") {
+      if (updateType == "title") {
         setLoading(true);
       } else {
         setDescLoading(true);
       }
       await axios
-        .post(`${urlFetcher()}/api/kanban/updatetask`, {
-          taskId: task.id,
-          value: type == "title" ? title : description,
-          type,
-        })
+        .patch(
+          `${urlFetcher()}${
+            type === "scrum" || type === "scrumSection"
+              ? "/api/scrum/issue/scrumissue"
+              : "/api/kanban/kanbantask"
+          }`,
+          {
+            taskId: task.id,
+            value: updateType == "title" ? title : description,
+            type: updateType,
+          }
+        )
         .then((response) => {
           socket.emit("taskCreated", {
             ProjectId,
             members,
             task: response.data,
-            type: type === "title" ? "updatetask" : "updatedescription",
-            section: "kanban",
-            sections,
+            type: updateType === "title" ? "updatetask" : "updatedescription",
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
 
-          if (type == "title") {
+          if (updateType == "title") {
             setLoading(false);
           } else {
             setShowDescription(false);
@@ -145,7 +251,7 @@ const TaskModal: FunctionComponent<Props> = ({
         });
     } catch (error: any) {
       console.log(error.message);
-      if (type == "title") {
+      if (updateType == "title") {
         setLoading(false);
       } else {
         setShowDescription(false);
@@ -301,8 +407,9 @@ const TaskModal: FunctionComponent<Props> = ({
                 </div>
 
                 <TaskComments
-                  taskId={task.id.toString()}
+                  taskId={type === "kanban" ? task.id.toString() : task.id}
                   loading={commentsLoading}
+                  type={type}
                 />
               </div>
             </div>
@@ -350,7 +457,88 @@ const TaskModal: FunctionComponent<Props> = ({
                     setLabels={setLabels}
                     labels={labels}
                     task={task}
+                    type={type}
                   />
+                  <div className="grid grid-cols-2 align-middle">
+                    <div className="text-sm text-gray-500 font-medium">
+                      Asignee
+                    </div>
+                    <div className="w-full">
+                      {task.assignedUser != null ? (
+                        <div
+                          className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
+                          onClick={() => setOpenAssignUser(!openAssignUser)}
+                        >
+                          {task.assignedUser.profile ? (
+                            <div className="w-6 h-6 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
+                              <Image
+                                src={task.assignedUser.profile}
+                                width={100}
+                                height={100}
+                                alt="UserProfile"
+                              />
+                            </div>
+                          ) : (
+                            <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                          )}
+                          <div className="group-hover:bg-gray-300">
+                            {task.assignedUser.username}
+                          </div>
+                        </div>
+                      ) : (
+                        <span
+                          className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 "
+                          onClick={() => setOpenAssignUser(!openAssignUser)}
+                        >
+                          <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
+                          <span className="text-sm text-gray-500">
+                            unassigned
+                          </span>
+                        </span>
+                      )}
+
+                      {openAssignUser && (
+                        <div className="w-full mt-2">
+                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md z-10">
+                            {members.map((member: any, index: number) => (
+                              <div
+                                className={`text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300 ${
+                                  task.assignedUser !== null &&
+                                  task.assignedUser?.username ==
+                                    member.username &&
+                                  "bg-gray-200"
+                                }`}
+                                key={index}
+                                onClick={() =>
+                                  updateAssignedUser(member.userId, {
+                                    username: member.username,
+                                    profile: member.profileImage,
+                                    userId: member.userId,
+                                  })
+                                }
+                              >
+                                {member.profileImage ? (
+                                  <div className="w-5 h-5 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
+                                    <Image
+                                      src={member.profileImage}
+                                      width={100}
+                                      height={100}
+                                      alt="UserProfile"
+                                    />
+                                  </div>
+                                ) : (
+                                  <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                                )}
+                                <div className="group-hover:bg-gray-300">
+                                  {member.username}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

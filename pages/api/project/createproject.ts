@@ -37,7 +37,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         isKanban: true,
         members: {
           create: {
-            email: user?.email || "",
+            username: user?.username || "",
             userId: user?.id || "",
             profileImage: user?.profile || "",
             role: "ADMIN",
@@ -56,7 +56,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
               },
               sections: {
                 create: [
-                  { title: "To DO" },
+                  { title: "To Do" },
                   { title: "Doing" },
                   { title: "Completed" },
                 ],

@@ -9,10 +9,12 @@ import axios from "axios";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import { Draggable } from "react-beautiful-dnd";
 import { Socket } from "socket.io-client";
+import IssueInfoModal, { IssueLabels, Label } from "../../../Modals/TaskModal";
 interface Issue {
   id: number;
   type: string;
-  issue: string;
+  titile: string;
+  description: string;
   projectId: number;
   username: string;
   profile: string;
@@ -24,8 +26,9 @@ interface Issue {
 type UpdateIssue = {
   type: string;
   id: number;
-  issue: string;
+  title: string;
   sprintId: number;
+  description: string;
   index: number;
 };
 interface Props {
@@ -58,6 +61,11 @@ const Issue = ({
     setIsOpen(!isOpen);
     setOpenOption(!openOption);
   };
+
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState<boolean>(false);
+  const [labels, setLabels] = useState<IssueLabels[] | [] | Label[]>(
+    issue.labels
+  );
 
   //Delete Issue.
   const deleteIssue = async (issueId: number, sprintId: number) => {
@@ -108,7 +116,10 @@ const Issue = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <div className="flex space-x-3 items-center">
+          <div
+            className="flex space-x-3 items-center cursor-pointer"
+            onClick={() => setIsIssueModalOpen(!isIssueModalOpen)}
+          >
             <div
               className="w-3 h-3 rounded-sm"
               style={{
@@ -116,7 +127,7 @@ const Issue = ({
               }}
             ></div>
             <div className=" text-xs">NEW {index + 1}</div>
-            <div className="text-sm">{issue.issue}</div>
+            <div className="text-sm">{issue.title}</div>
           </div>
           <div className="flex space-x-3 items-center">
             <div className="py-1 px-4 bg-gray-300 rounded-sm text-xs">
@@ -142,9 +153,10 @@ const Issue = ({
                     onClick={() =>
                       updateIssue({
                         id: issue.id,
-                        issue: issue.issue,
+                        title: issue.title,
                         type: issue.type,
                         sprintId: issue.sprintId,
+                        description: issue.description,
                         index,
                       })
                     }
@@ -163,6 +175,17 @@ const Issue = ({
               )}
             </div>
           </div>
+          {isIssueModalOpen && (
+            <IssueInfoModal
+              isOpen={isIssueModalOpen}
+              task={issue}
+              sectionName={issue.sprintName}
+              setIsOpen={setIsIssueModalOpen}
+              setLabels={setLabels}
+              labels={labels}
+              type="scrum"
+            />
+          )}
         </div>
       )}
     </Draggable>

@@ -16,6 +16,7 @@ interface Props {
   id: number;
   index: number;
   profile: string;
+  type: string;
 }
 
 const Comment = ({
@@ -26,6 +27,7 @@ const Comment = ({
   profile,
   comments,
   setComments,
+  type,
 }: Props) => {
   const [userComment, setUserComment] = useState<string>(comment);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
@@ -37,7 +39,7 @@ const Comment = ({
   } = ProjectState();
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -54,9 +56,14 @@ const Comment = ({
     const notification = toast.loading("Deleting Comment!");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/deletecomment`, {
-          id: commentId,
-        })
+        .post(
+          `${urlFetcher()}/api/comments/${
+            type == "kanban" ? "deletetaskcomments" : "deleteissuecomments"
+          }`,
+          {
+            id: commentId,
+          }
+        )
         .then((res) => {
           socket.emit("commentCreated", {
             ProjectId,
@@ -88,10 +95,15 @@ const Comment = ({
     const notification = toast.loading("Updating Comment!");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/updatecomment`, {
-          id: commentId,
-          comment,
-        })
+        .post(
+          `${urlFetcher()}/api/comments/${
+            type === "kanban" ? "updatetaskcomments" : "updateissuecomments"
+          }`,
+          {
+            id: commentId,
+            comment,
+          }
+        )
         .then((res) => {
           socket.emit("commentCreated", {
             ProjectId,

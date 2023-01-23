@@ -25,7 +25,7 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
   const { loggedInUser, members, setMembers } = ProjectState();
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -36,7 +36,7 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
 
   const addMember = async (
     userId: string,
-    userEmail: string,
+    userName: string,
     userProfile: string
   ) => {
     if (members.find((member: any) => member.userId === user.id)) {
@@ -56,7 +56,7 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
         `${urlFetcher()}/api/project/addmember`,
         {
           userId,
-          userEmail,
+          userName,
           userProfile,
           projectId: projectId,
         }
@@ -89,7 +89,7 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
     <div
       className="w-full p-3 rounded-md flex items-center space-x-4 bg-gray-200 cursor-pointer mt-1"
       key={index}
-      onClick={() => addMember(user.id, user.email, user.profile)}
+      onClick={() => addMember(user.id, user.username, user.profile)}
     >
       {user.profile ? (
         <div className="w-10 h-10 rounded-full items-center flex overflow-hidden">

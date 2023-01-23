@@ -25,9 +25,10 @@ interface Props {
     React.SetStateAction<{
       type: string;
       id: number;
-      issue: string;
+      title: string;
       sprintId: number;
       index: number;
+      description: string;
     }>
   >;
   index: number;

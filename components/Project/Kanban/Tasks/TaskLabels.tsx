@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Label } from "../../../Modals/TaskModal";
 import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import Toast from "react-hot-toast";
 import TaskLabel from "./Label";
-import { Task } from "../../../Modals/TaskModal";
+import { Task, Issue, Label, IssueLabels } from "../../../Modals/TaskModal";
 import { ProjectState } from "../../../../Context/ProjectContext";
 import { io, Socket } from "socket.io-client";
 let socket: Socket;
 
 interface Props {
-  task: Task;
+  task: Task | Issue;
   taskId: number;
-  setLabels: React.Dispatch<React.SetStateAction<[] | Label[]>>;
-  labels: Label[] | [];
+  setLabels: React.Dispatch<React.SetStateAction<[] | Label[] | IssueLabels[]>>;
+  labels: Label[] | IssueLabels[] | [];
+  type: string;
 }
 
 const TaskLabels: React.FunctionComponent<Props> = ({
@@ -21,9 +21,10 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   task,
   setLabels,
   labels,
+  type,
 }: Props) => {
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -36,7 +37,30 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     setSections,
     project: { id: ProjectId },
     members,
+    sprints,
+    scrumSections,
   } = ProjectState();
+
+  const getSectionsForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return sprints;
+      case "kanban":
+        return sections;
+      case "scrumSection":
+        return scrumSections;
+    }
+  };
+  const getSectionForTaskModal = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return "sprint";
+      case "kanban":
+        return "kanban";
+      case "scrumSection":
+        return "scrumSection";
+    }
+  };
 
   const [showLabelInput, setShowLabelInput] = useState<boolean>(false);
   const [labelValue, setLabelValue] = useState<string>("");
@@ -46,10 +70,17 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     const notification = Toast.loading("Creating Task");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/createlabel`, {
-          taskId,
-          label: labelValue,
-        })
+        .post(
+          `${urlFetcher()}${
+            type == "kanban"
+              ? "/api/kanban/task/createlabel"
+              : "/api/scrum/issue/issuelabel"
+          }`,
+          {
+            id: taskId,
+            label: labelValue,
+          }
+        )
         .then((res) => {
           Toast.success("Label Created!", { id: notification });
 
@@ -59,8 +90,8 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             label: res.data,
             task,
             type: "createTask",
-            section: "kanban",
-            sections,
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
 
           setLabelValue("");
@@ -77,9 +108,16 @@ const TaskLabels: React.FunctionComponent<Props> = ({
     const notification = Toast.loading("Deleting Task");
     try {
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/deletelabel`, {
-          labelId,
-        })
+        .post(
+          `${urlFetcher()}${
+            type == "kanban"
+              ? "/api/kanban/task/deletelabel"
+              : "/api/scrum/issue/deleteissuelabel"
+          }`,
+          {
+            labelId,
+          }
+        )
         .then((res) => {
           Toast.success("Label Deleted!", { id: notification });
           socket.emit("labelCreated", {
@@ -88,8 +126,8 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             label: res.data,
             task,
             type: "deleteTask",
-            section: "kanban",
-            sections,
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
           });
         });
     } catch (error: any) {
@@ -106,7 +144,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
             className="flex p-1 bg-gray-200 rounded-sm mb-1 items-center flex-wrap gap-2"
             onClick={() => setShowLabelInput(!showLabelInput)}
           >
-            {task?.labels?.map((label: Label, index: number) => (
+            {task?.labels?.map((label: Label | IssueLabels, index: number) => (
               <div key={index}>
                 <TaskLabel
                   id={label.id}

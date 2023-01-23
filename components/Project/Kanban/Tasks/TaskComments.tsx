@@ -10,11 +10,12 @@ import io, { Socket } from "socket.io-client";
 let socket: Socket;
 
 interface Props {
-  taskId: string;
+  taskId: string | number;
   loading: boolean;
+  type: string;
 }
 
-const TaskComments = ({ taskId, loading }: Props) => {
+const TaskComments = ({ taskId, loading, type }: Props) => {
   const {
     loggedInUser,
     project: { id: ProjectId },
@@ -25,7 +26,7 @@ const TaskComments = ({ taskId, loading }: Props) => {
   const [comment, setComment] = useState<string>("");
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -43,12 +44,17 @@ const TaskComments = ({ taskId, loading }: Props) => {
 
       allComments = allComments.length > 0 ? allComments : [];
       await axios
-        .post(`${urlFetcher()}/api/kanban/task/createcomments`, {
-          taskId,
-          comment,
-          username: loggedInUser.username,
-          userProfile: loggedInUser.profile,
-        })
+        .post(
+          `${urlFetcher()}/api/comments/${
+            type === "kanban" ? "createtaskcomments" : "createissuecomments"
+          }`,
+          {
+            taskId,
+            comment,
+            username: loggedInUser.username,
+            userProfile: loggedInUser.profile,
+          }
+        )
         .then((response) => {
           socket.emit("commentCreated", {
             ProjectId,
@@ -116,6 +122,7 @@ const TaskComments = ({ taskId, loading }: Props) => {
                   username={comment.username}
                   comments={comments}
                   setComments={setComments}
+                  type={type}
                 />
               ))}
             </div>

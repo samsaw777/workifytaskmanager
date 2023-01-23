@@ -6,7 +6,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const {
       type,
       username,
-      issue,
+      title,
+      description,
       profile,
       userId,
       sectionId,
@@ -14,7 +15,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       projectId,
       sprintId,
       sprintName,
-      isUnderStartSprint
+      isUnderStartSprint,
     } = req.body;
 
     const totalIssues = await prisma.issues.findMany({
@@ -30,9 +31,10 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         type,
         username,
         profile,
+        description,
         userId,
         sectionId,
-        issue,
+        title,
         sectionName,
         projectId,
         position: issuesLength,
@@ -44,6 +46,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(createdissue);
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 }

@@ -19,7 +19,7 @@ const Scrum = () => {
   } = ProjectState();
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -47,10 +47,18 @@ const Scrum = () => {
   const [updateIssueDetails, setUpdateIssueDetails] = useState<{
     type: string;
     id: number;
-    issue: string;
+    title: string;
     sprintId: number;
     index: number;
-  }>({ type: "Story", id: 0, issue: "", sprintId: 0, index: -1 });
+    description: string;
+  }>({
+    type: "Story",
+    id: 0,
+    title: "",
+    sprintId: 0,
+    index: -1,
+    description: "",
+  });
 
   const [updateSprintDetails, setUpdateSprintDetails] = useState<{
     sprintId: number;
@@ -173,16 +181,18 @@ const Scrum = () => {
           );
         })}
 
-        <IssueModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setUpdateIssueDetails={setUpdateIssueDetails}
-          updateIssueDetails={updateIssueDetails}
-          setIssueCheck={setIssueCheck}
-          setSprintDetails={setSprintDetails}
-          sprintDetails={sprintDetails}
-          socket={socket}
-        />
+        {isOpen && (
+          <IssueModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            setUpdateIssueDetails={setUpdateIssueDetails}
+            updateIssueDetails={updateIssueDetails}
+            setIssueCheck={setIssueCheck}
+            setSprintDetails={setSprintDetails}
+            sprintDetails={sprintDetails}
+            socket={socket}
+          />
+        )}
       </div>
     </DragDropContext>
   );
