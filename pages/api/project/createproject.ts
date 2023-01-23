@@ -56,7 +56,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
               },
               sections: {
                 create: [
-                  { title: "To DO" },
+                  { title: "To Do" },
                   { title: "Doing" },
                   { title: "Completed" },
                 ],

@@ -98,9 +98,10 @@ const TaskModal: FunctionComponent<Props> = ({
   const [showDetails, setShowDetails] = useState<boolean>(true);
   // const [comments, setComments] = useState<{}[]>([]);
   const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
+  const [openAssignUser, setOpenAssignUser] = useState<boolean>(false);
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };
@@ -167,16 +168,40 @@ const TaskModal: FunctionComponent<Props> = ({
     };
   }, []);
 
-  const updateAssignedUser = async (userId: string) => {
+  const updateAssignedUser = async (
+    userId: string,
+    memberInfo: { username: string; profile: string; userId: string }
+  ) => {
     const notification = Toast.loading("Assigning to user!");
     try {
       await axios
-        .patch(`${urlFetcher()}/api/scrum/issue/scrumissue`, {
-          type: "assigned",
-          value: userId,
-          taskId: task.id,
-        })
+        .patch(
+          `${urlFetcher()}${
+            type === "scrum" || type === "scrumSection"
+              ? "/api/scrum/issue/scrumissue"
+              : "/api/kanban/kanbantask"
+          }`,
+          {
+            type: "assigned",
+            value: userId,
+            taskId: task.id,
+          }
+        )
         .then((response) => {
+          socket.emit("taskCreated", {
+            ProjectId,
+            members,
+            task: {
+              memberInfo,
+              id: response.data.id,
+              sectionId: response.data.sectionId,
+              sprintId: response.data.sprintId,
+            },
+            type: "updateAssignTo",
+            section: getSectionForTaskModal(type),
+            sections: getSectionsForTaskModal(type),
+          });
+          setOpenAssignUser(false);
           Toast.success("User assignment successfully!", { id: notification });
         });
     } catch (error: any) {
@@ -440,39 +465,56 @@ const TaskModal: FunctionComponent<Props> = ({
                     </div>
                     <div className="w-full">
                       {task.assignedUser != null ? (
-                        <div></div>
+                        <div
+                          className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
+                          onClick={() => setOpenAssignUser(!openAssignUser)}
+                        >
+                          {task.assignedUser.profile ? (
+                            <div className="w-6 h-6 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
+                              <Image
+                                src={task.assignedUser.profile}
+                                width={100}
+                                height={100}
+                                alt="UserProfile"
+                              />
+                            </div>
+                          ) : (
+                            <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                          )}
+                          <div className="group-hover:bg-gray-300">
+                            {task.assignedUser.username}
+                          </div>
+                        </div>
                       ) : (
-                        <div className="w-full">
-                          <span className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 ">
-                            <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
-                            <span className="text-sm text-gray-500">
-                              unassigned
-                            </span>
+                        <span
+                          className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 "
+                          onClick={() => setOpenAssignUser(!openAssignUser)}
+                        >
+                          <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
+                          <span className="text-sm text-gray-500">
+                            unassigned
                           </span>
-                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md mt-2 z-10">
+                        </span>
+                      )}
+
+                      {openAssignUser && (
+                        <div className="w-full mt-2">
+                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md z-10">
                             {members.map((member: any, index: number) => (
-                              // <div key={index}>
-                              //   {member.profileImage ? (
-                              //     <div className="w-5 h-5 rounded-full items-center flex overflow-hidden">
-                              //       <Image
-                              //         src={member.profileImage}
-                              //         width={100}
-                              //         height={100}
-                              //         alt="UserProfile"
-                              //       />
-                              //     </div>
-                              //   ) : (
-                              //     <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
-                              //   )}
-                              //   <span className="text-sm">
-                              //     {member.username}
-                              //   </span>
-                              // </div>
                               <div
-                                className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
+                                className={`text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300 ${
+                                  task.assignedUser !== null &&
+                                  task.assignedUser?.username ==
+                                    member.username &&
+                                  "bg-gray-200"
+                                }`}
                                 key={index}
                                 onClick={() =>
-                                  updateAssignedUser(member.userId)
+                                  updateAssignedUser(member.userId, {
+                                    username: member.username,
+                                    profile: member.profileImage,
+                                    userId: member.userId,
+                                  })
                                 }
                               >
                                 {member.profileImage ? (

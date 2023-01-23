@@ -384,7 +384,7 @@ const ProjectDetails = ({
         setScrumSections(newScrumSections);
       } else if (
         projectId === ProjectId &&
-        section === "scrumSwction" &&
+        section === "scrumSection" &&
         type === "updatedescription"
       ) {
         const newScrumSections = JSON.parse(JSON.stringify(sections));
@@ -398,6 +398,55 @@ const ProjectDetails = ({
         newScrumSections[sectionIndex].issues[issueIndex].description =
           task.description;
         setScrumSections(newScrumSections);
+      } else if (
+        projectId === ProjectId &&
+        section === "scrumSection" &&
+        type === "updateAssignTo"
+      ) {
+        console.log(sections);
+        const newScrumSections = JSON.parse(JSON.stringify(sections));
+        const sectionIndex = sections.findIndex(
+          (section: any) => section.id === task.sectionId
+        );
+        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
+          task.memberInfo;
+        setScrumSections(newScrumSections);
+      } else if (
+        projectId === ProjectId &&
+        section === "sprint" &&
+        type === "updateAssignTo"
+      ) {
+        const newScrumSections = JSON.parse(JSON.stringify(sections));
+        const sectionIndex = sections.findIndex(
+          (section: any) => section.id === task.sprintId
+        );
+        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
+          task.memberInfo;
+        setSprints(newScrumSections);
+      } else if (
+        projectId === ProjectId &&
+        section === "kanban" &&
+        type === "updateAssignTo"
+      ) {
+        const newScrumSections = JSON.parse(JSON.stringify(sections));
+        const sectionIndex = sections.findIndex(
+          (section: any) => section.id === task.sectionId
+        );
+        const issueIndex = newScrumSections[sectionIndex].tasks.findIndex(
+          (i: any) => i.id === task.id
+        );
+
+        newScrumSections[sectionIndex].tasks[issueIndex].assignedUser =
+          task.memberInfo;
+        setSections(newScrumSections);
       }
     });
 

@@ -47,7 +47,7 @@ const KanbanSection = ({ id, title, tasks, boardId, index }: Props) => {
   kanbanSectionHeader = useRef<HTMLInputElement | any>(null);
 
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

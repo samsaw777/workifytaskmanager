@@ -24,7 +24,7 @@ const TaskLabels: React.FunctionComponent<Props> = ({
   type,
 }: Props) => {
   const socketInit = async () => {
-    // await fetch(`${urlFetcher()}/api/socket`);
+    await fetch(`${urlFetcher()}/api/socket`);
 
     socket = io();
   };

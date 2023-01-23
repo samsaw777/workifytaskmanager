@@ -15,6 +15,15 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             title: value,
           },
         });
+      } else if (type === "assigned") {
+        updatedTask = await prisma.task.update({
+          where: {
+            id: taskId,
+          },
+          data: {
+            assignedTo: value,
+          },
+        });
       } else {
         updatedTask = await prisma.task.update({
           where: {

@@ -17,6 +17,7 @@ model User {
   project Project[]
   issues Issues[] @relation("createdBy")
   assignedIssues Issues[] @relation("assignedTo")
+  assignedTask Task[] @relation("assignedTo")
   tasks Task[]
 }
 
@@ -110,6 +111,9 @@ model Task{
   comments TaskComments[]
   labels TaskLabels[]
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedTo String?
+  assignedUser User? @relation("assignedTo",fields: [assignedTo], references: [id], onDelete: Cascade)
+
 }
 
 model TaskComments{
