@@ -9,6 +9,7 @@ import TaskComments from "../Project/Kanban/Tasks/TaskComments";
 import io, { Socket } from "socket.io-client";
 import { number } from "yup";
 import { FaUserCircle } from "react-icons/fa";
+import Toast from "react-hot-toast";
 let socket: Socket;
 
 export interface Label {
@@ -83,7 +84,7 @@ const TaskModal: FunctionComponent<Props> = ({
     members,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
-  // console.log(task);
+  console.log(task);
 
   useEffect(() => {
     setDescription(task.description);
@@ -165,6 +166,25 @@ const TaskModal: FunctionComponent<Props> = ({
       console.log("Cancelled");
     };
   }, []);
+
+  const updateAssignedUser = async (userId: string) => {
+    const notification = Toast.loading("Assigning to user!");
+    try {
+      await axios
+        .patch(`${urlFetcher()}/api/scrum/issue/scrumissue`, {
+          type: "assigned",
+          value: userId,
+          taskId: task.id,
+        })
+        .then((response) => {
+          Toast.success("User assignment successfully!", { id: notification });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
 
   const updateTaskInformation = async (e: any, updateType: string) => {
     e.preventDefault();
@@ -418,13 +438,18 @@ const TaskModal: FunctionComponent<Props> = ({
                     <div className="text-sm text-gray-500 font-medium">
                       Asignee
                     </div>
-                    <div>
+                    <div className="w-full">
                       {task.assignedUser != null ? (
                         <div></div>
                       ) : (
-                        <div>
-                          <span>Unassigned</span>
-                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md">
+                        <div className="w-full">
+                          <span className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 ">
+                            <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
+                            <span className="text-sm text-gray-500">
+                              unassigned
+                            </span>
+                          </span>
+                          <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md mt-2 z-10">
                             {members.map((member: any, index: number) => (
                               // <div key={index}>
                               //   {member.profileImage ? (
@@ -444,11 +469,14 @@ const TaskModal: FunctionComponent<Props> = ({
                               //   </span>
                               // </div>
                               <div
-                                className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center mt-3 justify-center"
+                                className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
                                 key={index}
+                                onClick={() =>
+                                  updateAssignedUser(member.userId)
+                                }
                               >
                                 {member.profileImage ? (
-                                  <div className="w-5 h-5 rounded-full items-center flex overflow-hidden">
+                                  <div className="w-5 h-5 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
                                     <Image
                                       src={member.profileImage}
                                       width={100}
@@ -459,7 +487,9 @@ const TaskModal: FunctionComponent<Props> = ({
                                 ) : (
                                   <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
                                 )}
-                                <div>{member.username}</div>
+                                <div className="group-hover:bg-gray-300">
+                                  {member.username}
+                                </div>
                               </div>
                             ))}
                           </div>
