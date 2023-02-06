@@ -19,12 +19,20 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const events = [
+  {
+    title: "hello",
+    start: new Date(),
+    end: new Date(2023, 1, 10),
+  },
+];
+
 const UserCalendar = () => {
   return (
     <div>
       <Calendar
         localizer={localizer}
-        //   events={myEventsList}
+        events={events}
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
