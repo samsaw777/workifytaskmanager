@@ -1,5 +1,5 @@
 import Project from "../../components/Project/Project";
-
+import Tasks from "../../components/Dashboard/Tasks";
 type Props = {
   componentName: string;
 };
@@ -13,7 +13,7 @@ export const showComponent = ({ componentName }: Props) => {
     case "Inbox":
       return <div>This is dashboard</div>;
     case "Tasks":
-      return <div>This is dashboard</div>;
+      return <Tasks />;
     case "Profile":
       return <div>This is dashboard</div>;
     case "Settings":
