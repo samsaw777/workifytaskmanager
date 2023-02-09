@@ -36,3 +36,29 @@ const Tasks = () => {
 };
 
 export default Tasks;
+
+/* 
+
+Schema for report of a book.
+
+id:Integer,
+personName:String,
+title:String,
+author:String,
+submittedDate:Date,
+status: String,
+ratings: Interger,
+image:String,
+
+
+*/
+
+// https://workifytaskmanager.onrender.com/routes
+
+/*
+
+1. nodejs host -> url -> xyz.com
+2. API xyz.com/books 
+
+
+*/
