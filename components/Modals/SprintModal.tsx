@@ -33,6 +33,8 @@ const SprintModal = ({
 }: Props) => {
   const { project, members, sprints } = ProjectState();
   const [sprintName, setSprintName] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState("Option 1");
+  const options = ["Option 1", "Option 2", "Option 3"];
 
   const cancelSprint = () => {
     setSprintName("");
@@ -126,7 +128,7 @@ const SprintModal = ({
         id="overlay"
         //   onClick={() => setIsSprintModalOpen(!isOpen)}
       >
-        <div className="bg-white w-[550px] py-6 px-4 rounded-md shadow-xl text-gray-800">
+        <div className="bg-white w-[550px] h-auto py-6 px-4 rounded-md shadow-xl text-gray-800">
           <div className="flex">
             <span className="flex-grow w-full text-gray-700 text-md font-semibold">
               Create Sprint
@@ -160,6 +162,39 @@ const SprintModal = ({
                 placeholder="Enter Sprint Name"
                 className="w-[60%] p-2 rounded-md bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-300 focus:bg-white text-gray-600 placeholder:text-gray-500"
               />
+
+              <div className="w-[60%]">
+                <span>Duration</span>
+                <div className="relative">
+                  <select
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    value={selectedOption}
+                    onChange={(e) => setSelectedOption(e.target.value)}
+                  >
+                    {options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
 
               <div className="flex space-x-3 justify-end items-center mt-2">
                 <button

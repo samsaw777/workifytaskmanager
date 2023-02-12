@@ -42,6 +42,11 @@ const Dashboard = ({ loggedInUserDetails }: any) => {
     socketInit();
   }, []);
 
+  // const currentDate = new Date().toISOString().split("T")[0];
+  // const oneWeekLater = new Date();
+  // oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+  // console.log(oneWeekLater.toISOString().split("T")[0]);
+
   return (
     <div className="flex h-screen">
       <DashbordSideBar
