@@ -5,6 +5,8 @@ import Toast from "react-hot-toast";
 import { ProjectState } from "../../Context/ProjectContext";
 import io, { Socket } from "socket.io-client";
 import updatesprint from "../../pages/api/scrum/sprint/updatesprint";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 let socket: Socket;
 
@@ -35,6 +37,10 @@ const SprintModal = ({
   const [sprintName, setSprintName] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState("Option 1");
   const options = ["Option 1", "Option 2", "Option 3"];
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [startTime, setStartTime] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [endTime, setEndTime] = useState<Date | null>(new Date());
 
   const cancelSprint = () => {
     setSprintName("");
@@ -193,6 +199,52 @@ const SprintModal = ({
                       />
                     </svg>
                   </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-5 w-[60%] space-x-1">
+                <div className="w-full">
+                  <DatePicker
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    dateFormat="MMMM d"
+                  />
+                </div>
+                <div className="w-full">
+                  <DatePicker
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    selected={startTime}
+                    onChange={(date) => setStartTime(date)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeFormat="HH:mm"
+                    dateFormat="h:mm aa"
+                    timeCaption="Time"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-5 w-[60%] space-x-1">
+                <div className="w-full">
+                  <DatePicker
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    dateFormat="MMMM d"
+                  />
+                </div>
+                <div className="w-full">
+                  <DatePicker
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeFormat="HH:mm"
+                    dateFormat="h:mm aa"
+                    timeCaption="Time"
+                  />
                 </div>
               </div>
 
