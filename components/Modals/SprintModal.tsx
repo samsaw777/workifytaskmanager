@@ -42,6 +42,9 @@ const SprintModal = ({
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [endTime, setEndTime] = useState<Date | null>(new Date());
 
+  console.log(endDate?.toISOString());
+  console.log(endTime);
+
   const cancelSprint = () => {
     setSprintName("");
     setIsSprintModalOpen(!isSprintModalOpen);
@@ -188,12 +191,12 @@ const SprintModal = ({
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="w-4 h-4"
                     >
                       <path
-                        stroke-linecap="round"
+                        strokeLinecap="round"
                         stroke-linejoin="round"
                         d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                       />
@@ -207,7 +210,7 @@ const SprintModal = ({
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
-                    dateFormat="MMMM d"
+                    dateFormat="yy/MM/dd"
                   />
                 </div>
                 <div className="w-full">
@@ -230,14 +233,14 @@ const SprintModal = ({
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     selected={endDate}
                     onChange={(date) => setEndDate(date)}
-                    dateFormat="MMMM d"
+                    dateFormat="yy/MM/dd"
                   />
                 </div>
                 <div className="w-full">
                   <DatePicker
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
+                    selected={endTime}
+                    onChange={(date) => setEndTime(date)}
                     showTimeSelect
                     showTimeSelectOnly
                     timeIntervals={15}
