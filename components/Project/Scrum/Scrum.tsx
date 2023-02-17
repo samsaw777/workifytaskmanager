@@ -64,15 +64,27 @@ const Scrum = () => {
     sprintId: number;
     index: number;
     sprintName: string;
-  }>({ sprintId: 0, index: -1, sprintName: "" });
+    startDate: Date;
+    endDate: Date;
+  }>({
+    sprintId: 0,
+    index: -1,
+    sprintName: "",
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   const [issueCheck, setIssueCheck] = useState<string>("");
 
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
     sprintName: string;
+    startDate: Date;
+    endDate: Date;
   }>({
     id: 0,
     sprintName: "",
+    startDate: new Date(),
+    endDate: new Date(),
   });
 
   const onDragEnd = async ({ source, destination }: DropResult) => {

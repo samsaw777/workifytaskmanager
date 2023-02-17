@@ -22,7 +22,12 @@ interface Props {
   updateIssueDetails: UpdateIssue;
   setIssueCheck: React.Dispatch<React.SetStateAction<string>>;
   setSprintDetails: React.Dispatch<
-    React.SetStateAction<{ id: number; sprintName: string }>
+    React.SetStateAction<{
+      id: number;
+      sprintName: string;
+      startDate: Date;
+      endDate: Date;
+    }>
   >;
   sprintDetails: { id: number; sprintName: string };
   socket: Socket;
@@ -96,7 +101,12 @@ const IssueModal = ({
     setIssueCheck("");
     setSelectedItem(MenuItems[0]);
     setIsOpen(!isOpen);
-    setSprintDetails({ id: 0, sprintName: "" });
+    setSprintDetails({
+      id: 0,
+      sprintName: "",
+      startDate: new Date(),
+      endDate: new Date(),
+    });
     setUpdateIssueDetails({
       type: "Story",
       id: 0,

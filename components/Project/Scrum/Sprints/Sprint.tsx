@@ -33,7 +33,12 @@ interface Props {
   >;
   index: number;
   setSprintDetails: React.Dispatch<
-    React.SetStateAction<{ id: number; sprintName: string }>
+    React.SetStateAction<{
+      id: number;
+      sprintName: string;
+      startDate: Date;
+      endDate: Date;
+    }>
   >;
   socket: Socket;
   setUpdateSprintDetails: React.Dispatch<
@@ -41,12 +46,16 @@ interface Props {
       sprintId: number;
       index: number;
       sprintName: string;
+      startDate: Date;
+      endDate: Date;
     }>
   >;
   updateSprintDetails: {
     sprintId: number;
     index: number;
     sprintName: string;
+    startDate: Date;
+    endDate: Date;
   };
 }
 
@@ -69,19 +78,46 @@ const Sprint = ({
   } = ProjectState();
   const openIssueModal = () => {
     setIsOpen(!isOpen);
-    setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
+    setSprintDetails({
+      id: sprint.id,
+      sprintName: sprint.sprintName,
+      startDate: sprint.startDate,
+      endDate: sprint.endDate,
+    });
   };
   const [isSprintModalOpen, setIsSprintModalOpen] = useState<boolean>(false);
 
   const [openSprint, setOpenSprint] = useState<boolean>(true);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const openUpdateModal = (
     sprintId: number,
     sprintIndex: number,
-    sprintName: string
+    sprintName: string,
+    startDate: Date,
+    endDate: Date
   ) => {
-    setUpdateSprintDetails({ sprintId, index: sprintIndex, sprintName });
+    setUpdateSprintDetails({
+      sprintId,
+      index: sprintIndex,
+      sprintName,
+      startDate,
+      endDate,
+    });
     setIsSprintModalOpen(!isSprintModalOpen);
     setOpenOptions(!openOptions);
   };
@@ -130,6 +166,18 @@ const Sprint = ({
             } transition duration-150`}
           />
           <span>{sprint.sprintName}</span>
+          {sprint.startDate !== null && (
+            <span>
+              {new Date(sprint.startDate).getDate()}{" "}
+              {monthNames[new Date(sprint.startDate).getMonth()]} -
+            </span>
+          )}{" "}
+          {sprint.endDate !== null && (
+            <span>
+              {new Date(sprint.endDate).getDate()}{" "}
+              {monthNames[new Date(sprint.endDate).getMonth()]}
+            </span>
+          )}
         </div>
 
         {sprint.isPrimary && (
@@ -172,7 +220,13 @@ const Sprint = ({
                   <span
                     className="text-sm"
                     onClick={() =>
-                      openUpdateModal(sprint.id, index, sprint.sprintName)
+                      openUpdateModal(
+                        sprint.id,
+                        index,
+                        sprint.sprintName,
+                        sprint.startDate,
+                        sprint.endDate
+                      )
                     }
                   >
                     Edit Sprint
