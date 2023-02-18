@@ -148,6 +148,30 @@ const Sprint = ({
       });
     }
   };
+
+  const setSprintStatus = async (status: string) => {
+    const notification = Toast.loading("Starting Sprint!");
+
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/sprint/updatesprint`, {
+          sprintId: sprint.id,
+          sprintName: sprint.sprintName,
+          updateStatus: status,
+          startDate: sprint.startDate,
+          endDate: sprint.endDate,
+        })
+        .then((response) => {
+          Toast.success("Sprint Deleted!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
   return (
     <div
       className={`flex flex-col space-y-2 ${
@@ -165,15 +189,15 @@ const Sprint = ({
               !openSprint && "-rotate-90"
             } transition duration-150`}
           />
-          <span>{sprint.sprintName}</span>
+          <span className="font-bold">{sprint.sprintName}</span>
           {sprint.startDate !== null && (
-            <span>
+            <span className="text-xs ml-2">
               {new Date(sprint.startDate).getDate()}{" "}
               {monthNames[new Date(sprint.startDate).getMonth()]} -
             </span>
           )}{" "}
           {sprint.endDate !== null && (
-            <span>
+            <span className="text-xs">
               {new Date(sprint.endDate).getDate()}{" "}
               {monthNames[new Date(sprint.endDate).getMonth()]}
             </span>
@@ -185,13 +209,23 @@ const Sprint = ({
             className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200"
             onClick={() => setIsSprintModalOpen(!isSprintModalOpen)}
           >
-            create sprint
+            Create sprint
           </div>
         )}
 
-        {!sprint.isPrimary && (
+        {!sprint.isPrimary && !sprint.isUnderStartSprint && (
+          <button
+            className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-not-allowed hover:bg-gray-200"
+            disabled={sprint?.issues?.length > 0 ? false : true}
+            onClick={() => setSprintStatus("UPDATESPRINTSTATUS")}
+          >
+            Start sprint
+          </button>
+        )}
+
+        {!sprint.isPrimary && sprint.isUnderStartSprint && (
           <div className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-            start sprint
+            Complete sprint
           </div>
         )}
 
