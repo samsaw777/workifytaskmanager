@@ -13,6 +13,14 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   } = req.body;
 
   try {
+    const resourceSprint = await prisma.sprint.findFirst({
+      where: { id: sprintResourceId },
+    });
+
+    const destinationSprint = await prisma.sprint.findFirst({
+      where: { id: sprintDestinationId },
+    });
+
     if (sprintDestinationId != sprintResourceId) {
       for (const key in resourceList) {
         const id = resourceList[key].id;
@@ -24,6 +32,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             sprintName: sprintResourceName,
             sprintId: sprintResourceId,
             position: parseInt(key),
+            endAt: resourceSprint?.endDate,
           },
         });
       }
@@ -39,6 +48,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           sprintName: sprintDestinationName,
           sprintId: sprintDestinationId,
           position: parseInt(key),
+          endAt: destinationSprint?.endDate,
         },
       });
     }

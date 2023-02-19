@@ -41,6 +41,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                 },
                 data: {
                   isUnderStartSprint: true,
+                  endAt:endDate
                 },
               },
             },

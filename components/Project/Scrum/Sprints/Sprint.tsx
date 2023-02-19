@@ -215,7 +215,11 @@ const Sprint = ({
 
         {!sprint.isPrimary && !sprint.isUnderStartSprint && (
           <button
-            className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-not-allowed hover:bg-gray-200"
+            className={`bg-gray-200 text-gray-600 px-3 py-1 font-semibold hover:bg-gray-200 ${
+              sprint?.issues?.length > 0
+                ? "cursor-pointer"
+                : "cursor-not-allowed"
+            }`}
             disabled={sprint?.issues?.length > 0 ? false : true}
             onClick={() => setSprintStatus("UPDATESPRINTSTATUS")}
           >
