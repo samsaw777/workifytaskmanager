@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
@@ -9,6 +9,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import { ProjectState } from "../../../Context/ProjectContext";
+import IssueInfoModal, { IssueLabels, Label } from "../../Modals/TaskModal";
 
 const locales = {
   "en-US": enUS,
@@ -44,7 +45,10 @@ const events = [
 ];
 
 const UserCalendar = () => {
-  const [getItems, setGetItems] = React.useState<any>([]);
+  const [getItems, setGetItems] = useState<any>([]);
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState<boolean>(false);
+  const [labels, setLabels] = useState<IssueLabels[] | [] | Label[]>([]);
+  const [issue, setIssue] = useState<any>({});
   const {
     loggedInUser: { id },
   } = ProjectState();
@@ -67,6 +71,11 @@ const UserCalendar = () => {
     getAllTheItems();
   }, []);
 
+  const handleEventClick = (event: any) => {
+    setIssue(event);
+    setIsIssueModalOpen(!isIssueModalOpen);
+  };
+
   return (
     <div>
       <Calendar
@@ -75,7 +84,20 @@ const UserCalendar = () => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
+        onSelectEvent={handleEventClick}
       />
+
+      {isIssueModalOpen && (
+        <IssueInfoModal
+          isOpen={isIssueModalOpen}
+          task={issue}
+          sectionName={issue.sprintName}
+          setIsOpen={setIsIssueModalOpen}
+          setLabels={setLabels}
+          labels={labels}
+          type="scrum"
+        />
+      )}
     </div>
   );
 };

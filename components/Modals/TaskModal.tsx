@@ -254,7 +254,7 @@ const TaskModal: FunctionComponent<Props> = ({
 
   return (
     <div
-      className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
+      className={`bg-gray-700 z-10 bg-opacity-50 absolute inset-0 ${
         isOpen ? "flex" : "hidden"
       } justify-center items-center `}
       id="overlay"
