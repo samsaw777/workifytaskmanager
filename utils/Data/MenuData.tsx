@@ -1,5 +1,5 @@
 import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdGroups } from "react-icons/md";
 import {
   AiOutlineMail,
   AiFillSetting,
@@ -54,7 +54,7 @@ export const projectMenu = [
   //   title: "Github",
   //   icon: <AiOutlineMail />,
   // },
-  { title: "Members", icon: <BiTask /> },
+  { title: "Members", icon: <MdGroups /> },
   { title: "Settings", icon: <AiFillSetting /> },
   { title: "Logout", icon: <BiLogOut />, spacing: true },
 ];
