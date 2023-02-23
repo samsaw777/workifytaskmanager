@@ -23,6 +23,8 @@ export const ProjectContents = ({ componentName, projectId }: Props) => {
       return <Scrum />;
     case "kboard":
       return <Kanban />;
+    case "Calendar":
+      return <Calendar />;
     default:
       return <Calendar />;
   }
