@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { urlFetcher } from "../../utils/Helper/urlFetcher";
 
 const Test = () => {
-  useEffect(() => {
+  const loginInBitBucket = async () => {
     axios
-      .post(`${urlFetcher()}/api/test`)
-      .then((response) => {
-        console.log(response.data);
+      .get("http://localhost:5000/auth/bitbucket")
+      .then((res) => {
+        console.log(res);
       })
-      .catch((error: any) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-  }, []);
-  return <div>This is it</div>;
+  };
+
+  return <button onClick={loginInBitBucket}>This is it</button>;
 };
 
 export default Test;
