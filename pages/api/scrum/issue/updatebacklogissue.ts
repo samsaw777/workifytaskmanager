@@ -33,6 +33,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             sprintId: sprintResourceId,
             position: parseInt(key),
             endAt: resourceSprint?.endDate,
+            createdAt: resourceSprint?.startDate
+              ? resourceSprint.startDate
+              : new Date(),
           },
         });
       }
@@ -49,6 +52,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           sprintId: sprintDestinationId,
           position: parseInt(key),
           endAt: destinationSprint?.endDate,
+          createdAt: destinationSprint?.startDate
+            ? destinationSprint?.startDate
+            : new Date(),
         },
       });
     }

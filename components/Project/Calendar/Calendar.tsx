@@ -53,6 +53,19 @@ const UserCalendar = () => {
     loggedInUser: { id },
   } = ProjectState();
 
+  const getColor = (date: any, startDate: any) => {
+    // Get the current date and convert both dates to UTC
+    const currentDate = new Date().toISOString();
+    const inputDate = new Date(date).toISOString();
+    const StartDate = new Date(startDate).toISOString();
+    if (inputDate < currentDate) {
+      return "#ef4444";
+    } else if (StartDate > currentDate) {
+      return "gray";
+    }
+    // Compare the dates and return the result
+    return "#22c55e";
+  };
   const getAllTheItems = async () => {
     await axios
       .post(`${urlFetcher()}/api/dashboard/getassigneditems`, {
@@ -61,7 +74,12 @@ const UserCalendar = () => {
       .then((response) => {
         let res: any = [];
         response?.data?.map((data: any, index: number) => {
-          res.push({ ...data, start: data.createdAt, end: data.endAt });
+          res.push({
+            ...data,
+            start: data.createdAt,
+            end: data.endAt,
+            color: getColor(data.endAt, data.createdAt),
+          });
         });
         setGetItems(res);
       });
@@ -76,6 +94,20 @@ const UserCalendar = () => {
     setIsIssueModalOpen(!isIssueModalOpen);
   };
 
+  const eventPropGetter = (
+    event: any,
+    start: any,
+    end: any,
+    isSelected: any
+  ) => {
+    let style = {
+      backgroundColor: event.color,
+    };
+    return {
+      style: style,
+    };
+  };
+
   return (
     <div>
       <Calendar
@@ -85,6 +117,7 @@ const UserCalendar = () => {
         endAccessor="end"
         style={{ height: 500 }}
         onSelectEvent={handleEventClick}
+        eventPropGetter={eventPropGetter}
       />
 
       {isIssueModalOpen && (
