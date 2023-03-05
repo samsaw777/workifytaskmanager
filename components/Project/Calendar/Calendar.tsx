@@ -61,7 +61,7 @@ const UserCalendar = () => {
     if (inputDate < currentDate) {
       return "#ef4444";
     } else if (StartDate > currentDate) {
-      return "gray";
+      return "#6b7280";
     }
     // Compare the dates and return the result
     return "#22c55e";

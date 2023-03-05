@@ -191,6 +191,8 @@ const ProjectDetails = ({
             (Sprint: any) => Sprint.id === sprint.id
           );
           localSrpints[sprintIndex].sprintName = sprint.sprintName;
+          localSrpints[sprintIndex].startDate = sprint.startDate;
+          localSrpints[sprintIndex].endDate = sprint.endDate;
           setSprints([...localSrpints]);
         }
       });

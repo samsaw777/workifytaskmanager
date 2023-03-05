@@ -13,15 +13,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           },
           data: {
             sprintName,
-          },
-        });
-        break;
-      case "UPDATESPRINTDATE":
-        updatedSprint = await prisma.sprint.update({
-          where: {
-            id: sprintId,
-          },
-          data: {
             startDate,
             endDate,
           },
@@ -41,7 +32,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
                 },
                 data: {
                   isUnderStartSprint: true,
-                  endAt:endDate
+                  endAt: endDate,
                 },
               },
             },

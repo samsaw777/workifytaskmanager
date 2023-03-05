@@ -57,38 +57,6 @@ const SprintModal = ({
   //   setSelectedTime(time);
   // };
 
-  // const getCombinedDateTime = () => {
-  //   const year = selectedDate.getFullYear();
-  //   const month = selectedDate.getMonth();
-  //   const day = selectedDate.getDate();
-  //   const hours = selectedTime.getHours();
-  //   const minutes = selectedTime.getMinutes();
-  //   const seconds = selectedTime.getSeconds();
-  //   const conbined = new Date(year, month, day, hours, minutes, seconds);
-  //   console.log(conbined);
-  //   const date = new Date(conbined);
-  //   const options = {
-  //     year: "numeric",
-  //     month: "2-digit",
-  //     day: "2-digit",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //   };
-  //   const formatter = new Intl.DateTimeFormat("en-US", {
-  //     year: "numeric",
-  //     month: "2-digit",
-  //     day: "2-digit",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //   });
-  //   const formattedDate = formatter.format(date).replace(/[-:]/g, "/");
-  //   console.log(formattedDate);
-  // };
-
-  // getCombinedDateTime();
-
   const cancelSprint = () => {
     setSprintName("");
     setIsSprintModalOpen(!isSprintModalOpen);
@@ -121,8 +89,8 @@ const SprintModal = ({
     socketInit();
   }, []);
 
-  //function to create Sprints.
-  const createSprint = async (e: any) => {
+  //function to return combined sprint
+  const combineSprint = () => {
     const startyear = startDate
       ? startDate?.getFullYear()
       : new Date().getFullYear();
@@ -169,6 +137,13 @@ const SprintModal = ({
       endseconds
     );
 
+    return { combinedStartDate, combinedEndDate };
+  };
+
+  //function to create Sprints.
+  const createSprint = async (e: any) => {
+    const { combinedEndDate, combinedStartDate } = combineSprint();
+
     e.preventDefault();
     const notification = Toast.loading("Creating Sprint");
     try {
@@ -201,6 +176,8 @@ const SprintModal = ({
   };
 
   const updateSprint = async (e: any) => {
+    const { combinedEndDate, combinedStartDate } = combineSprint();
+
     e.preventDefault();
     const notification = Toast.loading("Updating Sprint");
 
@@ -210,6 +187,8 @@ const SprintModal = ({
           sprintName,
           sprintId: updateSprintDetails.sprintId,
           updateStatus: "UPDATESPRINTNAME",
+          startDate: combinedStartDate,
+          endDate: combinedEndDate,
         })
         .then((res) => {
           socket.emit("sprintCreated", {
@@ -384,12 +363,21 @@ const SprintModal = ({
                 >
                   Cancel
                 </button>
-                <button
-                  className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
-                  type="submit"
-                >
-                  Create
-                </button>
+                {updateSprintDetails.index === -1 ? (
+                  <button
+                    className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
+                    type="submit"
+                  >
+                    Create
+                  </button>
+                ) : (
+                  <button
+                    className="px-3 py-1 bg-green-500 text-white hover:bg-green-600 hover:text-white font-medium rounded"
+                    type="submit"
+                  >
+                    Update
+                  </button>
+                )}
               </div>
             </form>
           </div>
