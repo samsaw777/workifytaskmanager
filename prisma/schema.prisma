@@ -19,6 +19,7 @@ model User {
   assignedIssues Issues[] @relation("assignedTo")
   assignedTask Task[] @relation("assignedTo")
   tasks Task[]
+  notifications Notifications[] 
 }
 
 model Project{
@@ -153,4 +154,12 @@ model IssueLabels{
   Issue Issues @relation(fields: [issueId], references: [id], onDelete: Cascade)
 }
 
+model Notifications{
+  id Int @id @default(autoincrement())
+  title String
+  request Boolean
+  isPending Boolean
+  userId String
+  User User @relation(fields: [userId], references:[id], onDelete: Cascade)
+}
 
