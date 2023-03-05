@@ -77,8 +77,10 @@ export default (io: any, socket: any) => {
       sprint: any;
       type: string;
       section: string;
+      sprints: any;
     }) => {
-      const { members, ProjectId, sprint, type, section } = sprintDetails;
+      const { members, ProjectId, sprint, type, section, sprints } =
+        sprintDetails;
 
       if (!members) return console.log("Members not found!");
 
@@ -87,6 +89,7 @@ export default (io: any, socket: any) => {
         sprint,
         type,
         section,
+        sprints,
       });
     }
   );

@@ -164,7 +164,7 @@ const ProjectDetails = ({
 
     socket
       .off("sprints")
-      .on("sprints", ({ ProjectId, sprint, type, section }: any) => {
+      .on("sprints", ({ ProjectId, sprint, type, section, sprints }: any) => {
         if (
           ProjectId === projectId &&
           section === "backlog" &&
@@ -178,18 +178,20 @@ const ProjectDetails = ({
           section === "backlog" &&
           type === "deletesprint"
         ) {
-          setSprints(sprints.filter((s: any) => s.id != sprint.id));
+          const localSrpints = JSON.parse(JSON.stringify(sprints));
+
+          setSprints(localSrpints.filter((s: any) => s.id != sprint.id));
         } else if (
           ProjectId === projectId &&
           section === "backlog" &&
           type === "updatesprint"
         ) {
-          const sprintIndex = sprints.findIndex(
-            (Sprint: any) => Sprint.id !== sprint.id
+          const localSrpints = JSON.parse(JSON.stringify(sprints));
+          const sprintIndex = localSrpints.findIndex(
+            (Sprint: any) => Sprint.id === sprint.id
           );
-
-          sprints[sprintIndex].sprintName = sprint.sprintName;
-          setSprints([...sprints]);
+          localSrpints[sprintIndex].sprintName = sprint.sprintName;
+          setSprints([...localSrpints]);
         }
       });
 
@@ -666,7 +668,7 @@ const ProjectDetails = ({
         <TopBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
         {/* <ProjectMembers members={projectsDetail?.members} /> */}
         {/* hello */}
-        <div className="h-[90vh] p-2">
+        <div className="h-[90vh] p-2 overflow-scroll">
           {ProjectContents({
             componentName: showContent,
             projectId: projectId,

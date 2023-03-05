@@ -136,6 +136,7 @@ const Sprint = ({
             members,
             type: "deletesprint",
             section: "backlog",
+            sprints,
           });
           setOpenOptions(openOptions);
           Toast.success("Sprint Deleted!", {

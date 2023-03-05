@@ -38,7 +38,7 @@ const SprintModal = ({
   isSprintModalOpen,
 }: Props) => {
   const { project, members, sprints } = ProjectState();
-  console.log(new Date(updateSprintDetails.startDate));
+  // console.log(sprints);
   const [sprintName, setSprintName] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState("Option 1");
   const options = ["Option 1", "Option 2", "Option 3"];
@@ -209,6 +209,7 @@ const SprintModal = ({
         .post(`${urlFetcher()}/api/scrum/sprint/updatesprint`, {
           sprintName,
           sprintId: updateSprintDetails.sprintId,
+          updateStatus: "UPDATESPRINTNAME",
         })
         .then((res) => {
           socket.emit("sprintCreated", {
@@ -217,6 +218,7 @@ const SprintModal = ({
             members,
             type: "updatesprint",
             section: "backlog",
+            sprints,
           });
           cancelSprint();
           Toast.success("Sprint Updated!", {
@@ -262,7 +264,7 @@ const SprintModal = ({
           <div className="mt-3">
             <form
               onSubmit={
-                updateSprintDetails.sprintName !== ""
+                updateSprintDetails.index !== -1
                   ? (e) => updateSprint(e)
                   : (e) => createSprint(e)
               }
