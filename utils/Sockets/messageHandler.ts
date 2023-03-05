@@ -26,6 +26,11 @@ export default (io: any, socket: any) => {
     socket.join(project.id);
   });
 
+  //notifications socket
+  socket.on("notifications", (notification: any) => {
+    socket.to(notification.userId).emit("getNotification", notification);
+  });
+
   //send membes joined to other users.
   /* 
     Member Object will have = senderId, membersList, newMemberDetails, projectId, type 

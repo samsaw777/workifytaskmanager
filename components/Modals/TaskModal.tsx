@@ -193,6 +193,10 @@ const TaskModal: FunctionComponent<Props> = ({
             section: getSectionForTaskModal(type),
             sections: getSectionsForTaskModal(type),
           });
+          socket.emit("notifications", {
+            userId,
+            notificationData: response.data,
+          });
           setOpenAssignUser(false);
           Toast.success("User assignment successfully!", { id: notification });
         });

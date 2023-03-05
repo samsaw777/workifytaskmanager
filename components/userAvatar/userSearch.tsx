@@ -73,6 +73,8 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
         section: "members",
         type: "addmember",
       });
+
+      // socket.emit("notification", { userId: loggedInUser.id, data });
       toast.success("Member Added!", {
         id: notification,
       });

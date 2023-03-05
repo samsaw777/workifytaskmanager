@@ -25,7 +25,7 @@ if (!secret) {
 let socket: any;
 
 const Dashboard = ({ loggedInUserDetails }: any) => {
-  const { setLoggedInUser } = ProjectState();
+  const { setLoggedInUser, loggedInUser } = ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("Projects");
   const router = useRouter();
@@ -36,6 +36,12 @@ const Dashboard = ({ loggedInUserDetails }: any) => {
     socket = io();
 
     setLoggedInUser(loggedInUserDetails);
+
+    socket.emit("setup", loggedInUserDetails);
+
+    socket.on("getNotification", (notification: any) => {
+      console.log(notification);
+    });
   };
 
   useEffect(() => {
