@@ -7,6 +7,8 @@ import Toast from "react-hot-toast";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Sprint from "./Sprints/Sprint";
 import io, { Socket } from "socket.io-client";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 let socket: Socket;
 
@@ -17,6 +19,8 @@ const Scrum = () => {
     setSprints,
     members,
   } = ProjectState();
+
+  // console.log(members);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -32,6 +36,7 @@ const Scrum = () => {
         })
         .then((res) => {
           setSprints(res.data);
+          setLocalSprint(res.data);
         });
     } catch (error: any) {
       console.error(error);
@@ -74,7 +79,10 @@ const Scrum = () => {
     endDate: new Date(),
   });
   const [issueCheck, setIssueCheck] = useState<string>("");
-
+  const [localSprint, setLocalSprint] = useState<any>([]);
+  console.log(localSprint);
+  console.log(sprints);
+  const [filteredString, setFilteredString] = useState<string[]>([]);
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
     sprintName: string;
@@ -172,10 +180,72 @@ const Scrum = () => {
     }
   };
 
+  const filterIssues = (sprints: any) => {
+    if (filteredString.length > 0) {
+      let filteredArr = sprints.map((sprint: any) => ({
+        ...sprint,
+        issues: sprint.issues.filter((issue: any) =>
+          filteredString.includes(issue.assignedTo)
+        ),
+      }));
+
+      setLocalSprint([...filteredArr]);
+    } else {
+      setLocalSprint([...sprints]);
+    }
+  };
+
+  const checkFilteredSearch = (userId: string) => {
+    if (filteredString.includes(userId)) {
+      const newFilteredString = filteredString.filter(
+        (string: string) => string !== userId
+      );
+      setFilteredString(newFilteredString);
+    } else {
+      setFilteredString([...filteredString, userId]);
+    }
+  };
+
+  useEffect(() => {
+    filterIssues(sprints);
+  }, [filteredString]);
+
   return (
     <DragDropContext onDragEnd={onDragEnd} key="fdfd">
+      <div className="flex items-center">
+        <div className="flex flex-row space-x-[-10%] px-2">
+          {members.map((member: any, index: number) => {
+            return member.profileImage ? (
+              <div
+                key={index}
+                onClick={() => checkFilteredSearch(member.userId)}
+                className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                  filteredString.includes(member.userId) &&
+                  "border-[3px] border-blue-500"
+                }`}
+              >
+                <Image
+                  src={member.profileImage}
+                  width={90}
+                  height={90}
+                  alt="UserProfile"
+                />
+              </div>
+            ) : (
+              <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+            );
+          })}
+        </div>
+        <span
+          className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+          onClick={() => setFilteredString([])}
+        >
+          Clear Filter
+        </span>
+      </div>
+
       <div className="w-full p-2 flex flex-col space-y-3">
-        {sprints.map((sprint: any, index: number) => {
+        {localSprint.map((sprint: any, index: number) => {
           return (
             <div key={index}>
               <Sprint

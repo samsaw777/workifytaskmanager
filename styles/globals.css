@@ -82,3 +82,7 @@
 .block option[selected] {
   background-color: #007bff;
 }
+
+.scrum_image {
+  z-index: 1 !important;
+}
