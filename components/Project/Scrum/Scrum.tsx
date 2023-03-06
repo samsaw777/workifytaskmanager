@@ -36,7 +36,7 @@ const Scrum = () => {
         })
         .then((res) => {
           setSprints(res.data);
-          setLocalSprint(res.data);
+          setLocalSprints(res.data);
         });
     } catch (error: any) {
       console.error(error);
@@ -79,9 +79,8 @@ const Scrum = () => {
     endDate: new Date(),
   });
   const [issueCheck, setIssueCheck] = useState<string>("");
-  const [localSprint, setLocalSprint] = useState<any>([]);
-  console.log(localSprint);
-  console.log(sprints);
+  const [localSprints, setLocalSprints] = useState<any>([]);
+
   const [filteredString, setFilteredString] = useState<string[]>([]);
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
@@ -189,9 +188,9 @@ const Scrum = () => {
         ),
       }));
 
-      setLocalSprint([...filteredArr]);
+      setSprints([...filteredArr]);
     } else {
-      setLocalSprint([...sprints]);
+      setSprints([...sprints]);
     }
   };
 
@@ -207,11 +206,11 @@ const Scrum = () => {
   };
 
   useEffect(() => {
-    filterIssues(sprints);
+    filterIssues(localSprints);
   }, [filteredString]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd} key="fdfd">
+    <>
       <div className="flex items-center">
         <div className="flex flex-row space-x-[-10%] px-2">
           {members.map((member: any, index: number) => {
@@ -243,40 +242,41 @@ const Scrum = () => {
           Clear Filter
         </span>
       </div>
+      <DragDropContext onDragEnd={onDragEnd} key="fdfd">
+        <div className="w-full p-2 flex flex-col space-y-3">
+          {sprints.map((sprint: any, index: number) => {
+            return (
+              <div key={index}>
+                <Sprint
+                  sprint={sprint}
+                  index={index}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                  setUpdateIssueDetails={setUpdateIssueDetails}
+                  setSprintDetails={setSprintDetails}
+                  socket={socket}
+                  setUpdateSprintDetails={setUpdateSprintDetails}
+                  updateSprintDetails={updateSprintDetails}
+                />
+              </div>
+            );
+          })}
 
-      <div className="w-full p-2 flex flex-col space-y-3">
-        {localSprint.map((sprint: any, index: number) => {
-          return (
-            <div key={index}>
-              <Sprint
-                sprint={sprint}
-                index={index}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                setUpdateIssueDetails={setUpdateIssueDetails}
-                setSprintDetails={setSprintDetails}
-                socket={socket}
-                setUpdateSprintDetails={setUpdateSprintDetails}
-                updateSprintDetails={updateSprintDetails}
-              />
-            </div>
-          );
-        })}
-
-        {isOpen && (
-          <IssueModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setUpdateIssueDetails={setUpdateIssueDetails}
-            updateIssueDetails={updateIssueDetails}
-            setIssueCheck={setIssueCheck}
-            setSprintDetails={setSprintDetails}
-            sprintDetails={sprintDetails}
-            socket={socket}
-          />
-        )}
-      </div>
-    </DragDropContext>
+          {isOpen && (
+            <IssueModal
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              setUpdateIssueDetails={setUpdateIssueDetails}
+              updateIssueDetails={updateIssueDetails}
+              setIssueCheck={setIssueCheck}
+              setSprintDetails={setSprintDetails}
+              sprintDetails={sprintDetails}
+              socket={socket}
+            />
+          )}
+        </div>
+      </DragDropContext>
+    </>
   );
 };
 

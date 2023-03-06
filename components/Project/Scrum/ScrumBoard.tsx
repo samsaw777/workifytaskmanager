@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ProjectState } from "../../../Context/ProjectContext";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Section from "./Sections/Section";
@@ -7,6 +7,8 @@ import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
 import { AiOutlinePlus } from "react-icons/ai";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 let socket: Socket;
 
@@ -17,6 +19,8 @@ const ScrumBoard = () => {
     project: { board, id },
     members,
   } = ProjectState();
+  const [localSections, setLocalSections] = useState<any>([]);
+  const [filteredString, setFilteredString] = useState<string[]>([]);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -32,6 +36,7 @@ const ScrumBoard = () => {
         })
         .then((res) => {
           setScrumSections([...res.data]);
+          setLocalSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
@@ -126,6 +131,32 @@ const ScrumBoard = () => {
     }
   };
 
+  const filterIssues = (sections: any) => {
+    if (filteredString.length > 0) {
+      let filteredArr = sections.map((sprint: any) => ({
+        ...sprint,
+        issues: sprint.issues.filter((issue: any) =>
+          filteredString.includes(issue.assignedTo)
+        ),
+      }));
+
+      setScrumSections([...filteredArr]);
+    } else {
+      setScrumSections([...sections]);
+    }
+  };
+
+  const checkFilteredSearch = (userId: string) => {
+    if (filteredString.includes(userId)) {
+      const newFilteredString = filteredString.filter(
+        (string: string) => string !== userId
+      );
+      setFilteredString(newFilteredString);
+    } else {
+      setFilteredString([...filteredString, userId]);
+    }
+  };
+
   const createScrumSection = async () => {
     const notification = Toast.loading("Creating Section!");
     try {
@@ -145,36 +176,74 @@ const ScrumBoard = () => {
     }
   };
 
+  useEffect(() => {
+    filterIssues(localSections);
+  }, [filteredString]);
+
   return (
-    <div className="px-2 overflow-x-auto w-full pb-1 section-title">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
-          {scrumSections.map(
-            ({ id, title, issues, boardId }: any, index: number) => {
-              return (
-                <div
-                  key={index}
-                  className="h-full flex-non w-[350px] rounded-md"
-                >
-                  <Section
-                    id={id}
-                    title={title}
-                    issues={issues}
-                    boardId={boardId}
-                  />
-                </div>
-              );
-            }
-          )}
-          <div className="h-full flex-none w-10 rounded-md">
-            <AiOutlinePlus
-              className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
-              onClick={() => createScrumSection()}
-            />
-          </div>
+    <>
+      <div className="flex items-center">
+        <div className="flex flex-row space-x-[-10%] px-2">
+          {members.map((member: any, index: number) => {
+            return member.profileImage ? (
+              <div
+                key={index}
+                onClick={() => checkFilteredSearch(member.userId)}
+                className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                  filteredString.includes(member.userId) &&
+                  "border-[3px] border-blue-500"
+                }`}
+              >
+                <Image
+                  src={member.profileImage}
+                  width={90}
+                  height={90}
+                  alt="UserProfile"
+                />
+              </div>
+            ) : (
+              <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+            );
+          })}
         </div>
-      </DragDropContext>
-    </div>
+        <span
+          className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+          onClick={() => setFilteredString([])}
+        >
+          Clear Filter
+        </span>
+      </div>
+
+      <div className="px-2 overflow-x-auto w-full pb-1 section-title">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
+            {scrumSections.map(
+              ({ id, title, issues, boardId }: any, index: number) => {
+                return (
+                  <div
+                    key={index}
+                    className="h-full flex-non w-[350px] rounded-md"
+                  >
+                    <Section
+                      id={id}
+                      title={title}
+                      issues={issues}
+                      boardId={boardId}
+                    />
+                  </div>
+                );
+              }
+            )}
+            <div className="h-full flex-none w-10 rounded-md">
+              <AiOutlinePlus
+                className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
+                onClick={() => createScrumSection()}
+              />
+            </div>
+          </div>
+        </DragDropContext>
+      </div>
+    </>
   );
 };
 
