@@ -3,6 +3,7 @@ import Scrum from "../../components/Project/Scrum/Scrum";
 import ScrumBoard from "../../components/Project/Scrum/ScrumBoard";
 import Kanban from "../../components/Project/Kanban/Kanban";
 import Calendar from "../../components/Project/Calendar/Calendar";
+import ProjectSettings from "../../components/Project/ProjectSettings";
 
 interface Props {
   componentName: string;
@@ -16,7 +17,7 @@ export const ProjectContents = ({ componentName, projectId }: Props) => {
     case "Scrum":
       return <>this is the scrum view.</>;
     case "Settings":
-      return <>this is the settings stuff</>;
+      return <ProjectSettings />;
     case "scrumboard":
       return <ScrumBoard />;
     case "backlog":

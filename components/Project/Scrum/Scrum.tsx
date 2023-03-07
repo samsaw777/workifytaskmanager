@@ -109,12 +109,19 @@ const Scrum = () => {
 
       // Create a new sprint array to update.
       let newSprintArray = JSON.parse(JSON.stringify(sprints));
+      let localnewSprintArray = JSON.parse(JSON.stringify(localSprints));
 
       //Find the source and destination index.
       const sourceColIndex = newSprintArray.findIndex(
         (sprint: any) => sprint.id == parseInt(source.droppableId)
       );
       const destinationColIndex = newSprintArray.findIndex(
+        (sprint: any) => sprint.id == parseInt(destination.droppableId)
+      );
+      const localSourceColIndex = localnewSprintArray.findIndex(
+        (sprint: any) => sprint.id == parseInt(source.droppableId)
+      );
+      const localDestinationColIndex: any = localnewSprintArray.findIndex(
         (sprint: any) => sprint.id == parseInt(destination.droppableId)
       );
 
@@ -125,6 +132,13 @@ const Scrum = () => {
       const sourceSprintId = sourceSprint.id;
       const destinationSprintId = destinationSprint.id;
 
+      const localSourceSprint = localnewSprintArray[localSourceColIndex];
+      const localDestinationSprint =
+        localnewSprintArray[localDestinationColIndex];
+
+      const localSourceSprintId = localSourceSprint.id;
+      const localDestinationSprintId = localDestinationSprint.id;
+
       //Get the source and destination issues.
       const sourceIssues =
         sourceSprint?.issues?.length > 0 ? [...sourceSprint?.issues] : [];
@@ -133,28 +147,52 @@ const Scrum = () => {
           ? [...destinationSprint?.issues]
           : [];
 
+      const localSourceIssues =
+        localSourceSprint?.issues?.length > 0
+          ? [...localSourceSprint?.issues]
+          : [];
+      const localDestinationIssues =
+        localDestinationSprint?.issues?.length > 0
+          ? [...localDestinationSprint?.issues]
+          : [];
+
       //Logic to change the issues between sprints.
       if (parseInt(source.droppableId) !== parseInt(destination.droppableId)) {
         const [removed] = sourceIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         newSprintArray[sourceColIndex].issues = sourceIssues;
         newSprintArray[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localSourceIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localnewSprintArray[localSourceColIndex].issues = localSourceIssues;
+        localnewSprintArray[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setSprints(newSprintArray);
+        setLocalSprints(localnewSprintArray);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         newSprintArray[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localDestinationIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localnewSprintArray[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setSprints(newSprintArray);
+        setLocalSprints(localnewSprintArray);
       }
 
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/updatebacklogissue`, {
-          resourceList: sourceIssues,
-          destinationList: destinationIssues,
-          sprintResourceId: sourceSprintId,
-          sprintDestinationId: destinationSprintId,
-          sprintResourceName: sourceSprint.sprintName,
-          sprintDestinationName: destinationSprint.sprintName,
+          resourceList: localSourceIssues,
+          destinationList: localDestinationIssues,
+          sprintResourceId: localSourceSprintId,
+          sprintDestinationId: localDestinationSprintId,
+          sprintResourceName: localSourceSprint.sprintName,
+          sprintDestinationName: localDestinationSprint.sprintName,
         })
         .then((res) => {
           Toast.success("Position Changed!", {
