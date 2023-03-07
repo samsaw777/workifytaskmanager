@@ -21,6 +21,8 @@ const ScrumBoard = () => {
   } = ProjectState();
   const [localSections, setLocalSections] = useState<any>([]);
   const [filteredString, setFilteredString] = useState<string[]>([]);
+  console.log(scrumSections);
+  console.log(localSections);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -63,6 +65,7 @@ const ScrumBoard = () => {
       notification = Toast.loading("Changing Position");
 
       let sectionData = JSON.parse(JSON.stringify(scrumSections));
+      let localsectionData = JSON.parse(JSON.stringify(localSections));
 
       //Find the source and destination column index.
       const sourceColIndex = sectionData.findIndex(
@@ -70,6 +73,13 @@ const ScrumBoard = () => {
       );
 
       const destinationColIndex = sectionData.findIndex(
+        (section: any) => section.id === parseInt(destination.droppableId)
+      );
+      const localSourceColIndex = localsectionData.findIndex(
+        (section: any) => section.id === parseInt(source.droppableId)
+      );
+
+      const localDestinationColIndex = localsectionData.findIndex(
         (section: any) => section.id === parseInt(destination.droppableId)
       );
 
@@ -80,12 +90,26 @@ const ScrumBoard = () => {
       const sourceSectionId = sourceCol.id;
       const destinationSectionId = destinationCol.id;
 
+      const localSourceCol = localsectionData[localSourceColIndex];
+      const localDestinationCol = localsectionData[localDestinationColIndex];
+
+      const localSourceSectionId = localSourceCol.id;
+      const localDestinationSectionId = localDestinationCol.id;
+
       //Get the source and destination issues.
       const sourceIssues =
         sourceCol?.issues?.length > 0 ? [...sourceCol?.issues] : [];
 
       const destinationIssues =
         destinationCol?.issues?.length > 0 ? [...destinationCol?.issues] : [];
+
+      const localSourceIssues =
+        localSourceCol?.issues?.length > 0 ? [...localSourceCol?.issues] : [];
+
+      const localDestinationIssues =
+        localDestinationCol?.issues?.length > 0
+          ? [...localDestinationCol?.issues]
+          : [];
 
       //Logic Building.
       if (parseInt(source.droppableId) !== parseInt(destination.droppableId)) {
@@ -94,22 +118,35 @@ const ScrumBoard = () => {
         sectionData[sourceColIndex].issues = sourceIssues;
         sectionData[destinationColIndex].issues = destinationIssues;
 
+        const [localremoved] = localSourceIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localsectionData[localSourceColIndex].issues = localSourceIssues;
+        localsectionData[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setScrumSections(sectionData);
+        setLocalSections(localsectionData);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         sectionData[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localDestinationIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localsectionData[localDestinationColIndex].issues =
+          localDestinationIssues;
         setScrumSections(sectionData);
+        setLocalSections(localsectionData);
       }
 
       await axios
         .post(`${urlFetcher()}/api/section/updatesectionissues`, {
-          resourceList: sourceIssues,
-          destinationList: destinationIssues,
-          sectionResourceId: sourceSectionId,
-          sectionDestinationId: destinationSectionId,
-          sectionResourceName: sourceCol.title,
-          sectionDestinationName: destinationCol.title,
+          resourceList: localSourceIssues,
+          destinationList: localDestinationIssues,
+          sectionResourceId: localSourceSectionId,
+          sectionDestinationId: localDestinationSectionId,
+          sectionResourceName: localSourceCol.title,
+          sectionDestinationName: localDestinationCol.title,
         })
         .then((res) => {
           Toast.success("Position Changed!", {
