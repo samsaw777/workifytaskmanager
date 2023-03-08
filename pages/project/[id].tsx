@@ -661,7 +661,7 @@ const ProjectDetails = ({
         <ProjectSidebar
           openSidebar={openSideBar}
           setShowContent={setShowContent}
-          projectTitle={projectTitle}
+          projectTitle={project.name}
           // showContent={showContent}
         />
       </div>
