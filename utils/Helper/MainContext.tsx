@@ -1,5 +1,6 @@
 import Project from "../../components/Project/Project";
 import Tasks from "../../components/Dashboard/Tasks";
+import Notifications from "../../components/Dashboard/Notifications";
 type Props = {
   componentName: string;
 };
@@ -11,7 +12,7 @@ export const showComponent = ({ componentName }: Props) => {
     case "Projects":
       return <Project />;
     case "Inbox":
-      return <div>This is dashboard</div>;
+      return <Notifications />;
     case "Tasks":
       return <Tasks />;
     case "Profile":

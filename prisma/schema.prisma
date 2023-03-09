@@ -160,6 +160,7 @@ model Notifications{
   request Boolean
   isPending Boolean
   userId String
+  projectId Int
   User User @relation(fields: [userId], references:[id], onDelete: Cascade)
 }
 
