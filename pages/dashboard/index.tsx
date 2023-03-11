@@ -24,11 +24,14 @@ if (!secret) {
 
 let socket: any;
 
-const Dashboard = ({ loggedInUserDetails }: any) => {
-  const { setLoggedInUser, loggedInUser } = ProjectState();
+const Dashboard = ({ loggedInUserDetails, notificationArray }: any) => {
+  const { setLoggedInUser, loggedInUser, notifications, setNotifications } =
+    ProjectState();
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("Projects");
   const router = useRouter();
+
+  console.log(notifications);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -40,11 +43,13 @@ const Dashboard = ({ loggedInUserDetails }: any) => {
     socket.emit("setup", loggedInUserDetails);
 
     socket.on("getNotification", (notification: any) => {
-      console.log(notification);
+      setNotifications([...notifications, notification.notificationData]);
     });
   };
 
   useEffect(() => {
+    setNotifications(notificationArray);
+
     socketInit();
   }, []);
 
@@ -89,11 +94,18 @@ export async function getServerSideProps(context: any) {
     where: { id: jwtToken.userId },
   });
 
+  const notifications = await prisma.notifications.findMany({
+    where: {
+      userId: response?.id,
+    },
+  });
+
   const user: any = JSON.stringify(response);
 
   return {
     props: {
       loggedInUserDetails: JSON.parse(user),
+      notificationArray: notifications,
     },
   };
 }

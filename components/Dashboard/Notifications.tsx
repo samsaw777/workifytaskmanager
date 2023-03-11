@@ -10,20 +10,20 @@ const Notifications = () => {
   const { notifications, setNotifications, loggedInUser, members, setMembers } =
     ProjectState();
 
-  const getNotifications = async () => {
-    try {
-      await axios
-        .post(`${urlFetcher()}/api/project/getnotifications`, {
-          userId: loggedInUser.id,
-        })
-        .then((res) => {
-          setNotifications([...res.data]);
-          console.log(res.data);
-        });
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
+  // const getNotifications = async () => {
+  //   try {
+  //     await axios
+  //       .post(`${urlFetcher()}/api/project/getnotifications`, {
+  //         userId: loggedInUser.id,
+  //       })
+  //       .then((res) => {
+  //         setNotifications([...res.data]);
+  //         console.log(res.data);
+  //       });
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -73,7 +73,7 @@ const Notifications = () => {
   };
 
   React.useEffect(() => {
-    getNotifications();
+    // getNotifications();
     socketInit();
   }, []);
 
@@ -83,13 +83,17 @@ const Notifications = () => {
         return (
           <div key={index}>
             <p>{notification.title}</p>
-            {notification.request && (
+            {notification.request && notification.isPending && (
               <span
                 className="cursor-pointer"
                 onClick={() => acceptRequest(notification.projectId)}
               >
                 Accept
               </span>
+            )}
+
+            {notification.request && !notification.isPending && (
+              <span className="cursor-pointer">Delete</span>
             )}
           </div>
         );

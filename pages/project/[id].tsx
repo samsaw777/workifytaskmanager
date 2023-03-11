@@ -45,6 +45,8 @@ const ProjectDetails = ({
     setComments,
   } = ProjectState();
 
+  // console.log(sprints);
+
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<string>("view");
 
@@ -424,6 +426,7 @@ const ProjectDetails = ({
         section === "sprint" &&
         type === "updateAssignTo"
       ) {
+        // console.log(task);
         const newScrumSections = JSON.parse(JSON.stringify(sections));
         const sectionIndex = sections.findIndex(
           (section: any) => section.id === task.sprintId
@@ -431,9 +434,12 @@ const ProjectDetails = ({
         const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
           (i: any) => i.id === task.id
         );
-
         newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
           task.memberInfo;
+        newScrumSections[sectionIndex].issues[issueIndex].assignedTo;
+        task.userId;
+
+        // console.log(newScrumSections);
         setSprints(newScrumSections);
       } else if (
         projectId === ProjectId &&
@@ -448,8 +454,15 @@ const ProjectDetails = ({
           (i: any) => i.id === task.id
         );
 
+        // console.log(newScrumSections);
+
         newScrumSections[sectionIndex].tasks[issueIndex].assignedUser =
           task.memberInfo;
+        newScrumSections[sectionIndex].tasks[issueIndex].assignedTo =
+          task.userId;
+
+        // console.log(newScrumSections);
+
         setSections(newScrumSections);
       }
     });

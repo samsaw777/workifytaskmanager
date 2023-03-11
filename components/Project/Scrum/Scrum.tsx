@@ -269,7 +269,13 @@ const Scrum = () => {
                 />
               </div>
             ) : (
-              <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+              <FaUserCircle
+                onClick={() => checkFilteredSearch(member.userId)}
+                className={`text-4xl text-violet-400 cursor-pointer ${
+                  filteredString.includes(member.userId) &&
+                  "border-[3px] border-blue-500"
+                }`}
+              />
             );
           })}
         </div>

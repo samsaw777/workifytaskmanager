@@ -22,8 +22,7 @@ interface Props {
 }
 
 const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
-  const { loggedInUser, members, setMembers, project } = ProjectState();
-
+  const { loggedInUser, members, notifications, project } = ProjectState();
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
 
@@ -61,6 +60,11 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
         }
       );
 
+      socket.emit("notifications", {
+        userId,
+        notificationData: data,
+        notifications,
+      });
       // setMembers([...members, data]);
       // socket.emit("memberadded", {
       //   project: {

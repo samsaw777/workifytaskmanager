@@ -79,9 +79,10 @@ const TaskModal: FunctionComponent<Props> = ({
     sprints,
     comments,
     setComments,
-    project: { id: ProjectId },
+    project: { id: ProjectId, name },
     scrumSections,
     members,
+    notifications,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
   // console.log(task);
@@ -177,6 +178,10 @@ const TaskModal: FunctionComponent<Props> = ({
             type: "assigned",
             value: userId,
             taskId: task.id,
+            requestBody: `You have been assigned a task under ${
+              type === "scrum" || type === "scrumSection" ? "scrum" : "kanban"
+            } in ${name}.`,
+            projectId: ProjectId,
           }
         )
         .then((response) => {
@@ -185,18 +190,20 @@ const TaskModal: FunctionComponent<Props> = ({
             members,
             task: {
               memberInfo,
-              id: response.data.id,
-              sectionId: response.data.sectionId,
-              sprintId: response.data.sprintId,
+              userId,
+              id: response.data.issueUpdated.id,
+              sectionId: response.data.issueUpdated.sectionId,
+              sprintId: response.data.issueUpdated.sprintId,
             },
             type: "updateAssignTo",
             section: getSectionForTaskModal(type),
             sections: getSectionsForTaskModal(type),
           });
-          socket.emit("notifications", {
-            userId,
-            notificationData: response.data,
-          });
+          // socket.emit("notifications", {
+          //   userId,
+          //   notificationData: response.data.notification,
+          //   notifications,
+          // });
           setOpenAssignUser(false);
           Toast.success("User assignment successfully!", { id: notification });
         });
