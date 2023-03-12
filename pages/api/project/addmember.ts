@@ -3,7 +3,8 @@ import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { projectId, userId, userName, userProfile } = req.body;
+    const { projectId, userId, userName, userProfile, notificationId } =
+      req.body;
 
     const member = await prisma.members.create({
       data: {
@@ -12,6 +13,15 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         userId: userId,
         profileImage: userProfile,
         role: "MEMBER",
+      },
+    });
+
+    await prisma.notifications.update({
+      where: {
+        id: notificationId,
+      },
+      data: {
+        isPending: false,
       },
     });
 

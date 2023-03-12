@@ -3,6 +3,7 @@ import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { taskId, value, type, requestBody, projectId } = req.body;
+  console.log(taskId);
   try {
     let updatedTask;
     if (req.method === "PATCH") {
@@ -16,7 +17,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           },
         });
       } else if (type === "assigned") {
-        updatedTask = await prisma.issues.update({
+        updatedTask = await prisma.task.update({
           where: {
             id: taskId,
           },
@@ -54,5 +55,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(updatedTask);
   } catch (error: any) {
     res.status(400).send(error);
+    console.log(error.message);
   }
 }

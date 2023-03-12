@@ -18,6 +18,8 @@ const Scrum = () => {
     sprints,
     setSprints,
     members,
+    localSprints,
+    setLocalSprints,
   } = ProjectState();
 
   // console.log(members);
@@ -79,7 +81,6 @@ const Scrum = () => {
     endDate: new Date(),
   });
   const [issueCheck, setIssueCheck] = useState<string>("");
-  const [localSprints, setLocalSprints] = useState<any>([]);
 
   const [filteredString, setFilteredString] = useState<string[]>([]);
   const [sprintDetails, setSprintDetails] = useState<{

@@ -43,6 +43,12 @@ const ProjectDetails = ({
     scrumSections,
     setScrumSections,
     setComments,
+    localSprints,
+    setLocalSprints,
+    localSections,
+    setLocalSections,
+    setLocalScrumSections,
+    localScrumSections,
   } = ProjectState();
 
   // console.log(sprints);
@@ -281,191 +287,246 @@ const ProjectDetails = ({
       }
     );
 
-    socket.on("tasks", ({ ProjectId, task, type, section, sections }: any) => {
-      if (
-        ProjectId === projectId &&
-        type == "createtask" &&
-        section == "kanban"
-      ) {
-        let newSections = JSON.parse(JSON.stringify(sections));
-        console.log(newSections);
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sectionId
-        );
-        console.log(sectionIndex);
-        newSections[sectionIndex].tasks =
-          newSections[sectionIndex]?.tasks?.length > 0
-            ? newSections[sectionIndex].tasks
-            : [];
-        newSections[sectionIndex]?.tasks?.push(task);
-        console.log(newSections[sectionIndex]);
-        setSections(newSections);
-      } else if (
-        ProjectId === projectId &&
-        type == "deletetask" &&
-        section == "kanban"
-      ) {
-        const newData = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = newData.findIndex(
-          (e: any) => e.id == task?.sectionId
-        );
-        const taskIndex = newData[sectionIndex].tasks.findIndex(
-          (e: any) => e.id == task.id
-        );
-        newData[sectionIndex].tasks.splice(taskIndex, 1);
-        setSections(newData);
-      } else if (
-        ProjectId === projectId &&
-        type == "updatetask" &&
-        section == "kanban"
-      ) {
-        let sectionIndex = sections.findIndex(
-          (section: any) => section.id == task?.sectionId
-        );
+    socket.on(
+      "tasks",
+      ({ ProjectId, task, type, section, sections, localSprints }: any) => {
+        if (
+          ProjectId === projectId &&
+          type == "createtask" &&
+          section == "kanban"
+        ) {
+          let newSections = JSON.parse(JSON.stringify(sections));
+          console.log(newSections);
+          const sectionIndex = sections.findIndex(
+            (section: any) => section.id === task.sectionId
+          );
+          console.log(sectionIndex);
+          newSections[sectionIndex].tasks =
+            newSections[sectionIndex]?.tasks?.length > 0
+              ? newSections[sectionIndex].tasks
+              : [];
+          newSections[sectionIndex]?.tasks?.push(task);
+          console.log(newSections[sectionIndex]);
+          setSections(newSections);
+        } else if (
+          ProjectId === projectId &&
+          type == "deletetask" &&
+          section == "kanban"
+        ) {
+          const newData = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = newData.findIndex(
+            (e: any) => e.id == task?.sectionId
+          );
+          const taskIndex = newData[sectionIndex].tasks.findIndex(
+            (e: any) => e.id == task.id
+          );
+          newData[sectionIndex].tasks.splice(taskIndex, 1);
+          setSections(newData);
+        } else if (
+          ProjectId === projectId &&
+          type == "updatetask" &&
+          section == "kanban"
+        ) {
+          let sectionIndex = sections.findIndex(
+            (section: any) => section.id == task?.sectionId
+          );
 
-        const index = sections[sectionIndex].tasks.findIndex(
-          (e: any) => e.id === task?.id
-        );
-        sections[sectionIndex].tasks[index].title = task?.title;
-        setSections(sections);
-      } else if (
-        ProjectId === projectId &&
-        type == "updatedescription" &&
-        section == "kanban"
-      ) {
-        let sectionIndex = sections.findIndex(
-          (section: any) => section.id == task?.sectionId
-        );
+          const index = sections[sectionIndex].tasks.findIndex(
+            (e: any) => e.id === task?.id
+          );
+          sections[sectionIndex].tasks[index].title = task?.title;
+          setSections(sections);
+        } else if (
+          ProjectId === projectId &&
+          type == "updatedescription" &&
+          section == "kanban"
+        ) {
+          let sectionIndex = sections.findIndex(
+            (section: any) => section.id == task?.sectionId
+          );
 
-        const index = sections[sectionIndex].tasks.findIndex(
-          (e: any) => e.id === task?.id
-        );
-        sections[sectionIndex].tasks[index].description = task?.description;
-        setSections(sections);
-      } else if (
-        projectId === ProjectId &&
-        section === "sprint" &&
-        type === "updatetask"
-      ) {
-        const newSprints = JSON.parse(JSON.stringify(sections));
-        const sprintIndex = sections.findIndex(
-          (sprint: any) => sprint.id === task.sprintId
-        );
-        const issueIndex = newSprints[sprintIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
+          const index = sections[sectionIndex].tasks.findIndex(
+            (e: any) => e.id === task?.id
+          );
+          sections[sectionIndex].tasks[index].description = task?.description;
+          setSections(sections);
+        } else if (
+          projectId === ProjectId &&
+          section === "sprint" &&
+          type === "updatetask"
+        ) {
+          const newSprints = JSON.parse(JSON.stringify(sections));
+          const sprintIndex = sections.findIndex(
+            (sprint: any) => sprint.id === task.sprintId
+          );
+          const issueIndex = newSprints[sprintIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        newSprints[sprintIndex].issues[issueIndex].title = task.title;
-        setSprints(newSprints);
-      } else if (
-        projectId === ProjectId &&
-        section === "sprint" &&
-        type === "updatedescription"
-      ) {
-        const newSprints = JSON.parse(JSON.stringify(sections));
-        const sprintIndex = sections.findIndex(
-          (sprint: any) => sprint.id === task.sprintId
-        );
-        const issueIndex = newSprints[sprintIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
+          newSprints[sprintIndex].issues[issueIndex].title = task.title;
+          setSprints(newSprints);
+        } else if (
+          projectId === ProjectId &&
+          section === "sprint" &&
+          type === "updatedescription"
+        ) {
+          const newSprints = JSON.parse(JSON.stringify(sections));
+          const sprintIndex = sections.findIndex(
+            (sprint: any) => sprint.id === task.sprintId
+          );
+          const issueIndex = newSprints[sprintIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        newSprints[sprintIndex].issues[issueIndex].description =
-          task.description;
-        setSprints(newSprints);
-      } else if (
-        projectId === ProjectId &&
-        section === "scrumSection" &&
-        type === "updatetask"
-      ) {
-        const newScrumSections = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sectionId
-        );
-        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
+          newSprints[sprintIndex].issues[issueIndex].description =
+            task.description;
+          setSprints(newSprints);
+        } else if (
+          projectId === ProjectId &&
+          section === "scrumSection" &&
+          type === "updatetask"
+        ) {
+          const newScrumSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section: any) => section.id === task.sectionId
+          );
+          const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        newScrumSections[sectionIndex].issues[issueIndex].title = task.title;
-        setScrumSections(newScrumSections);
-      } else if (
-        projectId === ProjectId &&
-        section === "scrumSection" &&
-        type === "updatedescription"
-      ) {
-        const newScrumSections = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sectionId
-        );
-        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
+          newScrumSections[sectionIndex].issues[issueIndex].title = task.title;
+          setScrumSections(newScrumSections);
+        } else if (
+          projectId === ProjectId &&
+          section === "scrumSection" &&
+          type === "updatedescription"
+        ) {
+          const newScrumSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section: any) => section.id === task.sectionId
+          );
+          const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        newScrumSections[sectionIndex].issues[issueIndex].description =
-          task.description;
-        setScrumSections(newScrumSections);
-      } else if (
-        projectId === ProjectId &&
-        section === "scrumSection" &&
-        type === "updateAssignTo"
-      ) {
-        console.log(sections);
-        const newScrumSections = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sectionId
-        );
-        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
+          newScrumSections[sectionIndex].issues[issueIndex].description =
+            task.description;
+          setScrumSections(newScrumSections);
+        } else if (
+          projectId === ProjectId &&
+          section === "scrumSection" &&
+          type === "updateAssignTo"
+        ) {
+          console.log(sections);
+          const newScrumSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section: any) => section.id === task.sectionId
+          );
+          const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
-          task.memberInfo;
-        setScrumSections(newScrumSections);
-      } else if (
-        projectId === ProjectId &&
-        section === "sprint" &&
-        type === "updateAssignTo"
-      ) {
-        // console.log(task);
-        const newScrumSections = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sprintId
-        );
-        const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
-          (i: any) => i.id === task.id
-        );
-        newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
-          task.memberInfo;
-        newScrumSections[sectionIndex].issues[issueIndex].assignedTo;
-        task.userId;
+          const newLocalScrumSections = JSON.parse(
+            JSON.stringify(localSprints)
+          );
+          const localSprintIndex = localSprints.findIndex(
+            (sprint: any) => sprint.id === task.sectionId
+          );
+          const localIssueIndex = newLocalScrumSections[
+            localSprintIndex
+          ].issues.findIndex((i: any) => i.id === task.id);
 
-        // console.log(newScrumSections);
-        setSprints(newScrumSections);
-      } else if (
-        projectId === ProjectId &&
-        section === "kanban" &&
-        type === "updateAssignTo"
-      ) {
-        const newScrumSections = JSON.parse(JSON.stringify(sections));
-        const sectionIndex = sections.findIndex(
-          (section: any) => section.id === task.sectionId
-        );
-        const issueIndex = newScrumSections[sectionIndex].tasks.findIndex(
-          (i: any) => i.id === task.id
-        );
+          newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
+            task.memberInfo;
+          newScrumSections[sectionIndex].issues[issueIndex].assignedTo =
+            task.userId;
 
-        // console.log(newScrumSections);
+          newLocalScrumSections[localSprintIndex].issues[
+            localIssueIndex
+          ].assignedUser = task.memberInfo;
+          newLocalScrumSections[localSprintIndex].issues[
+            localIssueIndex
+          ].assignedTo = task.userId;
 
-        newScrumSections[sectionIndex].tasks[issueIndex].assignedUser =
-          task.memberInfo;
-        newScrumSections[sectionIndex].tasks[issueIndex].assignedTo =
-          task.userId;
+          setScrumSections(newScrumSections);
+          setLocalScrumSections([...newLocalScrumSections]);
+        } else if (
+          projectId === ProjectId &&
+          section === "sprint" &&
+          type === "updateAssignTo"
+        ) {
+          const newScrumSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex = sections.findIndex(
+            (section: any) => section.id === task.sprintId
+          );
+          const issueIndex = newScrumSections[sectionIndex].issues.findIndex(
+            (i: any) => i.id === task.id
+          );
 
-        // console.log(newScrumSections);
+          const newLocalScrumSections = JSON.parse(
+            JSON.stringify(localSprints)
+          );
+          const localSprintIndex = localSprints.findIndex(
+            (sprint: any) => sprint.id === task.sprintId
+          );
+          const localIssueIndex = newLocalScrumSections[
+            localSprintIndex
+          ].issues.findIndex((i: any) => i.id === task.id);
 
-        setSections(newScrumSections);
+          newScrumSections[sectionIndex].issues[issueIndex].assignedUser =
+            task.memberInfo;
+          newScrumSections[sectionIndex].issues[issueIndex].assignedTo =
+            task.userId;
+
+          newLocalScrumSections[localSprintIndex].issues[
+            localIssueIndex
+          ].assignedUser = task.memberInfo;
+          newLocalScrumSections[localSprintIndex].issues[
+            localIssueIndex
+          ].assignedTo = task.userId;
+
+          setSprints([...newScrumSections]);
+          setLocalSprints([...newLocalScrumSections]);
+        } else if (
+          projectId === ProjectId &&
+          section === "kanban" &&
+          type === "updateAssignTo"
+        ) {
+          const newScrumSections = JSON.parse(JSON.stringify(sections));
+          const sectionIndex: number = sections.findIndex(
+            (section: any) => section.id === task.sectionId
+          );
+          const issueIndex = newScrumSections[sectionIndex].tasks.findIndex(
+            (i: any) => i.id === task.id
+          );
+
+          const newLocalScrumSections = JSON.parse(
+            JSON.stringify(localSprints)
+          );
+          const localSprintIndex = localSprints.findIndex(
+            (sprint: any) => sprint.id === task.sectionId
+          );
+          const localIssueIndex = newLocalScrumSections[
+            localSprintIndex
+          ].tasks.findIndex((i: any) => i.id === task.id);
+
+          newScrumSections[sectionIndex].tasks[issueIndex].assignedUser =
+            task.memberInfo;
+          newScrumSections[sectionIndex].tasks[issueIndex].assignedTo =
+            task.userId;
+
+          newLocalScrumSections[localSprintIndex].tasks[
+            localIssueIndex
+          ].assignedUser = task.memberInfo;
+          newLocalScrumSections[localSprintIndex].tasks[
+            localIssueIndex
+          ].assignedTo = task.userId;
+
+          setSections([...newScrumSections]);
+          setLocalSections([...newLocalScrumSections]);
+        }
       }
-    });
+    );
 
     socket.on(
       "commentCreation",

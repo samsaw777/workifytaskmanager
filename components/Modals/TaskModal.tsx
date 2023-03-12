@@ -83,6 +83,9 @@ const TaskModal: FunctionComponent<Props> = ({
     scrumSections,
     members,
     notifications,
+    localSprints,
+    localScrumSections,
+    localSections,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
   // console.log(task);
@@ -121,6 +124,18 @@ const TaskModal: FunctionComponent<Props> = ({
         return scrumSections;
     }
   };
+
+  const getLocalSections = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return localSprints;
+      case "kanban":
+        return localSections;
+      case "scrumSection":
+        return localScrumSections;
+    }
+  };
+
   const getSectionForTaskModal = (type: string) => {
     switch (type) {
       case "scrum":
@@ -178,10 +193,10 @@ const TaskModal: FunctionComponent<Props> = ({
             type: "assigned",
             value: userId,
             taskId: task.id,
-            requestBody: `You have been assigned a task under ${
-              type === "scrum" || type === "scrumSection" ? "scrum" : "kanban"
-            } in ${name}.`,
-            projectId: ProjectId,
+            // requestBody: `You have been assigned a task under ${
+            //   type === "scrum" || type === "scrumSection" ? "scrum" : "kanban"
+            // } in ${name}.`,
+            // projectId: ProjectId,
           }
         )
         .then((response) => {
@@ -191,13 +206,14 @@ const TaskModal: FunctionComponent<Props> = ({
             task: {
               memberInfo,
               userId,
-              id: response.data.issueUpdated.id,
-              sectionId: response.data.issueUpdated.sectionId,
-              sprintId: response.data.issueUpdated.sprintId,
+              id: response.data.id,
+              sectionId: response.data.sectionId,
+              sprintId: response.data.sprintId,
             },
             type: "updateAssignTo",
             section: getSectionForTaskModal(type),
             sections: getSectionsForTaskModal(type),
+            localSprints: getLocalSections(type),
           });
           // socket.emit("notifications", {
           //   userId,

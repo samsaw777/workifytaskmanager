@@ -138,7 +138,15 @@ export default (io: any, socket: any) => {
   //Socket to creaate task.
   socket.on(
     "taskCreated",
-    ({ ProjectId, members, task, type, section, sections }: any) => {
+    ({
+      ProjectId,
+      members,
+      task,
+      type,
+      section,
+      sections,
+      localSprints,
+    }: any) => {
       if (!members) return console.log("Members not found!");
 
       socket.to(ProjectId).emit("tasks", {
@@ -147,6 +155,7 @@ export default (io: any, socket: any) => {
         type,
         section,
         sections,
+        localSprints,
       });
     }
   );

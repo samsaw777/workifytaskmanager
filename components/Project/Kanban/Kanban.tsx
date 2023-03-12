@@ -17,9 +17,11 @@ const Kanban = () => {
     members,
     sections,
     setSections,
+    localSections,
+    setLocalSections,
   } = ProjectState();
   // const [sections, setSections] = useState<{}[]>([]);
-  const [localSections, setLocalSections] = useState<any>([]);
+
   const [filteredString, setFilteredString] = useState<string[]>([]);
 
   const socketInit = async () => {

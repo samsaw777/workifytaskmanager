@@ -18,11 +18,11 @@ const ScrumBoard = () => {
     setScrumSections,
     project: { board, id },
     members,
+    localScrumSections,
+    setLocalScrumSections,
   } = ProjectState();
-  const [localSections, setLocalSections] = useState<any>([]);
   const [filteredString, setFilteredString] = useState<string[]>([]);
   console.log(scrumSections);
-  console.log(localSections);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -38,7 +38,7 @@ const ScrumBoard = () => {
         })
         .then((res) => {
           setScrumSections([...res.data]);
-          setLocalSections([...res.data]);
+          setLocalScrumSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
@@ -65,7 +65,7 @@ const ScrumBoard = () => {
       notification = Toast.loading("Changing Position");
 
       let sectionData = JSON.parse(JSON.stringify(scrumSections));
-      let localsectionData = JSON.parse(JSON.stringify(localSections));
+      let localsectionData = JSON.parse(JSON.stringify(localScrumSections));
 
       //Find the source and destination column index.
       const sourceColIndex = sectionData.findIndex(
@@ -125,7 +125,7 @@ const ScrumBoard = () => {
           localDestinationIssues;
 
         setScrumSections(sectionData);
-        setLocalSections(localsectionData);
+        setLocalScrumSections(localsectionData);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
@@ -136,7 +136,7 @@ const ScrumBoard = () => {
         localsectionData[localDestinationColIndex].issues =
           localDestinationIssues;
         setScrumSections(sectionData);
-        setLocalSections(localsectionData);
+        setLocalScrumSections(localsectionData);
       }
 
       await axios
@@ -214,7 +214,7 @@ const ScrumBoard = () => {
   };
 
   useEffect(() => {
-    filterIssues(localSections);
+    filterIssues(localScrumSections);
   }, [filteredString]);
 
   return (

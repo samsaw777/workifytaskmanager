@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  const { value, taskId, type, requestBody, projectId } = req.body;
+  const { value, taskId, type, requestBody, projectId, boardId } = req.body;
   try {
     let updatedIssue;
     if (req.method === "PATCH") {
