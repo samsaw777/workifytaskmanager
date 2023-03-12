@@ -30,18 +30,23 @@ const Kanban = () => {
     socket = io();
   };
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const fetchKanbanSections = async () => {
     try {
+      setLoading(true);
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
           boardId: board[1].id,
           type: "KANBAN",
         })
         .then((res) => {
+          setLoading(false);
           setSections([...res.data]);
           setLocalSections([...res.data]);
         });
     } catch (error: any) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -216,64 +221,72 @@ const Kanban = () => {
   }, [filteredString]);
 
   return (
-    <div className="px-2 mx-2 w-full">
-      <div className="flex space-x-2">
-        <div
-          onClick={() => createSection()}
-          className="p-2 bg-blue-500 text-white w-fit rounded-md cursor-pointer"
-        >
-          Create Section
+    <>
+      {loading ? (
+        <div className="w-full h-[70vh] flex items-center justify-center">
+          <span>Loading ...</span>
         </div>
-        <div className="flex items-center">
-          <div className="flex flex-row space-x-[-10%] px-2">
-            {members.map((member: any, index: number) => {
-              return member.profileImage ? (
-                <div
-                  key={index}
-                  onClick={() => checkFilteredSearch(member.userId)}
-                  className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
-                    filteredString.includes(member.userId) &&
-                    "border-[3px] border-blue-500"
-                  }`}
-                >
-                  <Image
-                    src={member.profileImage}
-                    width={90}
-                    height={90}
-                    alt="UserProfile"
-                  />
-                </div>
-              ) : (
-                <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
-              );
-            })}
-          </div>
-          <span
-            className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
-            onClick={() => setFilteredString([])}
-          >
-            Clear Filter
-          </span>
-        </div>
-      </div>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-5 w-full overflow-x-auto mt-2 h-[75vh] pb-2 section-title">
-          {sections.map((section: any, index: number) => {
-            return (
-              <div key={index}>
-                <KanbanSection
-                  id={section.id}
-                  title={section.title}
-                  tasks={section.tasks}
-                  boardId={section.boardId}
-                  index={index}
-                />
+      ) : (
+        <div className="px-2 mx-2 w-full">
+          <div className="flex space-x-2">
+            <div
+              onClick={() => createSection()}
+              className="p-2 bg-blue-500 text-white w-fit rounded-md cursor-pointer"
+            >
+              Create Section
+            </div>
+            <div className="flex items-center">
+              <div className="flex flex-row space-x-[-10%] px-2">
+                {members.map((member: any, index: number) => {
+                  return member.profileImage ? (
+                    <div
+                      key={index}
+                      onClick={() => checkFilteredSearch(member.userId)}
+                      className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                        filteredString.includes(member.userId) &&
+                        "border-[3px] border-blue-500"
+                      }`}
+                    >
+                      <Image
+                        src={member.profileImage}
+                        width={90}
+                        height={90}
+                        alt="UserProfile"
+                      />
+                    </div>
+                  ) : (
+                    <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+                  );
+                })}
               </div>
-            );
-          })}
+              <span
+                className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+                onClick={() => setFilteredString([])}
+              >
+                Clear Filter
+              </span>
+            </div>
+          </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="flex space-x-5 w-full overflow-x-auto mt-2 h-[75vh] pb-2 section-title">
+              {sections.map((section: any, index: number) => {
+                return (
+                  <div key={index}>
+                    <KanbanSection
+                      id={section.id}
+                      title={section.title}
+                      tasks={section.tasks}
+                      boardId={section.boardId}
+                      index={index}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </DragDropContext>
         </div>
-      </DragDropContext>
-    </div>
+      )}
+    </>
   );
 };
 

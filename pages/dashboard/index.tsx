@@ -43,7 +43,10 @@ const Dashboard = ({ loggedInUserDetails, notificationArray }: any) => {
     socket.emit("setup", loggedInUserDetails);
 
     socket.on("getNotification", (notification: any) => {
-      setNotifications([...notifications, notification.notificationData]);
+      setNotifications((current: any) => [
+        ...current,
+        notification.notificationData,
+      ]);
     });
   };
 

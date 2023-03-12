@@ -49,6 +49,7 @@ const UserCalendar = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState<boolean>(false);
   const [labels, setLabels] = useState<IssueLabels[] | [] | Label[]>([]);
   const [issue, setIssue] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     loggedInUser: { id },
   } = ProjectState();
@@ -67,11 +68,13 @@ const UserCalendar = () => {
     return "#22c55e";
   };
   const getAllTheItems = async () => {
+    setLoading(true);
     await axios
       .post(`${urlFetcher()}/api/dashboard/getassigneditems`, {
         userId: id,
       })
       .then((response) => {
+        setLoading(false);
         let res: any = [];
         response?.data?.map((data: any, index: number) => {
           res.push({
@@ -110,16 +113,22 @@ const UserCalendar = () => {
 
   return (
     <div>
-      <Calendar
-        localizer={localizer}
-        events={getItems}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        onSelectEvent={handleEventClick}
-        eventPropGetter={eventPropGetter}
-      />
-
+      :
+      {loading ? (
+        <div className="w-full h-[70vh] flex items-center justify-center">
+          <span>Loading ...</span>
+        </div>
+      ) : (
+        <Calendar
+          localizer={localizer}
+          events={getItems}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
+          onSelectEvent={handleEventClick}
+          eventPropGetter={eventPropGetter}
+        />
+      )}
       {isIssueModalOpen && (
         <IssueInfoModal
           isOpen={isIssueModalOpen}

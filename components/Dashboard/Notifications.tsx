@@ -38,33 +38,42 @@ const Notifications = () => {
     }
     const notification = toast.loading("Adding Member");
     try {
-      const { data } = await axios.post(
-        `${urlFetcher()}/api/project/addmember`,
-        {
+      await axios
+        .post(`${urlFetcher()}/api/project/addmember`, {
           userId: loggedInUser.id,
           userName: loggedInUser.username,
           userProfile: loggedInUser.profile,
           projectId,
           notificationId,
-        }
-      );
+        })
+        .then((response) => {
+          socket.emit("memberadded", {
+            project: {
+              members,
+              projectId,
+            },
+            senderId: loggedInUser.id,
+            newMemberDetails: response.data,
+            section: "members",
+            type: "addmember",
+          });
+
+          const newLocalNotifications = JSON.parse(
+            JSON.stringify(notifications)
+          );
+          const notificationIndex = newLocalNotifications.findIndex(
+            (notification: any) => notification.id === notificationId
+          );
+          newLocalNotifications[notificationIndex].isPending = false;
+          setNotifications([...newLocalNotifications]);
+
+          // socket.emit("notification", { userId: loggedInUser.id, data });
+          toast.success("Member Added!", {
+            id: notification,
+          });
+        });
 
       // setMembers([...members, data]);
-      socket.emit("memberadded", {
-        project: {
-          members,
-          projectId,
-        },
-        senderId: loggedInUser.id,
-        newMemberDetails: data,
-        section: "members",
-        type: "addmember",
-      });
-
-      // socket.emit("notification", { userId: loggedInUser.id, data });
-      toast.success("Member Added!", {
-        id: notification,
-      });
     } catch (error: any) {
       console.log(error);
       toast.error(error.message, {
@@ -103,9 +112,9 @@ const Notifications = () => {
   }, []);
 
   return (
-    <div className="">
+    <div className=" h-[80vh] overflow-y-scroll">
       <h1 className="font-bold">Your's Notifications</h1>
-      <div className="grid grid-cols-2 gap-2 h-[80vh] overflow-y-scroll">
+      <div className="grid grid-cols-2 gap-2 mt-4">
         {notifications.map((notification: any, index: number) => {
           return (
             <div

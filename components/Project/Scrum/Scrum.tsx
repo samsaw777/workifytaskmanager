@@ -24,6 +24,8 @@ const Scrum = () => {
 
   // console.log(members);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
 
@@ -32,6 +34,7 @@ const Scrum = () => {
 
   const fetchSprints = async () => {
     try {
+      setLoading(true);
       await axios
         .post(`${urlFetcher()}/api/scrum/sprint/getsprint`, {
           boardId: board[0].id,
@@ -39,9 +42,11 @@ const Scrum = () => {
         .then((res) => {
           setSprints(res.data);
           setLocalSprints(res.data);
+          setLoading(false);
         });
     } catch (error: any) {
       console.error(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -250,77 +255,85 @@ const Scrum = () => {
 
   return (
     <>
-      <div className="flex items-center">
-        <div className="flex flex-row space-x-[-10%] px-2">
-          {members.map((member: any, index: number) => {
-            return member.profileImage ? (
-              <div
-                key={index}
-                onClick={() => checkFilteredSearch(member.userId)}
-                className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
-                  filteredString.includes(member.userId) &&
-                  "border-[3px] border-blue-500"
-                }`}
-              >
-                <Image
-                  src={member.profileImage}
-                  width={90}
-                  height={90}
-                  alt="UserProfile"
-                />
-              </div>
-            ) : (
-              <FaUserCircle
-                onClick={() => checkFilteredSearch(member.userId)}
-                className={`text-4xl text-violet-400 cursor-pointer ${
-                  filteredString.includes(member.userId) &&
-                  "border-[3px] border-blue-500"
-                }`}
-              />
-            );
-          })}
+      {loading ? (
+        <div className="w-full h-[70vh] flex items-center justify-center">
+          <span>Loading ...</span>
         </div>
-        <span
-          className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
-          onClick={() => setFilteredString([])}
-        >
-          Clear Filter
-        </span>
-      </div>
-      <DragDropContext onDragEnd={onDragEnd} key="fdfd">
-        <div className="w-full p-2 flex flex-col space-y-3">
-          {sprints.map((sprint: any, index: number) => {
-            return (
-              <div key={index}>
-                <Sprint
-                  sprint={sprint}
-                  index={index}
+      ) : (
+        <>
+          <div className="flex items-center">
+            <div className="flex flex-row space-x-[-10%] px-2">
+              {members.map((member: any, index: number) => {
+                return member.profileImage ? (
+                  <div
+                    key={index}
+                    onClick={() => checkFilteredSearch(member.userId)}
+                    className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                      filteredString.includes(member.userId) &&
+                      "border-[3px] border-blue-500"
+                    }`}
+                  >
+                    <Image
+                      src={member.profileImage}
+                      width={90}
+                      height={90}
+                      alt="UserProfile"
+                    />
+                  </div>
+                ) : (
+                  <FaUserCircle
+                    onClick={() => checkFilteredSearch(member.userId)}
+                    className={`text-4xl text-violet-400 cursor-pointer ${
+                      filteredString.includes(member.userId) &&
+                      "border-[3px] border-blue-500"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <span
+              className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+              onClick={() => setFilteredString([])}
+            >
+              Clear Filter
+            </span>
+          </div>
+          <DragDropContext onDragEnd={onDragEnd} key="fdfd">
+            <div className="w-full p-2 flex flex-col space-y-3">
+              {sprints.map((sprint: any, index: number) => {
+                return (
+                  <div key={index}>
+                    <Sprint
+                      sprint={sprint}
+                      index={index}
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      setUpdateIssueDetails={setUpdateIssueDetails}
+                      setSprintDetails={setSprintDetails}
+                      socket={socket}
+                      setUpdateSprintDetails={setUpdateSprintDetails}
+                      updateSprintDetails={updateSprintDetails}
+                    />
+                  </div>
+                );
+              })}
+
+              {isOpen && (
+                <IssueModal
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
                   setUpdateIssueDetails={setUpdateIssueDetails}
+                  updateIssueDetails={updateIssueDetails}
+                  setIssueCheck={setIssueCheck}
                   setSprintDetails={setSprintDetails}
+                  sprintDetails={sprintDetails}
                   socket={socket}
-                  setUpdateSprintDetails={setUpdateSprintDetails}
-                  updateSprintDetails={updateSprintDetails}
                 />
-              </div>
-            );
-          })}
-
-          {isOpen && (
-            <IssueModal
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              setUpdateIssueDetails={setUpdateIssueDetails}
-              updateIssueDetails={updateIssueDetails}
-              setIssueCheck={setIssueCheck}
-              setSprintDetails={setSprintDetails}
-              sprintDetails={sprintDetails}
-              socket={socket}
-            />
-          )}
-        </div>
-      </DragDropContext>
+              )}
+            </div>
+          </DragDropContext>
+        </>
+      )}
     </>
   );
 };
