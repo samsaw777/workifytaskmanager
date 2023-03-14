@@ -7,6 +7,8 @@ import Toast from "react-hot-toast";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Sprint from "./Sprints/Sprint";
 import io, { Socket } from "socket.io-client";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 let socket: Socket;
 
@@ -16,7 +18,13 @@ const Scrum = () => {
     sprints,
     setSprints,
     members,
+    localSprints,
+    setLocalSprints,
   } = ProjectState();
+
+  // console.log(members);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -26,15 +34,19 @@ const Scrum = () => {
 
   const fetchSprints = async () => {
     try {
+      setLoading(true);
       await axios
         .post(`${urlFetcher()}/api/scrum/sprint/getsprint`, {
           boardId: board[0].id,
         })
         .then((res) => {
           setSprints(res.data);
+          setLocalSprints(res.data);
+          setLoading(false);
         });
     } catch (error: any) {
       console.error(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -64,15 +76,28 @@ const Scrum = () => {
     sprintId: number;
     index: number;
     sprintName: string;
-  }>({ sprintId: 0, index: -1, sprintName: "" });
+    startDate: Date;
+    endDate: Date;
+  }>({
+    sprintId: 0,
+    index: -1,
+    sprintName: "",
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   const [issueCheck, setIssueCheck] = useState<string>("");
 
+  const [filteredString, setFilteredString] = useState<string[]>([]);
   const [sprintDetails, setSprintDetails] = useState<{
     id: number;
     sprintName: string;
+    startDate: Date;
+    endDate: Date;
   }>({
     id: 0,
     sprintName: "",
+    startDate: new Date(),
+    endDate: new Date(),
   });
 
   const onDragEnd = async ({ source, destination }: DropResult) => {
@@ -90,12 +115,19 @@ const Scrum = () => {
 
       // Create a new sprint array to update.
       let newSprintArray = JSON.parse(JSON.stringify(sprints));
+      let localnewSprintArray = JSON.parse(JSON.stringify(localSprints));
 
       //Find the source and destination index.
       const sourceColIndex = newSprintArray.findIndex(
         (sprint: any) => sprint.id == parseInt(source.droppableId)
       );
       const destinationColIndex = newSprintArray.findIndex(
+        (sprint: any) => sprint.id == parseInt(destination.droppableId)
+      );
+      const localSourceColIndex = localnewSprintArray.findIndex(
+        (sprint: any) => sprint.id == parseInt(source.droppableId)
+      );
+      const localDestinationColIndex: any = localnewSprintArray.findIndex(
         (sprint: any) => sprint.id == parseInt(destination.droppableId)
       );
 
@@ -106,6 +138,13 @@ const Scrum = () => {
       const sourceSprintId = sourceSprint.id;
       const destinationSprintId = destinationSprint.id;
 
+      const localSourceSprint = localnewSprintArray[localSourceColIndex];
+      const localDestinationSprint =
+        localnewSprintArray[localDestinationColIndex];
+
+      const localSourceSprintId = localSourceSprint.id;
+      const localDestinationSprintId = localDestinationSprint.id;
+
       //Get the source and destination issues.
       const sourceIssues =
         sourceSprint?.issues?.length > 0 ? [...sourceSprint?.issues] : [];
@@ -114,28 +153,52 @@ const Scrum = () => {
           ? [...destinationSprint?.issues]
           : [];
 
+      const localSourceIssues =
+        localSourceSprint?.issues?.length > 0
+          ? [...localSourceSprint?.issues]
+          : [];
+      const localDestinationIssues =
+        localDestinationSprint?.issues?.length > 0
+          ? [...localDestinationSprint?.issues]
+          : [];
+
       //Logic to change the issues between sprints.
       if (parseInt(source.droppableId) !== parseInt(destination.droppableId)) {
         const [removed] = sourceIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         newSprintArray[sourceColIndex].issues = sourceIssues;
         newSprintArray[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localSourceIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localnewSprintArray[localSourceColIndex].issues = localSourceIssues;
+        localnewSprintArray[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setSprints(newSprintArray);
+        setLocalSprints(localnewSprintArray);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         newSprintArray[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localDestinationIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localnewSprintArray[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setSprints(newSprintArray);
+        setLocalSprints(localnewSprintArray);
       }
 
       await axios
         .post(`${urlFetcher()}/api/scrum/issue/updatebacklogissue`, {
-          resourceList: sourceIssues,
-          destinationList: destinationIssues,
-          sprintResourceId: sourceSprintId,
-          sprintDestinationId: destinationSprintId,
-          sprintResourceName: sourceSprint.sprintName,
-          sprintDestinationName: destinationSprint.sprintName,
+          resourceList: localSourceIssues,
+          destinationList: localDestinationIssues,
+          sprintResourceId: localSourceSprintId,
+          sprintDestinationId: localDestinationSprintId,
+          sprintResourceName: localSourceSprint.sprintName,
+          sprintDestinationName: localDestinationSprint.sprintName,
         })
         .then((res) => {
           Toast.success("Position Changed!", {
@@ -160,41 +223,118 @@ const Scrum = () => {
     }
   };
 
-  return (
-    <DragDropContext onDragEnd={onDragEnd} key="fdfd">
-      <div className="w-full p-2 flex flex-col space-y-3">
-        {sprints.map((sprint: any, index: number) => {
-          return (
-            <div key={index}>
-              <Sprint
-                sprint={sprint}
-                index={index}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                setUpdateIssueDetails={setUpdateIssueDetails}
-                setSprintDetails={setSprintDetails}
-                socket={socket}
-                setUpdateSprintDetails={setUpdateSprintDetails}
-                updateSprintDetails={updateSprintDetails}
-              />
-            </div>
-          );
-        })}
+  const filterIssues = (sprints: any) => {
+    if (filteredString.length > 0) {
+      let filteredArr = sprints.map((sprint: any) => ({
+        ...sprint,
+        issues: sprint.issues.filter((issue: any) =>
+          filteredString.includes(issue.assignedTo)
+        ),
+      }));
 
-        {isOpen && (
-          <IssueModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setUpdateIssueDetails={setUpdateIssueDetails}
-            updateIssueDetails={updateIssueDetails}
-            setIssueCheck={setIssueCheck}
-            setSprintDetails={setSprintDetails}
-            sprintDetails={sprintDetails}
-            socket={socket}
-          />
-        )}
-      </div>
-    </DragDropContext>
+      setSprints([...filteredArr]);
+    } else {
+      setSprints([...sprints]);
+    }
+  };
+
+  const checkFilteredSearch = (userId: string) => {
+    if (filteredString.includes(userId)) {
+      const newFilteredString = filteredString.filter(
+        (string: string) => string !== userId
+      );
+      setFilteredString(newFilteredString);
+    } else {
+      setFilteredString([...filteredString, userId]);
+    }
+  };
+
+  useEffect(() => {
+    filterIssues(localSprints);
+  }, [filteredString]);
+
+  return (
+    <>
+      {loading ? (
+        <div className="w-full h-[70vh] flex items-center justify-center">
+          <span>Loading ...</span>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center">
+            <div className="flex flex-row space-x-[-10%] px-2">
+              {members.map((member: any, index: number) => {
+                return member.profileImage ? (
+                  <div
+                    key={index}
+                    onClick={() => checkFilteredSearch(member.userId)}
+                    className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                      filteredString.includes(member.userId) &&
+                      "border-[3px] border-blue-500"
+                    }`}
+                  >
+                    <Image
+                      src={member.profileImage}
+                      width={90}
+                      height={90}
+                      alt="UserProfile"
+                    />
+                  </div>
+                ) : (
+                  <FaUserCircle
+                    onClick={() => checkFilteredSearch(member.userId)}
+                    className={`text-4xl text-violet-400 cursor-pointer ${
+                      filteredString.includes(member.userId) &&
+                      "border-[3px] border-blue-500"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <span
+              className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+              onClick={() => setFilteredString([])}
+            >
+              Clear Filter
+            </span>
+          </div>
+          <DragDropContext onDragEnd={onDragEnd} key="fdfd">
+            <div className="w-full p-2 flex flex-col space-y-3">
+              {sprints.map((sprint: any, index: number) => {
+                return (
+                  <div key={index}>
+                    <Sprint
+                      sprint={sprint}
+                      index={index}
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      setUpdateIssueDetails={setUpdateIssueDetails}
+                      setSprintDetails={setSprintDetails}
+                      socket={socket}
+                      setUpdateSprintDetails={setUpdateSprintDetails}
+                      updateSprintDetails={updateSprintDetails}
+                    />
+                  </div>
+                );
+              })}
+
+              {isOpen && (
+                <IssueModal
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                  setUpdateIssueDetails={setUpdateIssueDetails}
+                  updateIssueDetails={updateIssueDetails}
+                  setIssueCheck={setIssueCheck}
+                  setSprintDetails={setSprintDetails}
+                  sprintDetails={sprintDetails}
+                  socket={socket}
+                />
+              )}
+            </div>
+          </DragDropContext>
+        </>
+      )}
+    </>
   );
 };
 

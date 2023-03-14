@@ -26,6 +26,11 @@ export default (io: any, socket: any) => {
     socket.join(project.id);
   });
 
+  //notifications socket
+  socket.on("notifications", (notification: any) => {
+    socket.to(notification.userId).emit("getNotification", notification);
+  });
+
   //send membes joined to other users.
   /* 
     Member Object will have = senderId, membersList, newMemberDetails, projectId, type 
@@ -77,8 +82,10 @@ export default (io: any, socket: any) => {
       sprint: any;
       type: string;
       section: string;
+      sprints: any;
     }) => {
-      const { members, ProjectId, sprint, type, section } = sprintDetails;
+      const { members, ProjectId, sprint, type, section, sprints } =
+        sprintDetails;
 
       if (!members) return console.log("Members not found!");
 
@@ -87,6 +94,7 @@ export default (io: any, socket: any) => {
         sprint,
         type,
         section,
+        sprints,
       });
     }
   );
@@ -130,7 +138,15 @@ export default (io: any, socket: any) => {
   //Socket to creaate task.
   socket.on(
     "taskCreated",
-    ({ ProjectId, members, task, type, section, sections }: any) => {
+    ({
+      ProjectId,
+      members,
+      task,
+      type,
+      section,
+      sections,
+      localSprints,
+    }: any) => {
       if (!members) return console.log("Members not found!");
 
       socket.to(ProjectId).emit("tasks", {
@@ -139,6 +155,7 @@ export default (io: any, socket: any) => {
         type,
         section,
         sections,
+        localSprints,
       });
     }
   );

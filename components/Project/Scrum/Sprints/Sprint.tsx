@@ -33,7 +33,12 @@ interface Props {
   >;
   index: number;
   setSprintDetails: React.Dispatch<
-    React.SetStateAction<{ id: number; sprintName: string }>
+    React.SetStateAction<{
+      id: number;
+      sprintName: string;
+      startDate: Date;
+      endDate: Date;
+    }>
   >;
   socket: Socket;
   setUpdateSprintDetails: React.Dispatch<
@@ -41,12 +46,16 @@ interface Props {
       sprintId: number;
       index: number;
       sprintName: string;
+      startDate: Date;
+      endDate: Date;
     }>
   >;
   updateSprintDetails: {
     sprintId: number;
     index: number;
     sprintName: string;
+    startDate: Date;
+    endDate: Date;
   };
 }
 
@@ -69,19 +78,46 @@ const Sprint = ({
   } = ProjectState();
   const openIssueModal = () => {
     setIsOpen(!isOpen);
-    setSprintDetails({ id: sprint.id, sprintName: sprint.sprintName });
+    setSprintDetails({
+      id: sprint.id,
+      sprintName: sprint.sprintName,
+      startDate: sprint.startDate,
+      endDate: sprint.endDate,
+    });
   };
   const [isSprintModalOpen, setIsSprintModalOpen] = useState<boolean>(false);
 
   const [openSprint, setOpenSprint] = useState<boolean>(true);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const openUpdateModal = (
     sprintId: number,
     sprintIndex: number,
-    sprintName: string
+    sprintName: string,
+    startDate: Date,
+    endDate: Date
   ) => {
-    setUpdateSprintDetails({ sprintId, index: sprintIndex, sprintName });
+    setUpdateSprintDetails({
+      sprintId,
+      index: sprintIndex,
+      sprintName,
+      startDate,
+      endDate,
+    });
     setIsSprintModalOpen(!isSprintModalOpen);
     setOpenOptions(!openOptions);
   };
@@ -100,8 +136,33 @@ const Sprint = ({
             members,
             type: "deletesprint",
             section: "backlog",
+            sprints,
           });
           setOpenOptions(openOptions);
+          Toast.success("Sprint Deleted!", {
+            id: notification,
+          });
+        });
+    } catch (error: any) {
+      Toast.error(error.message, {
+        id: notification,
+      });
+    }
+  };
+
+  const setSprintStatus = async (status: string) => {
+    const notification = Toast.loading("Starting Sprint!");
+
+    try {
+      await axios
+        .post(`${urlFetcher()}/api/scrum/sprint/updatesprint`, {
+          sprintId: sprint.id,
+          sprintName: sprint.sprintName,
+          updateStatus: status,
+          startDate: sprint.startDate,
+          endDate: sprint.endDate,
+        })
+        .then((response) => {
           Toast.success("Sprint Deleted!", {
             id: notification,
           });
@@ -129,7 +190,19 @@ const Sprint = ({
               !openSprint && "-rotate-90"
             } transition duration-150`}
           />
-          <span>{sprint.sprintName}</span>
+          <span className="font-bold">{sprint.sprintName}</span>
+          {sprint.startDate !== null && (
+            <span className="text-xs ml-2">
+              {new Date(sprint.startDate).getDate()}{" "}
+              {monthNames[new Date(sprint.startDate).getMonth()]} -
+            </span>
+          )}{" "}
+          {sprint.endDate !== null && (
+            <span className="text-xs">
+              {new Date(sprint.endDate).getDate()}{" "}
+              {monthNames[new Date(sprint.endDate).getMonth()]}
+            </span>
+          )}
         </div>
 
         {sprint.isPrimary && (
@@ -137,13 +210,27 @@ const Sprint = ({
             className="bg-gray-100 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200"
             onClick={() => setIsSprintModalOpen(!isSprintModalOpen)}
           >
-            create sprint
+            Create sprint
           </div>
         )}
 
-        {!sprint.isPrimary && (
+        {!sprint.isPrimary && !sprint.isUnderStartSprint && (
+          <button
+            className={`bg-gray-200 text-gray-600 px-3 py-1 font-semibold hover:bg-gray-200 ${
+              sprint?.issues?.length > 0
+                ? "cursor-pointer"
+                : "cursor-not-allowed"
+            }`}
+            disabled={sprint?.issues?.length > 0 ? false : true}
+            onClick={() => setSprintStatus("UPDATESPRINTSTATUS")}
+          >
+            Start sprint
+          </button>
+        )}
+
+        {!sprint.isPrimary && sprint.isUnderStartSprint && (
           <div className="bg-gray-200 text-gray-600 px-3 py-1 font-semibold cursor-pointer hover:bg-gray-200">
-            start sprint
+            Complete sprint
           </div>
         )}
 
@@ -172,7 +259,13 @@ const Sprint = ({
                   <span
                     className="text-sm"
                     onClick={() =>
-                      openUpdateModal(sprint.id, index, sprint.sprintName)
+                      openUpdateModal(
+                        sprint.id,
+                        index,
+                        sprint.sprintName,
+                        sprint.startDate,
+                        sprint.endDate
+                      )
                     }
                   >
                     Edit Sprint

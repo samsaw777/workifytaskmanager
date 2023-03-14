@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ProjectState } from "../../../Context/ProjectContext";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Section from "./Sections/Section";
@@ -7,6 +7,8 @@ import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
 import { AiOutlinePlus } from "react-icons/ai";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 let socket: Socket;
 
@@ -16,7 +18,12 @@ const ScrumBoard = () => {
     setScrumSections,
     project: { board, id },
     members,
+    localScrumSections,
+    setLocalScrumSections,
   } = ProjectState();
+  const [filteredString, setFilteredString] = useState<string[]>([]);
+  console.log(scrumSections);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
@@ -24,6 +31,7 @@ const ScrumBoard = () => {
     socket = io();
   };
   const fetchSections = async () => {
+    setLoading(true);
     try {
       await axios
         .post(`${urlFetcher()}/api/section/getsection`, {
@@ -32,9 +40,12 @@ const ScrumBoard = () => {
         })
         .then((res) => {
           setScrumSections([...res.data]);
+          setLoading(false);
+          setLocalScrumSections([...res.data]);
         });
     } catch (error: any) {
       console.error(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -58,6 +69,7 @@ const ScrumBoard = () => {
       notification = Toast.loading("Changing Position");
 
       let sectionData = JSON.parse(JSON.stringify(scrumSections));
+      let localsectionData = JSON.parse(JSON.stringify(localScrumSections));
 
       //Find the source and destination column index.
       const sourceColIndex = sectionData.findIndex(
@@ -65,6 +77,13 @@ const ScrumBoard = () => {
       );
 
       const destinationColIndex = sectionData.findIndex(
+        (section: any) => section.id === parseInt(destination.droppableId)
+      );
+      const localSourceColIndex = localsectionData.findIndex(
+        (section: any) => section.id === parseInt(source.droppableId)
+      );
+
+      const localDestinationColIndex = localsectionData.findIndex(
         (section: any) => section.id === parseInt(destination.droppableId)
       );
 
@@ -75,12 +94,26 @@ const ScrumBoard = () => {
       const sourceSectionId = sourceCol.id;
       const destinationSectionId = destinationCol.id;
 
+      const localSourceCol = localsectionData[localSourceColIndex];
+      const localDestinationCol = localsectionData[localDestinationColIndex];
+
+      const localSourceSectionId = localSourceCol.id;
+      const localDestinationSectionId = localDestinationCol.id;
+
       //Get the source and destination issues.
       const sourceIssues =
         sourceCol?.issues?.length > 0 ? [...sourceCol?.issues] : [];
 
       const destinationIssues =
         destinationCol?.issues?.length > 0 ? [...destinationCol?.issues] : [];
+
+      const localSourceIssues =
+        localSourceCol?.issues?.length > 0 ? [...localSourceCol?.issues] : [];
+
+      const localDestinationIssues =
+        localDestinationCol?.issues?.length > 0
+          ? [...localDestinationCol?.issues]
+          : [];
 
       //Logic Building.
       if (parseInt(source.droppableId) !== parseInt(destination.droppableId)) {
@@ -89,22 +122,35 @@ const ScrumBoard = () => {
         sectionData[sourceColIndex].issues = sourceIssues;
         sectionData[destinationColIndex].issues = destinationIssues;
 
+        const [localremoved] = localSourceIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localsectionData[localSourceColIndex].issues = localSourceIssues;
+        localsectionData[localDestinationColIndex].issues =
+          localDestinationIssues;
+
         setScrumSections(sectionData);
+        setLocalScrumSections(localsectionData);
       } else {
         const [removed] = destinationIssues.splice(source.index, 1);
         destinationIssues.splice(destination.index, 0, removed);
         sectionData[destinationColIndex].issues = destinationIssues;
+
+        const [localremoved] = localDestinationIssues.splice(source.index, 1);
+        localDestinationIssues.splice(destination.index, 0, localremoved);
+        localsectionData[localDestinationColIndex].issues =
+          localDestinationIssues;
         setScrumSections(sectionData);
+        setLocalScrumSections(localsectionData);
       }
 
       await axios
         .post(`${urlFetcher()}/api/section/updatesectionissues`, {
-          resourceList: sourceIssues,
-          destinationList: destinationIssues,
-          sectionResourceId: sourceSectionId,
-          sectionDestinationId: destinationSectionId,
-          sectionResourceName: sourceCol.title,
-          sectionDestinationName: destinationCol.title,
+          resourceList: localSourceIssues,
+          destinationList: localDestinationIssues,
+          sectionResourceId: localSourceSectionId,
+          sectionDestinationId: localDestinationSectionId,
+          sectionResourceName: localSourceCol.title,
+          sectionDestinationName: localDestinationCol.title,
         })
         .then((res) => {
           Toast.success("Position Changed!", {
@@ -123,6 +169,32 @@ const ScrumBoard = () => {
       });
     } catch (error: any) {
       console.log(Error);
+    }
+  };
+
+  const filterIssues = (sections: any) => {
+    if (filteredString.length > 0) {
+      let filteredArr = sections.map((sprint: any) => ({
+        ...sprint,
+        issues: sprint.issues.filter((issue: any) =>
+          filteredString.includes(issue.assignedTo)
+        ),
+      }));
+
+      setScrumSections([...filteredArr]);
+    } else {
+      setScrumSections([...sections]);
+    }
+  };
+
+  const checkFilteredSearch = (userId: string) => {
+    if (filteredString.includes(userId)) {
+      const newFilteredString = filteredString.filter(
+        (string: string) => string !== userId
+      );
+      setFilteredString(newFilteredString);
+    } else {
+      setFilteredString([...filteredString, userId]);
     }
   };
 
@@ -145,36 +217,82 @@ const ScrumBoard = () => {
     }
   };
 
+  useEffect(() => {
+    filterIssues(localScrumSections);
+  }, [filteredString]);
+
   return (
-    <div className="px-2 overflow-x-auto w-full pb-1 section-title">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
-          {scrumSections.map(
-            ({ id, title, issues, boardId }: any, index: number) => {
-              return (
-                <div
-                  key={index}
-                  className="h-full flex-non w-[350px] rounded-md"
-                >
-                  <Section
-                    id={id}
-                    title={title}
-                    issues={issues}
-                    boardId={boardId}
+    <>
+      {loading ? (
+        <div className="w-full h-[70vh] flex items-center justify-center">
+          <span>Loading ...</span>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center">
+            <div className="flex flex-row space-x-[-10%] px-2">
+              {members.map((member: any, index: number) => {
+                return member.profileImage ? (
+                  <div
+                    key={index}
+                    onClick={() => checkFilteredSearch(member.userId)}
+                    className={`scrum_image  w-8 cursor-pointer h-8 rounded-full items-center flex overflow-hidden ${
+                      filteredString.includes(member.userId) &&
+                      "border-[3px] border-blue-500"
+                    }`}
+                  >
+                    <Image
+                      src={member.profileImage}
+                      width={90}
+                      height={90}
+                      alt="UserProfile"
+                    />
+                  </div>
+                ) : (
+                  <FaUserCircle className="text-4xl text-violet-400 cursor-pointer" />
+                );
+              })}
+            </div>
+            <span
+              className="m-0 hover:bg-gray-200 rounded-md text-sm py-1 px-3 cursor-pointer"
+              onClick={() => setFilteredString([])}
+            >
+              Clear Filter
+            </span>
+          </div>
+
+          <div className="px-2 overflow-x-auto w-full pb-1 section-title">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
+                {scrumSections.map(
+                  ({ id, title, issues, boardId }: any, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        className="h-full flex-non w-[350px] rounded-md"
+                      >
+                        <Section
+                          id={id}
+                          title={title}
+                          issues={issues}
+                          boardId={boardId}
+                        />
+                      </div>
+                    );
+                  }
+                )}
+                <div className="h-full flex-none w-10 rounded-md">
+                  <AiOutlinePlus
+                    className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
+                    onClick={() => createScrumSection()}
                   />
                 </div>
-              );
-            }
-          )}
-          <div className="h-full flex-none w-10 rounded-md">
-            <AiOutlinePlus
-              className="bg-gray-200 p-1 rounded-sm cursor-pointer  w-7 h-7"
-              onClick={() => createScrumSection()}
-            />
+              </div>
+            </DragDropContext>
           </div>
-        </div>
-      </DragDropContext>
-    </div>
+        </>
+      )}
+    </>
   );
 };
 

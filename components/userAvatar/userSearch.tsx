@@ -22,8 +22,7 @@ interface Props {
 }
 
 const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
-  const { loggedInUser, members, setMembers } = ProjectState();
-
+  const { loggedInUser, members, notifications, project } = ProjectState();
   const socketInit = async () => {
     await fetch(`${urlFetcher()}/api/socket`);
 
@@ -53,27 +52,33 @@ const UserSearch = ({ user, index, projectId, closeModal }: Props) => {
     const notification = toast.loading("Adding Member");
     try {
       const { data } = await axios.post(
-        `${urlFetcher()}/api/project/addmember`,
+        `${urlFetcher()}/api/project/sendrequest`,
         {
+          requestBody: `You have requested to join ${project.name}, By ${loggedInUser?.username}.`,
           userId,
-          userName,
-          userProfile,
-          projectId: projectId,
+          projectId: project.id,
         }
       );
 
-      // setMembers([...members, data]);
-      socket.emit("memberadded", {
-        project: {
-          members,
-          projectId,
-        },
-        senderId: loggedInUser.id,
-        newMemberDetails: data,
-        section: "members",
-        type: "addmember",
+      socket.emit("notifications", {
+        userId,
+        notificationData: data,
+        notifications,
       });
-      toast.success("Member Added!", {
+      // setMembers([...members, data]);
+      // socket.emit("memberadded", {
+      //   project: {
+      //     members,
+      //     projectId,
+      //   },
+      //   senderId: loggedInUser.id,
+      //   newMemberDetails: data,
+      //   section: "members",
+      //   type: "addmember",
+      // });
+
+      // socket.emit("notification", { userId: loggedInUser.id, data });
+      toast.success("Request Sent Sucessfully", {
         id: notification,
       });
       closeModal();

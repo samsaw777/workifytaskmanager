@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  const { taskId, value, type } = req.body;
+  const { taskId, value, type, requestBody, projectId } = req.body;
+  console.log(taskId);
   try {
     let updatedTask;
     if (req.method === "PATCH") {
@@ -24,6 +25,21 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             assignedTo: value,
           },
         });
+
+        // const notification = await prisma.notifications.create({
+        //   data: {
+        //     title: requestBody,
+        //     request: false,
+        //     isPending: false,
+        //     userId: value,
+        //     projectId,
+        //   },
+        // });
+
+        // updatedTask = {
+        //   issueUpdated,
+        //   notification,
+        // };
       } else {
         updatedTask = await prisma.task.update({
           where: {
@@ -39,5 +55,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(updatedTask);
   } catch (error: any) {
     res.status(400).send(error);
+    console.log(error.message);
   }
 }

@@ -19,6 +19,7 @@ model User {
   assignedIssues Issues[] @relation("assignedTo")
   assignedTask Task[] @relation("assignedTo")
   tasks Task[]
+  notifications Notifications[] 
 }
 
 model Project{
@@ -61,6 +62,8 @@ model Issues{
   sprintName String
   isUnderStartSprint Boolean
   assignedTo String?
+  createdAt DateTime @default(now())
+  endAt DateTime?
   Sprint Sprint @relation(fields: [sprintId], references:[id], onDelete: Cascade)
   Section Section @relation(fields: [sectionId], references: [id],onDelete: Cascade)
   User User @relation("createdBy",fields: [userId], references: [id], onDelete: Cascade)
@@ -94,6 +97,8 @@ model Sprint{
   boardId Int
   isUnderStartSprint Boolean
   isPrimary Boolean
+  startDate DateTime?
+  endDate DateTime?
   Board Board @relation(fields: [boardId], references: [id],onDelete: Cascade)
   issues Issues[]
 }
@@ -112,6 +117,8 @@ model Task{
   labels TaskLabels[]
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
   assignedTo String?
+  createdAt DateTime @default(now())
+  endAt DateTime?
   assignedUser User? @relation("assignedTo",fields: [assignedTo], references: [id], onDelete: Cascade)
 
 }
@@ -147,4 +154,13 @@ model IssueLabels{
   Issue Issues @relation(fields: [issueId], references: [id], onDelete: Cascade)
 }
 
+model Notifications{
+  id Int @id @default(autoincrement())
+  title String
+  request Boolean
+  isPending Boolean
+  userId String
+  projectId Int
+  User User @relation(fields: [userId], references:[id], onDelete: Cascade)
+}
 

@@ -8,6 +8,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { AiOutlineCaretDown } from "react-icons/ai";
 import { LogoutUser } from "../../utils/apicalls/userauthentication";
+import { ProjectState } from "../../Context/ProjectContext";
 
 type Props = {
   openSidebar: boolean;
@@ -23,6 +24,7 @@ const ProjectSideBar = ({
 }: //
 //   showContent,
 Props) => {
+  const { project } = ProjectState();
   const router = useRouter();
   const [currentMenu, setCurrentMenu] = useState<string>("Dashboard");
   const [isSubMenuOpen, setIsSubMenuOpen] = useState<boolean>(false);
@@ -53,7 +55,7 @@ Props) => {
             !openSidebar && "scale-0"
           }`}
         >
-          {projectTitle}
+          {project.name}
         </h1>
       </div>
       <ul className="pt-6">

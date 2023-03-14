@@ -18,7 +18,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           type == "SCRUM"
             ? {
                 where: {
-                  isUnderStartSprint: false,
+                  isUnderStartSprint: true,
                   NOT: {
                     sprintName: "BACKLOG",
                   },

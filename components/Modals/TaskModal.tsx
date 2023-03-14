@@ -79,9 +79,13 @@ const TaskModal: FunctionComponent<Props> = ({
     sprints,
     comments,
     setComments,
-    project: { id: ProjectId },
+    project: { id: ProjectId, name },
     scrumSections,
     members,
+    notifications,
+    localSprints,
+    localScrumSections,
+    localSections,
   } = ProjectState();
   const [loading, setLoading] = useState(false);
   // console.log(task);
@@ -120,6 +124,18 @@ const TaskModal: FunctionComponent<Props> = ({
         return scrumSections;
     }
   };
+
+  const getLocalSections = (type: string) => {
+    switch (type) {
+      case "scrum":
+        return localSprints;
+      case "kanban":
+        return localSections;
+      case "scrumSection":
+        return localScrumSections;
+    }
+  };
+
   const getSectionForTaskModal = (type: string) => {
     switch (type) {
       case "scrum":
@@ -177,6 +193,10 @@ const TaskModal: FunctionComponent<Props> = ({
             type: "assigned",
             value: userId,
             taskId: task.id,
+            // requestBody: `You have been assigned a task under ${
+            //   type === "scrum" || type === "scrumSection" ? "scrum" : "kanban"
+            // } in ${name}.`,
+            // projectId: ProjectId,
           }
         )
         .then((response) => {
@@ -185,6 +205,7 @@ const TaskModal: FunctionComponent<Props> = ({
             members,
             task: {
               memberInfo,
+              userId,
               id: response.data.id,
               sectionId: response.data.sectionId,
               sprintId: response.data.sprintId,
@@ -192,7 +213,13 @@ const TaskModal: FunctionComponent<Props> = ({
             type: "updateAssignTo",
             section: getSectionForTaskModal(type),
             sections: getSectionsForTaskModal(type),
+            localSprints: getLocalSections(type),
           });
+          // socket.emit("notifications", {
+          //   userId,
+          //   notificationData: response.data.notification,
+          //   notifications,
+          // });
           setOpenAssignUser(false);
           Toast.success("User assignment successfully!", { id: notification });
         });
@@ -254,7 +281,7 @@ const TaskModal: FunctionComponent<Props> = ({
 
   return (
     <div
-      className={`bg-gray-700 bg-opacity-50 absolute inset-0 ${
+      className={`bg-gray-700 z-10 bg-opacity-50 absolute inset-0 ${
         isOpen ? "flex" : "hidden"
       } justify-center items-center `}
       id="overlay"

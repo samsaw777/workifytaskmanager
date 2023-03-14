@@ -3,7 +3,7 @@ import prisma from "../../../../lib/prisma";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { sprintName, boardId } = req.body;
+    const { sprintName, boardId, startDate, endDate } = req.body;
 
     const newSprint = await prisma.sprint.create({
       data: {
@@ -11,6 +11,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         boardId,
         isUnderStartSprint: false,
         isPrimary: false,
+        startDate,
+        endDate,
       },
     });
 

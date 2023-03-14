@@ -3,6 +3,7 @@ import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import UserAvatar from "../userAvatar/userSearch";
 import { ProjectState } from "../../Context/ProjectContext";
+import { setLocale } from "yup";
 interface User {
   id: string;
   email: string;
@@ -22,6 +23,7 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
   const { loggedInUser, members, setMembers } = ProjectState();
   const [search, setSearch] = useState<string>("");
   const [searchedUser, setSearchUser] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSearch = async (e: any) => {
     e.preventDefault();
@@ -30,14 +32,16 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
       console.log("Please search a user");
       return;
     }
-
+    setLoading(true);
     try {
       const { data } = await axios.get(
         `${urlFetcher()}/api/user/searchusers?search=${search}`
       );
+      setLoading(false);
       setSearchUser(data);
     } catch (error: any) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -86,23 +90,29 @@ const AddMemberModal = ({ projectId, setIsOpen, isOpen }: Props) => {
             <button className="hidden" type="submit"></button>
           </form>
         </div>
-        <div className="w-full mt-5">
-          {searchedUser.map((user: User, index: number) => (
-            <div key={index}>
-              <UserAvatar
-                index={index}
-                user={{
-                  id: user.id,
-                  email: user.email,
-                  username: user.username,
-                  profile: user.profile,
-                }}
-                projectId={projectId}
-                closeModal={closeModal}
-              />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <span>Loading ...</span>
+          </div>
+        ) : (
+          <div className="w-full mt-5">
+            {searchedUser.map((user: User, index: number) => (
+              <div key={index}>
+                <UserAvatar
+                  index={index}
+                  user={{
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    profile: user.profile,
+                  }}
+                  projectId={projectId}
+                  closeModal={closeModal}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

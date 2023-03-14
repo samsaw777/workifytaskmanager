@@ -71,14 +71,22 @@ interface Context {
   setIssues: React.Dispatch<React.SetStateAction<ScrumIssue[]>>;
   sprints: Sprint[];
   setSprints: React.Dispatch<React.SetStateAction<Sprint[]>>;
+  localSprints: Sprint[];
+  setLocalSprints: React.Dispatch<React.SetStateAction<Sprint[]>>;
   sections: Section[];
   setSections: React.Dispatch<React.SetStateAction<Section[]>>;
+  localSections: Section[];
+  setLocalSections: React.Dispatch<React.SetStateAction<Section[]>>;
   scrumSections: Section[];
   setScrumSections: React.Dispatch<React.SetStateAction<Section[]>>;
+  localScrumSections: Section[];
+  setLocalScrumSections: React.Dispatch<React.SetStateAction<Section[]>>;
   labels: Label[];
   setLabels: React.Dispatch<React.SetStateAction<Label[]>>;
   comments: {}[];
   setComments: React.Dispatch<React.SetStateAction<{}[]>>;
+  setNotifications: any;
+  notifications: any;
 }
 
 const ProjectContext = createContext<Context>({
@@ -98,14 +106,22 @@ const ProjectContext = createContext<Context>({
   issues: [],
   sprints: [],
   setSprints: () => [],
+  localSprints: [],
+  setLocalSprints: () => [],
   sections: [],
   setSections: () => [],
+  localSections: [],
+  setLocalSections: () => [],
   labels: [],
   setLabels: () => [],
   scrumSections: [],
   setScrumSections: () => [],
+  localScrumSections: [],
+  setLocalScrumSections: () => [],
   setComments: () => [],
   comments: [],
+  setNotifications: () => [],
+  notifications: [],
 });
 
 const ProjectProvider = ({ children }: any) => {
@@ -121,10 +137,14 @@ const ProjectProvider = ({ children }: any) => {
   const [project, setProject] = useState<any>({});
   const [issues, setIssues] = useState<ScrumIssue[]>([]);
   const [sprints, setSprints] = useState<Sprint[]>([]);
+  const [localSprints, setLocalSprints] = useState<Sprint[]>([]);
+  const [localScrumSections, setLocalScrumSections] = useState<Section[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
+  const [localSections, setLocalSections] = useState<Section[]>([]);
   const [scrumSections, setScrumSections] = useState<Section[]>([]);
   const [labels, setLabels] = useState<Label[]>([]);
   const [comments, setComments] = useState<{}[]>([]);
+  const [notifications, setNotifications] = useState<{}[]>([]);
 
   return (
     <ProjectContext.Provider
@@ -147,6 +167,14 @@ const ProjectProvider = ({ children }: any) => {
         setScrumSections,
         comments,
         setComments,
+        notifications,
+        setNotifications,
+        localSprints,
+        setLocalSprints,
+        localScrumSections,
+        setLocalScrumSections,
+        localSections,
+        setLocalSections,
       }}
     >
       {children}

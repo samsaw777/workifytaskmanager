@@ -1,6 +1,10 @@
 import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
-import { MdDashboard } from "react-icons/md";
-import { AiOutlineMail, AiFillSetting } from "react-icons/ai";
+import { MdDashboard, MdGroups } from "react-icons/md";
+import {
+  AiOutlineMail,
+  AiFillSetting,
+  AiTwotoneCalendar,
+} from "react-icons/ai";
 import { BiTask, BiUser, BiLogOut } from "react-icons/bi";
 
 export const menu = [
@@ -22,11 +26,11 @@ export const menu = [
 
 export const projectMenu = [
   // { title: "Board", icon: <MdDashboard /> },
-  // {
-  //   title: "Calendar",
-  //   spacing: true,
-  //   icon: <BsReverseLayoutTextSidebarReverse />,
-  // },
+  {
+    title: "Calendar",
+    spacing: true,
+    icon: <AiTwotoneCalendar />,
+  },
 
   {
     title: "Scrum",
@@ -50,7 +54,7 @@ export const projectMenu = [
   //   title: "Github",
   //   icon: <AiOutlineMail />,
   // },
-  { title: "Members", icon: <BiTask /> },
+  { title: "Members", icon: <MdGroups /> },
   { title: "Settings", icon: <AiFillSetting /> },
   { title: "Logout", icon: <BiLogOut />, spacing: true },
 ];
