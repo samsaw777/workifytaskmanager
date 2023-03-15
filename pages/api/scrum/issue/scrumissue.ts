@@ -16,7 +16,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           },
         });
       } else if (type === "assigned") {
-        updatedIssue = await prisma.issues.update({
+        const issueUpdated = await prisma.issues.update({
           where: {
             id: taskId,
           },
@@ -25,20 +25,20 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           },
         });
 
-        // const notification = await prisma.notifications.create({
-        //   data: {
-        //     title: requestBody,
-        //     request: false,
-        //     isPending: false,
-        //     userId: value,
-        //     projectId,
-        //   },
-        // });
+        const notification = await prisma.notifications.create({
+          data: {
+            title: requestBody,
+            request: false,
+            isPending: false,
+            userId: value,
+            projectId,
+          },
+        });
 
-        // updatedIssue = {
-        //   issueUpdated,
-        //   notification,
-        // };
+        updatedIssue = {
+          issueUpdated,
+          notification,
+        };
       } else {
         updatedIssue = await prisma.issues.update({
           where: {
