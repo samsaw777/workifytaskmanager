@@ -5,6 +5,7 @@ import IssueModal from "../../../Modals/TaskModal";
 import { IssueLabels, Label } from "../../../Modals/TaskModal";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import { returnUserProfile } from "../Backloq/Issue";
 interface Props {
   title: string;
   id: number;
@@ -64,7 +65,7 @@ const SectionIssue = ({ issue, index }: any) => {
               </span>
             </div>
 
-            {issue.profile !== "" ? (
+            {/* {issue.profile !== "" ? (
               <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
                 <Image
                   src={issue.profile}
@@ -75,7 +76,9 @@ const SectionIssue = ({ issue, index }: any) => {
               </div>
             ) : (
               <FaUserCircle className="text-2xl text-violet-400 cursor-pointer" />
-            )}
+            )} */}
+
+            {returnUserProfile(issue?.assignedUser?.profile)}
           </div>
           {isIssueOpen && (
             <IssueModal

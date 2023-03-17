@@ -199,6 +199,7 @@ const Scrum = () => {
           sprintDestinationId: localDestinationSprintId,
           sprintResourceName: localSourceSprint.sprintName,
           sprintDestinationName: localDestinationSprint.sprintName,
+
         })
         .then((res) => {
           Toast.success("Position Changed!", {

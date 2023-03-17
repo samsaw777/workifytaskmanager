@@ -36,6 +36,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             createdAt: resourceSprint?.startDate
               ? resourceSprint.startDate
               : new Date(),
+              isUnderStartSprint:resourceSprint?.isUnderStartSprint
           },
         });
       }
@@ -55,6 +56,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
           createdAt: destinationSprint?.startDate
             ? destinationSprint?.startDate
             : new Date(),
+            isUnderStartSprint: destinationSprint?.isUnderStartSprint
         },
       });
     }
