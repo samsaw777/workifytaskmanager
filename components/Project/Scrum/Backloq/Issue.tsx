@@ -10,6 +10,8 @@ import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import { Draggable } from "react-beautiful-dnd";
 import { Socket } from "socket.io-client";
 import IssueInfoModal, { IssueLabels, Label } from "../../../Modals/TaskModal";
+import { FaUserCircle } from "react-icons/fa";
+
 interface Issue {
   id: number;
   type: string;
@@ -40,6 +42,20 @@ interface Props {
   setUpdateIssueDetails: React.Dispatch<React.SetStateAction<UpdateIssue>>;
 }
 
+export const returnUserProfile = (profile: string | undefined) => {
+  if (profile === undefined) {
+    return <FaUserCircle className="text-3xl text-gray-400 cursor-pointer" />;
+  } else if (profile !== "") {
+    return (
+      <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+        <Image src={profile} width={100} height={100} alt="UserProfile" />
+      </div>
+    );
+  } else if (profile == "") {
+    return <FaUserCircle className="text-3xl text-violet-400 cursor-pointer" />;
+  }
+};
+
 const Issue = ({
   issue,
   index,
@@ -61,6 +77,8 @@ const Issue = ({
     setIsOpen(!isOpen);
     setOpenOption(!openOption);
   };
+
+  // console.log(issue);
 
   const [isIssueModalOpen, setIsIssueModalOpen] = useState<boolean>(false);
   const [labels, setLabels] = useState<IssueLabels[] | [] | Label[]>(
@@ -133,14 +151,31 @@ const Issue = ({
             <div className="py-1 px-4 bg-gray-300 rounded-sm text-xs">
               {issue.sectionName}
             </div>
-            <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
-              <Image
-                src={issue.profile}
-                width={100}
-                height={100}
-                alt="UserProfile"
-              />
-            </div>
+            {/* 
+            {issue.assignedIssue ? (
+              <div>
+                {issue?.assignedUser?.profile !== "" ? (
+                  <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
+                    <Image
+                      src={issue?.assignedUser?.profile}
+                      width={100}
+                      height={100}
+                      alt="UserProfile"
+                    />
+                  </div>
+                ) : (
+                  <FaUserCircle className="text-3xl text-violet-400 cursor-pointer" />
+                )}
+              </div>
+            ) : (
+              <div>
+                {!issue?.assignedUser && (
+                  <FaUserCircle className="text-3xl text-gray-400 cursor-pointer" />
+                )}
+              </div>
+            )} */}
+
+            {returnUserProfile(issue?.assignedUser?.profile)}
             <div className="relative">
               <BiDotsVerticalRounded
                 className="curosr-pointer hover:bg-blue-200 text-2xl rounded-sm p-1"

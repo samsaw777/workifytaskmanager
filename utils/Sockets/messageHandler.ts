@@ -9,7 +9,7 @@ export default (io: any, socket: any) => {
   //Join the project with socket.
   const joinProject = (project: any) => {
     socket.join(project.id);
-    console.log(project.id);
+
     console.log("User Joined", project.id);
     socket.emit("Connected Room", project.id);
   };

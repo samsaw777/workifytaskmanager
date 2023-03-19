@@ -9,6 +9,7 @@ import io, { Socket } from "socket.io-client";
 import { AiOutlinePlus } from "react-icons/ai";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import SectionLoading from "../../Loading/SectionLoading";
 
 let socket: Socket;
 
@@ -224,9 +225,7 @@ const ScrumBoard = () => {
   return (
     <>
       {loading ? (
-        <div className="w-full h-[70vh] flex items-center justify-center">
-          <span>Loading ...</span>
-        </div>
+        <SectionLoading />
       ) : (
         <>
           <div className="flex items-center">
@@ -263,7 +262,7 @@ const ScrumBoard = () => {
 
           <div className="px-2 overflow-x-auto w-full pb-1 section-title">
             <DragDropContext onDragEnd={onDragEnd}>
-              <div className="flex space-x-2 mt-2 h-[85vh] pb-2 w-full">
+              <div className="flex space-x-2 mt-2 h-[80vh] pb-2 w-full">
                 {scrumSections.map(
                   ({ id, title, issues, boardId }: any, index: number) => {
                     return (

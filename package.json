@@ -19,6 +19,7 @@
     "date-fns": "^2.29.3",
     "jsonwebtoken": "^8.5.1",
     "next": "latest",
+    "nextjs-progressbar": "^0.0.16",
     "nookies": "^2.5.2",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",

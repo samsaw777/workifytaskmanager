@@ -8,6 +8,7 @@ import { urlFetcher } from "../../../../utils/Helper/urlFetcher";
 import Toast from "react-hot-toast";
 import { Draggable } from "react-beautiful-dnd";
 import io, { Socket } from "socket.io-client";
+import { returnUserProfile } from "../../Scrum/Backloq/Issue";
 let socket: Socket;
 interface Props {
   issue: any;
@@ -187,7 +188,7 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
             </div>
             <div className="flex items-center justify-between">
               <div className="text-xs">Desc</div>
-              {issue.profile !== "" ? (
+              {/* {issue.profile !== "" ? (
                 <div className="w-7 h-7 rounded-full items-center flex overflow-hidden">
                   <Image
                     src={issue.profile}
@@ -198,7 +199,8 @@ const KanbanTask = ({ issue, index, sectionName }: Props) => {
                 </div>
               ) : (
                 <FaUserCircle className="text-2xl text-violet-400 cursor-pointer" />
-              )}
+              )} */}
+              {returnUserProfile(issue?.assignedUser?.profile)}
             </div>
           </div>
           {isOpen && (

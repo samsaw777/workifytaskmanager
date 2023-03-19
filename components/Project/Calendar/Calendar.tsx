@@ -10,6 +10,7 @@ import axios from "axios";
 import { urlFetcher } from "../../../utils/Helper/urlFetcher";
 import { ProjectState } from "../../../Context/ProjectContext";
 import IssueInfoModal, { IssueLabels, Label } from "../../Modals/TaskModal";
+import CalendarLoading from "../../Loading/CalendarLoaing";
 
 const locales = {
   "en-US": enUS,
@@ -115,9 +116,10 @@ const UserCalendar = () => {
     <div>
       :
       {loading ? (
-        <div className="w-full h-[70vh] flex items-center justify-center">
-          <span>Loading ...</span>
-        </div>
+        // <div className="w-full h-[70vh] flex items-center justify-center">
+        //   <span>Loading ...</span>
+        // </div>
+        <CalendarLoading />
       ) : (
         <Calendar
           localizer={localizer}
