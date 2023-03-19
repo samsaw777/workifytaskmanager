@@ -8,6 +8,7 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import io, { Socket } from "socket.io-client";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import SectionLoading from "../../Loading/SectionLoading";
 
 let socket: Socket;
 
@@ -223,9 +224,10 @@ const Kanban = () => {
   return (
     <>
       {loading ? (
-        <div className="w-full h-[70vh] flex items-center justify-center">
-          <span>Loading ...</span>
-        </div>
+        // <div className="w-full h-[70vh] flex items-center justify-center">
+        //   <span>Loading ...</span>
+        // </div>
+        <SectionLoading />
       ) : (
         <div className="px-2 mx-2 w-full">
           <div className="flex space-x-2">

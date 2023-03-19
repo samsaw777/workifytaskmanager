@@ -9,6 +9,7 @@ import Sprint from "./Sprints/Sprint";
 import io, { Socket } from "socket.io-client";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import SprintLoading from "../../Loading/SprintLoading";
 
 let socket: Socket;
 
@@ -199,7 +200,6 @@ const Scrum = () => {
           sprintDestinationId: localDestinationSprintId,
           sprintResourceName: localSourceSprint.sprintName,
           sprintDestinationName: localDestinationSprint.sprintName,
-
         })
         .then((res) => {
           Toast.success("Position Changed!", {
@@ -257,9 +257,7 @@ const Scrum = () => {
   return (
     <>
       {loading ? (
-        <div className="w-full h-[70vh] flex items-center justify-center">
-          <span>Loading ...</span>
-        </div>
+        <SprintLoading />
       ) : (
         <>
           <div className="flex items-center">
