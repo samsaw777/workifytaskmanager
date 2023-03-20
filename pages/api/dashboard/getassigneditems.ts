@@ -10,33 +10,35 @@ if (!secret) {
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { userId } = req.body;
+    const { userId, projectId } = req.body;
     const { token } = nookies.get({ req });
     const jwtToken: any = jwt.verify(token, secret);
 
+    console.log(projectId);
+
     const issues = await prisma.issues.findMany({
       where: {
-        assignedTo: jwtToken.userId,
+        AND: [{ projectId: projectId }, { assignedTo: jwtToken.userId }],
       },
     });
 
     // console.log(issues);
 
-    const tasks = await prisma.task.findMany({
-      where: {
-        assignedTo: userId,
-      },
-    });
-    let combinedTasks;
-    if (issues.length > 0 && tasks.length > 0) {
-      combinedTasks = [...issues, ...tasks];
-    } else if (issues.length > 0 && tasks.length == 0) {
-      combinedTasks = [...issues];
-    } else {
-      combinedTasks = [...tasks];
-    }
+    // const tasks = await prisma.task.findMany({
+    //   where: {
+    //     AND: [{ projectId }, { assignedTo: jwtToken.userId }],
+    //   },
+    // });
+    // let combinedTasks;
+    // if (issues.length > 0 && tasks.length > 0) {
+    //   combinedTasks = [...issues, ...tasks];
+    // } else if (issues.length > 0 && tasks.length == 0) {
+    //   combinedTasks = [...issues];
+    // } else {
+    //   combinedTasks = [...tasks];
+    // }
 
-    res.status(200).send(combinedTasks);
+    res.status(200).send(issues);
   } catch (error) {
     res.status(200).send(error);
   }

@@ -163,7 +163,7 @@ const Sprint = ({
           endDate: sprint.endDate,
         })
         .then((response) => {
-          Toast.success("Sprint Deleted!", {
+          Toast.success("Sprint Started!", {
             id: notification,
           });
         });

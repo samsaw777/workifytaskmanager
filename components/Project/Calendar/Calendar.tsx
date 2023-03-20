@@ -53,6 +53,7 @@ const UserCalendar = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {
     loggedInUser: { id },
+    project,
   } = ProjectState();
 
   const getColor = (date: any, startDate: any) => {
@@ -73,6 +74,7 @@ const UserCalendar = () => {
     await axios
       .post(`${urlFetcher()}/api/dashboard/getassigneditems`, {
         userId: id,
+        projectId: project.id,
       })
       .then((response) => {
         setLoading(false);
