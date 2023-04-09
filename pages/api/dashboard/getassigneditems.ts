@@ -20,6 +20,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       where: {
         AND: [{ projectId: projectId }, { assignedTo: jwtToken.userId }],
       },
+      include: {
+        comments: true,
+        labels: true,
+        assignedUser: true,
+      },
     });
 
     // console.log(issues);

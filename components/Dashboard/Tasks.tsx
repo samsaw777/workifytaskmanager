@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { urlFetcher } from "../../utils/Helper/urlFetcher";
 import { ProjectState } from "../../Context/ProjectContext";
+import DashboardTask from "./DashboardTask";
 
 const Tasks = () => {
   const {
     loggedInUser: { id },
   } = ProjectState();
   const [assignedTasks, setAssignedTasks] = React.useState([]);
+  console.log(assignedTasks);
 
   const fetchAssignedTask = async () => {
     await axios
@@ -27,9 +29,9 @@ const Tasks = () => {
   }, []);
 
   return (
-    <div>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {assignedTasks.map((task: any, index: number) => {
-        return <div key={index}>{task.title}</div>;
+        return <DashboardTask task={task} index={index} />;
       })}
     </div>
   );
