@@ -72,26 +72,26 @@ const UserCalendar = () => {
   const getAllTheItems = async () => {
     console.log(project);
     setLoading(true);
-    if (project.id) {
-      await axios
-        .post(`${urlFetcher()}/api/dashboard/getassigneditems`, {
-          userId: id,
-          projectId: project.id,
-        })
-        .then((response) => {
-          setLoading(false);
-          let res: any = [];
-          response?.data?.map((data: any, index: number) => {
-            res.push({
-              ...data,
-              start: data.createdAt,
-              end: data.endAt,
-              color: getColor(data.endAt, data.createdAt),
-            });
+    // if (project.id) {
+    await axios
+      .post(`${urlFetcher()}/api/dashboard/getassigneditems`, {
+        userId: id,
+        projectId: project.id,
+      })
+      .then((response) => {
+        setLoading(false);
+        let res: any = [];
+        response?.data?.map((data: any, index: number) => {
+          res.push({
+            ...data,
+            start: data.createdAt,
+            end: data.endAt,
+            color: getColor(data.endAt, data.createdAt),
           });
-          setGetItems(res);
         });
-    }
+        setGetItems(res);
+      });
+    // }
   };
 
   React.useEffect(() => {
