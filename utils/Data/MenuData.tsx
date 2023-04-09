@@ -8,7 +8,7 @@ import {
 import { BiTask, BiUser, BiLogOut } from "react-icons/bi";
 
 export const menu = [
-  { title: "Dashboard", icon: <MdDashboard /> },
+  // { title: "Dashboard", icon: <MdDashboard /> },
   {
     title: "Projects",
     spacing: true,
