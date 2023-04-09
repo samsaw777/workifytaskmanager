@@ -19,8 +19,8 @@ export const menu = [
     icon: <AiOutlineMail />,
   },
   { title: "Tasks", icon: <BiTask /> },
-  { title: "Profile", spacing: true, icon: <BiUser /> },
-  { title: "Settings", icon: <AiFillSetting /> },
+  // { title: "Profile", spacing: true, icon: <BiUser /> },
+  // { title: "Settings", icon: <AiFillSetting /> },
   { title: "Logout", icon: <BiLogOut />, spacing: true },
 ];
 
