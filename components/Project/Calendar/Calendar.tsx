@@ -134,6 +134,8 @@ const UserCalendar = () => {
           style={{ height: 500 }}
           onSelectEvent={handleEventClick}
           eventPropGetter={eventPropGetter}
+          views={["month"]} // pass an empty array to disable all views
+          // defaultView="month"
         />
       )}
       {isIssueModalOpen && (

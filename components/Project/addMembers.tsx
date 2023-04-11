@@ -92,7 +92,7 @@ const AddMembers = ({ projectId }: Props) => {
         type: "makeadmin",
       });
 
-      toast.success("Member is not Admin!", {
+      toast.success("Member is now an Admin!", {
         id: notification,
       });
 

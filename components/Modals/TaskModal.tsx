@@ -80,6 +80,7 @@ const TaskModal: FunctionComponent<Props> = ({
     comments,
     setComments,
     project: { id: ProjectId, name },
+    loggedInUser: { id },
     scrumSections,
     members,
     notifications,
@@ -89,6 +90,16 @@ const TaskModal: FunctionComponent<Props> = ({
   } = ProjectState();
   const [loading, setLoading] = useState(false);
   // console.log(task);
+
+  const checkForAdmin = () => {
+    let member = members.filter((member: any) => member.userId === id);
+    console.log(member);
+    if (member[0]?.role === "ADMIN") {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   useEffect(() => {
     setDescription(task.description);
@@ -483,39 +494,42 @@ const TaskModal: FunctionComponent<Props> = ({
                       Asignee
                     </div>
                     <div className="w-full">
-                      {task.assignedUser != null ? (
-                        <div
-                          className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
-                          onClick={() => setOpenAssignUser(!openAssignUser)}
-                        >
-                          {task.assignedUser.profile ? (
-                            <div className="w-6 h-6 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
-                              <Image
-                                src={task.assignedUser.profile}
-                                width={100}
-                                height={100}
-                                alt="UserProfile"
-                              />
+                      {checkForAdmin() && (
+                        <>
+                          {task.assignedUser != null ? (
+                            <div
+                              className="text-sm text-black font-normal cursor-pointer flex space-x-2 items-center px-3 py-2 group hover:bg-gray-300"
+                              onClick={() => setOpenAssignUser(!openAssignUser)}
+                            >
+                              {task.assignedUser.profile ? (
+                                <div className="w-6 h-6 rounded-full items-center flex overflow-hidden max-w-10 group-hover:bg-gray-300">
+                                  <Image
+                                    src={task.assignedUser.profile}
+                                    width={100}
+                                    height={100}
+                                    alt="UserProfile"
+                                  />
+                                </div>
+                              ) : (
+                                <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                              )}
+                              <div className="group-hover:bg-gray-300">
+                                {task.assignedUser.username}
+                              </div>
                             </div>
                           ) : (
-                            <FaUserCircle className="text-sm text-violet-400 cursor-pointer" />
+                            <span
+                              className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 "
+                              onClick={() => setOpenAssignUser(!openAssignUser)}
+                            >
+                              <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
+                              <span className="text-sm text-gray-500">
+                                unassigned
+                              </span>
+                            </span>
                           )}
-                          <div className="group-hover:bg-gray-300">
-                            {task.assignedUser.username}
-                          </div>
-                        </div>
-                      ) : (
-                        <span
-                          className="bg-gray-200 w-full flex py-1 px-2 items-center space-x-1 "
-                          onClick={() => setOpenAssignUser(!openAssignUser)}
-                        >
-                          <FaUserCircle className="text-lg text-gray-400 cursor-pointer" />
-                          <span className="text-sm text-gray-500">
-                            unassigned
-                          </span>
-                        </span>
+                        </>
                       )}
-
                       {openAssignUser && (
                         <div className="w-full mt-2">
                           <div className="bg-white border-2 border-gray-200 shadow-sm p-1 rounded-md z-10">
