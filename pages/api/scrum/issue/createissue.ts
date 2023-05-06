@@ -16,6 +16,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       sprintId,
       sprintName,
       isUnderStartSprint,
+      createdAt,
+      endAt,
     } = req.body;
 
     const totalIssues = await prisma.issues.findMany({
@@ -41,6 +43,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         sprintId,
         sprintName,
         isUnderStartSprint,
+        createdAt,
+        endAt,
       },
     });
 
