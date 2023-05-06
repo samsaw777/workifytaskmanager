@@ -14,8 +14,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const { token } = nookies.get({ req });
     const jwtToken: any = jwt.verify(token, secret);
 
-    console.log(projectId);
-
     const issues = await prisma.issues.findMany({
       where: {
         AND: [{ projectId: projectId }, { assignedTo: jwtToken.userId }],
