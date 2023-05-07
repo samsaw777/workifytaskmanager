@@ -4,6 +4,7 @@ import { MdMenu } from "react-icons/md";
 import { useRouter } from "next/router";
 import { ProjectState } from "../../Context/ProjectContext";
 import Image from "next/image";
+import Search from "./SearchDashboard";
 
 type Props = {
   openSideBar: boolean;
@@ -22,11 +23,7 @@ const TopBar = ({ openSideBar, setOpenSideBar }: Props) => {
           onClick={() => setOpenSideBar(!openSideBar)}
         />
 
-        {/* {pathname.slice(1) == "dashboard" ? (
-          <div>Dashboard</div>
-        ) : (
-          <div>Project</div>
-        )} */}
+        {pathname.slice(1) == "dashboard" && <Search />}
       </div>
       <div className="flex space-x-2 items-center">
         <div className="flex flex-col space-y-1 items-center">
