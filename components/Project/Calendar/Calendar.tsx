@@ -131,10 +131,11 @@ const UserCalendar = () => {
           events={getItems}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500 }}
+          style={{ height: 1000 }}
           onSelectEvent={handleEventClick}
           eventPropGetter={eventPropGetter}
           views={["month"]} // pass an empty array to disable all views
+          showMultiDayTimes
           // defaultView="month"
         />
       )}

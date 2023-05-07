@@ -27,6 +27,6 @@ export const ProjectContents = ({ componentName, projectId }: Props) => {
     case "Calendar":
       return <Calendar />;
     default:
-      return <Calendar />;
+      return <Members projectId={projectId} />;
   }
 };

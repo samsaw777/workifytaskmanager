@@ -163,6 +163,14 @@ const Sprint = ({
           endDate: sprint.endDate,
         })
         .then((response) => {
+          socket.emit("sprintCreated", {
+            ProjectId: id,
+            sprint: response.data,
+            members,
+            type: "startSprint",
+            section: "backlog",
+            sprints,
+          });
           Toast.success("Sprint Started!", {
             id: notification,
           });

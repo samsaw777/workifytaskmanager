@@ -202,6 +202,18 @@ const ProjectDetails = ({
           localSrpints[sprintIndex].startDate = sprint.startDate;
           localSrpints[sprintIndex].endDate = sprint.endDate;
           setSprints([...localSrpints]);
+        } else if (
+          ProjectId === projectId &&
+          section === "backlog" &&
+          type === "startSprint"
+        ) {
+          const localSrpints = JSON.parse(JSON.stringify(sprints));
+          const sprintIndex = localSrpints.findIndex(
+            (Sprint: any) => Sprint.id === sprint.id
+          );
+          localSrpints[sprintIndex].isUnderStartSprint =
+            sprint.isUnderStartSprint;
+          setSprints([...localSrpints]);
         }
       });
 

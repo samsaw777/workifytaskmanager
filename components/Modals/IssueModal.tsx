@@ -29,7 +29,12 @@ interface Props {
       endDate: Date;
     }>
   >;
-  sprintDetails: { id: number; sprintName: string };
+  sprintDetails: {
+    id: number;
+    sprintName: string;
+    startDate: Date;
+    endDate: Date;
+  };
   socket: Socket;
 }
 
@@ -67,6 +72,7 @@ const IssueModal = ({
   sprintDetails,
   socket,
 }: Props) => {
+  // console.log(sprintDetails);
   const {
     setIssues,
     issues,
@@ -141,6 +147,8 @@ const IssueModal = ({
           projectId: id,
           sprintId: sprintDetails.id,
           sprintName: sprintDetails.sprintName,
+          createdAt: sprintDetails.startDate,
+          endAt: sprintDetails.endDate,
           isUnderStartSprint: false,
         })
         .then((res) => {

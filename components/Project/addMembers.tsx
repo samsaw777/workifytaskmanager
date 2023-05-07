@@ -195,6 +195,18 @@ const AddMembers = ({ projectId }: Props) => {
     setIsExpanded(!isExpanded);
   };
 
+  const checkForAdmin = () => {
+    let member = members.filter(
+      (member: any) => member.userId === loggedInUser.id
+    );
+    console.log(member);
+    if (member[0]?.role === "ADMIN") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className="mx-5 flex flex-col">
       <AddMembersModal
@@ -202,12 +214,14 @@ const AddMembers = ({ projectId }: Props) => {
         setIsOpen={setIsOpen}
         isOpen={isOpen}
       />
-      <div
-        className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        Add Members
-      </div>
+      {checkForAdmin() && (
+        <div
+          className="p-2 bg-green-400 rounded-md w-fit ml-auto cursor-pointer text-white font-bold"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          Add Members
+        </div>
+      )}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 mt-5">
           {[...Array(3)].map(() => (

@@ -12,6 +12,16 @@ export default async function handler(
       throw new Error("No Request Body Was Found!");
     }
 
+    const isMember = await prisma.members.findFirst({
+      where: {
+        AND: [{ projectId: projectId }, { userId: userId }],
+      },
+    });
+
+    if (isMember) {
+      return res.send("Member has already joined the project!");
+    }
+
     const notification = await prisma.notifications.create({
       data: {
         title: requestBody,
