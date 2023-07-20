@@ -211,7 +211,7 @@ const AddMembers = ({ projectId }: Props) => {
     <div className="mx-5 flex flex-col">
       <AddMembersModal
         projectId={projectId}
-        setIsOpen={setIsOpen}
+        setIsOpen={setIsOpen} 
         isOpen={isOpen}
       />
       {checkForAdmin() && (
