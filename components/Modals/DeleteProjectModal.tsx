@@ -73,6 +73,7 @@ const DeleteProjectModal = ({
             onSubmit={(e) => deleteUserProject(e)}
           >
             <button
+              type="button"
               className="px-3 py-1 rounded   text-gray-400 border border-gray-300 hover:border-gray-800 hover:font-bold"
               onClick={() => setIsOpen(!isOpen)}
             >

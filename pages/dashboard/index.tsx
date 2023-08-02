@@ -7,7 +7,7 @@ import {
   getProjects,
   createProject,
 } from "../../utils/apicalls/project";
-import ProjectComponent from "../../components/Project/Project";
+import ProjectComponent from "../../components/Project/Projects";
 import Nookies from "nookies";
 import * as jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma";

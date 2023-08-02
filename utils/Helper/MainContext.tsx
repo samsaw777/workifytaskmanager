@@ -1,4 +1,4 @@
-import Project from "../../components/Project/Project";
+import Project from "../../components/Project/Projects";
 import Tasks from "../../components/Dashboard/Tasks";
 import Notifications from "../../components/Dashboard/Notifications";
 type Props = {
