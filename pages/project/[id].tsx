@@ -746,6 +746,7 @@ const ProjectDetails = ({
       <div className="">
         <ProjectSidebar
           openSidebar={openSideBar}
+          setOpenSidebar={setOpenSideBar}
           setShowContent={setShowContent}
           projectTitle={project.name}
           // showContent={showContent}

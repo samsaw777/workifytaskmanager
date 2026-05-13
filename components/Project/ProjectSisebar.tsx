@@ -12,6 +12,7 @@ import { ProjectState } from "../../Context/ProjectContext";
 
 type Props = {
   openSidebar: boolean;
+  setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setShowContent: React.Dispatch<React.SetStateAction<string>>;
   projectTitle: string;
   //   showContent: string;
@@ -19,6 +20,7 @@ type Props = {
 
 const ProjectSideBar = ({
   openSidebar,
+  setOpenSidebar,
   setShowContent,
   projectTitle,
 }: //
@@ -36,8 +38,9 @@ Props) => {
   };
 
   const openSubMenu = (index: number): void => {
+    if (!openSidebar) setOpenSidebar(true);
     setSubMenuIndex(index);
-    setIsSubMenuOpen(!isSubMenuOpen);
+    setIsSubMenuOpen(subMenuIndex !== index ? true : !isSubMenuOpen);
   };
 
   return (
